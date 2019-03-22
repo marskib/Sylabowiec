@@ -1,0 +1,31 @@
+<resources>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="maly_odstep">8dp</dimen>
+
+
+    <dimen name="litera_size">50sp</dimen>
+ <!--  wyrzucam - bedą wyliczalne:
+    <dimen name="margin_top_size_1st_row">-15dp</dimen>
+    <dimen name="margin_top_size_2nd_row">52dp</dimen>
+    <dimen name="margin_top_size_3rd_row">124dp</dimen>
+-->
+    <!--odstep 1-szej litery 1=go rzedu od obrazka od obrazka: -->
+    <!--wyrzucam - wyliczane-->
+    <!--<dimen name="od_obrazka">30dp</dimen>-->
+
+    <!-- wartosc na rozsuniecie etykiet wzgledem siebie w rzędzie; wykorzystywana w kodzie: -->
+    <dimen name="poprawka">100dp</dimen>
+
+    <!--padding etykiety; wykorzystywany w kodzie do obliczenia dokladnej pozycji litery: -->
+    <dimen name="padding_ski">10dp</dimen>
+
+    <!-- rozsuniecie liter (api dependent >= 21 -->
+    <dimen name="lspacing_ski">0.1</dimen>
+
+    <dimen name="bOK_size">25sp</dimen>
+    <dimen name="tvPoziom_size">28dp</dimen>
+    <dimen name="tvGledzenie_size">20sp</dimen>
+    <dimen name="tvMozliwosci_size">16sp</dimen>
+    <dimen name="ostrzegaj_demo_size">20sp</dimen>
+
+</resources>

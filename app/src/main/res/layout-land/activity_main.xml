@@ -1,0 +1,454 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#BEBEBE"
+    android:padding="-100dp"
+    android:layout_margin="0dp"
+    tools:context=".MainActivity"
+>
+
+    <!-- zielone tlo: android:background="#26ce61"-->
+    <!--SELEDYNowe:   android:background="#BEB"-->
+
+
+
+    <Button
+        android:id="@+id/bDalej"
+        android:onClick="bDalejOnClick"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+
+        android:layout_gravity="center_horizontal"
+        android:drawableStart="@drawable/arrow_right"
+
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="3dp"
+
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="2dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="40dp"
+        android:visibility="invisible"
+    />
+
+    <!-- klawisz 'Again' pod bDalej: -->
+    <Button
+      android:id="@+id/bAgain1"
+      android:onClick="bAgainOnClick"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+
+      android:layout_below="@+id/bDalej"
+
+      android:layout_marginRight="2dp"
+      android:layout_marginTop="-3dp"
+      android:text="@string/bAgain_text"
+
+      android:textStyle="bold"
+      android:visibility="invisible"/>
+
+
+    <!-- klawisz 'Again' pod l_Obszar: -->
+    <Button
+        android:id="@+id/bAgain"
+        android:onClick="bAgainOnClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="2dp"
+
+        android:paddingTop="0dp"
+
+        android:text="@string/bAgain_text"
+        android:textStyle="bold"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/bUpperLower"
+        android:onClick="bUpperLowerOnClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/bAgain"
+        android:text="-----"
+        android:textStyle="bold"
+        android:letterSpacing="-0.15"
+        android:visibility="invisible"/>
+
+        <!--android:text="a &lt;&#45;&#45;&gt; A"-->
+
+    <Button
+        android:id="@+id/bPomin"
+        android:onClick="bPominOnClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" X "
+        android:textStyle="bold"
+        android:layout_toStartOf="@+id/bUpperLower"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible"/>
+
+    <Button
+      android:id="@+id/bHint"
+      android:onClick="bHintOnClick"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_toStartOf="@+id/bPomin"
+      android:visibility="invisible"
+      android:textStyle="bold"
+      android:text="?"/>
+
+
+    <!--bDajGestosc: daje gestosc ekranu + inne uslugi-->
+    <!--sledzenie - po developmencie wylaczam-->
+    <Button
+      android:id="@+id/bDajGestosc"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:onClick="bDajGestoscOnClick"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+
+      android:visibility="invisible"
+
+      android:text="Gestosc"
+      />
+
+    <Button
+        android:id="@+id/bShiftLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="bShiftLeftOnClick"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="visible"
+        android:textStyle="bold"
+        android:text="&lt;&lt;"
+    />
+
+
+    <!--bDajWielkosc: wielkosc ekranu - Sledzenie-->
+    <!--wylaczam po developmencie-->
+    <Button
+      android:id="@+id/bDajWielkosc"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_toEndOf="@+id/tvInfo3"
+      android:onClick="bDajWielkoscEkranuOnClick"
+      android:visibility="invisible"
+      android:text="Ekran"
+      />
+
+
+    <!-- Prostokat - Obszar -->
+    <!--Uwaga - marginStart MUSI być 0, bo problemy w pokazWyraz()-->
+    <LinearLayout
+        android:id="@+id/l_Obszar"
+        android:layout_marginTop="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="2dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/border_skib">
+
+
+        <!--Na wyswietlenie zwycieskiego wyrazu:-->
+        <!--na otoczenie wyrazu-sledzenie:    android:background="@drawable/border_probnik"-->
+        d<TextView
+            android:id="@+id/tvShownWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="5dp"
+
+            android:layout_margin="0dp"
+            android:text="aaaaaaaa"
+            android:textAlignment="center"
+            android:textSize="@dimen/litera_size"
+            android:textStyle="bold"
+            android:letterSpacing="@dimen/lspacing_ski"
+            android:visibility="invisible"
+
+            android:padding="@dimen/padding_ski"
+
+            android:maxLines="1"/>
+    </LinearLayout>
+
+    <!--Miesce na obrazek:
+    realizuję wewnątrz layoutu, bo w przypadku wylaczenia zobrazowania obrazkow
+    nie ma na czym kliknac, zeby wrococ do Ustawien (niewidoczny obrazek nie reaguje na long]onClick'i...
+    -->
+    <RelativeLayout
+        android:id="@+id/l_imgContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        >
+
+        <!--android:background="@drawable/border_skib_gray"-->
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="10dp"
+            android:src="@drawable/cytryna"
+            android:visibility="visible"
+        />
+
+    </RelativeLayout>
+
+
+    <!--Nazwa pod Obrazkiem: -->
+    <!--na otoczenie wyrazu-sledzenie: android:background="@drawable/border_probnik"-->
+    <autyzmsoft.pl.literowiec.ResizeTextView
+      android:id="@+id/tvNazwa"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:paddingLeft="0dp"
+      android:paddingTop="0dp"
+      android:layout_marginTop="-11dp"
+      android:layout_marginLeft="10dp"
+
+      android:paddingStart="-10dp"
+      android:paddingEnd="-10dp"
+
+      android:layout_alignParentStart="true"
+      android:layout_below="@+id/l_imgContainer"
+      android:gravity="center"
+      android:maxLines="1"
+      android:visibility="invisible"/>
+
+
+
+    <!--LITERY-->
+    <!--Litery powinny byc deklarowane PO innych kontrolkach, zeby inne kontrolki nie 'przykrywaly' liter :-->
+
+    <!-- 1-szy rząd -->
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L00"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="300dp"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:textStyle="bold"
+        android:text="Ą" />
+    <!--android:layout_marginTop="@dimen/margin_top_size_1st_row"-->
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L01"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="400dp"
+        android:textStyle="bold"
+        android:text="Ź" />
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L02"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="500dp"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:textStyle="bold"
+        android:text="Ć" />
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L03"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="600dp"
+        android:textStyle="bold"
+        android:text="D" />
+
+    <!-- 2-gi rząd -->
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L04"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="300dp"
+        android:textStyle="bold"
+        android:text="E" />
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L05"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="400dp"
+        android:textStyle="bold"
+        android:text="F" />
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L06"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="500dp"
+        android:textStyle="bold"
+        android:text="G" />
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L07"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="600dp"
+        android:textStyle="bold"
+        android:text="H" />
+
+    <!-- 3-ci rząd -->
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L08"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="300dp"
+        android:textStyle="bold"
+        android:text="I" />
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L09"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="400dp"
+        android:textStyle="bold"
+        android:text="J" />
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L10"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="500dp"
+        android:textStyle="bold"
+        android:text="K" />
+
+    <autyzmsoft.pl.literowiec.MojTV
+        android:id="@+id/L11"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/litera_size"
+        android:padding="@dimen/padding_ski"
+        android:layout_marginLeft="600dp"
+        android:textStyle="bold"
+        android:text="L" />
+
+
+    <!--Probniki na rozmiary liter Malych i Wielkich (litery dibieram arbitralnie, lepiej zeby nie wypadaly jedna na drugiej-odsuwam w leftMargin...) : -->
+<!--  2018-07-21 - usuwam, bo wprowadzilem ustawiana programowo grawitacje
+
+    <TextView
+      android:id="@+id/probnikM"
+
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="@dimen/litera_size"
+      android:padding="@dimen/padding_ski"
+      android:layout_marginLeft="600dp"
+      android:textStyle="bold"
+      android:text="k" />
+
+    <TextView
+      android:id="@+id/probnikW"
+
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="@dimen/litera_size"
+      android:padding="@dimen/padding_ski"
+      android:layout_marginLeft="800dp"
+      android:textStyle="bold"
+      android:text="W" />
+
+-->
+
+
+<!-- Kontrolki 'kontrolne' -->
+    <TextView
+        android:id="@+id/tvInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:text="Wspolrzedne Kontrolki" />
+
+    <TextView
+        android:id="@+id/tvInfo1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/tvInfo"
+        android:text="Wspolrzedne Palca"/>
+
+    <TextView
+        android:id="@+id/tvInfo2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/tvInfo1"
+        android:layout_marginLeft="50dp"
+        android:text="Wspolrzedne Litery" />
+
+    <TextView
+        android:id="@+id/tvInfo3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/tvoInfoObszar"
+        android:layout_alignTop="@+id/tvoInfoObszar"
+
+        android:layout_marginLeft="50dp"
+        android:text="Rozdzielczosc" />
+
+
+
+
+</RelativeLayout>
+
+
