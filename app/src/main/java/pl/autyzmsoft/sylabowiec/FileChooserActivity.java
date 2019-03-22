@@ -24,7 +24,7 @@ import java.io.File;
 //import ar.com.daidalos.afiledialog.R;
 
 /**
- * A file chooser implemented in an Activity.
+ * A file chooser implemented  in an Activity.
  */
 public class FileChooserActivity extends Activity implements FileChooser {
 
