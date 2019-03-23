@@ -6,8 +6,7 @@
     android:background="#BEBEBE"
     android:padding="-100dp"
     android:layout_margin="0dp"
-    tools:context=".MainActivity"
->
+    tools:context=".MainActivity">
 
     <!-- zielone tlo: android:background="#26ce61"-->
     <!--SELEDYNowe:   android:background="#BEB"-->
@@ -29,10 +28,10 @@
         android:layout_marginBottom="0dp"
         android:layout_marginTop="3dp"
 
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="2dp"
-        android:paddingLeft="50dp"
-        android:paddingRight="40dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="2dp"
+        android:paddingStart="50dp"
+        android:paddingEnd="40dp"
         android:visibility= "invisible"
     />
 
@@ -213,7 +212,7 @@
 
     <!--Nazwa pod Obrazkiem: -->
     <!--na otoczenie wyrazu-sledzenie: android:background="@drawable/border_probnik"-->
-    <autyzmsoft.pl.literowiec.ResizeTextView
+    <pl.autyzmsoft.sylabowiec.ResizeTextView
       android:id="@+id/tvNazwa"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -237,7 +236,7 @@
     <!--Litery powinny byc deklarowane PO innych kontrolkach, zeby inne kontrolki nie 'przykrywaly' liter :-->
 
     <!-- 1-szy rząd -->
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L00"
 
         android:layout_width="wrap_content"
@@ -249,7 +248,7 @@
         android:text="Ą" />
     <!--android:layout_marginTop="@dimen/margin_top_size_1st_row"-->
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L01"
 
         android:layout_width="wrap_content"
@@ -260,7 +259,7 @@
         android:textStyle="bold"
         android:text="Ź" />
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L02"
 
         android:layout_width="wrap_content"
@@ -271,7 +270,7 @@
         android:textStyle="bold"
         android:text="Ć" />
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L03"
 
         android:layout_width="wrap_content"
@@ -283,7 +282,7 @@
         android:text="D" />
 
     <!-- 2-gi rząd -->
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L04"
 
         android:layout_width="wrap_content"
@@ -294,7 +293,7 @@
         android:textStyle="bold"
         android:text="E" />
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L05"
 
         android:layout_width="wrap_content"
@@ -305,7 +304,7 @@
         android:textStyle="bold"
         android:text="F" />
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L06"
 
         android:layout_width="wrap_content"
@@ -316,7 +315,7 @@
         android:textStyle="bold"
         android:text="G" />
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L07"
 
         android:layout_width="wrap_content"
@@ -329,7 +328,7 @@
 
     <!-- 3-ci rząd -->
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L08"
 
         android:layout_width="wrap_content"
@@ -340,7 +339,7 @@
         android:textStyle="bold"
         android:text="I" />
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L09"
 
         android:layout_width="wrap_content"
@@ -351,7 +350,7 @@
         android:textStyle="bold"
         android:text="J" />
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L10"
 
         android:layout_width="wrap_content"
@@ -362,7 +361,7 @@
         android:textStyle="bold"
         android:text="K" />
 
-    <autyzmsoft.pl.literowiec.MojTV
+    <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L11"
 
         android:layout_width="wrap_content"
