@@ -73,7 +73,7 @@ public class ApkaInfo extends Activity {
   private void dajInfoWersja(){
     /*Na ekranie ApkaInfo.xml wypisuje jeden wiersz informacji o wersji aplikacji*/
     TextView tvWersja = (TextView) findViewById(R.id.tvWersja);
-    String str = "  Literowiec 1.0 wersja ";
+    String str = "  Sylabowiec 1.0 wersja ";
     if (mGlob.PELNA_WERSJA)
       str = str + "Pełna";
     else

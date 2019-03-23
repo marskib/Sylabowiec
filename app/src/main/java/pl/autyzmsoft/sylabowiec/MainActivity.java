@@ -1314,7 +1314,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
    * dotyczy: imageView
    * Co na dlugim kliknieciu na obrazku - powolanie ekranu z opcjami
    */ public boolean onLongClick(View view) {
-    intUstawienia = new Intent("autyzmsoft.pl.literowiec.UstawieniaActivity");
+    intUstawienia = new Intent("pl.autyzmsoft.sylabowiec.UstawieniaActivity");
     startActivity(intUstawienia);
     return true;
   } //koniec Metody()

@@ -440,9 +440,6 @@
         android:layout_height="wrap_content"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:layout_toRightOf="@+id/tvoInfoObszar"
-        android:layout_alignTop="@+id/tvoInfoObszar"
-
         android:layout_marginLeft="50dp"
         android:text="Rozdzielczosc" />
 

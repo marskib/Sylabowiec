@@ -16,7 +16,7 @@ import android.widget.TextView;
  * Wyswietla okienko modalne.
  * Zrodlo - stackoverflow
  * Dotakowo jest jeszcze potrzebny wpis w manifest.xml:
- * action android:name="autyzmsoft.pl.literowiec.DialogModalny"/>   --> it gives the activity the dialog look...
+ * action android:name="autyzmsoft.pl.sylabowiec.DialogModalny"/>   --> it gives the activity the dialog look...
  * Uzywane do startowania aplikacji
  */
 
@@ -52,7 +52,7 @@ public class DialogModalny extends Activity {
     czyscDlaKrzyska(); //jezeli wysylam do Testerow, to zacieram namiary na moje www
 
     //Tytul na gorze (nie trzeba ustawiac w manifescie(!)):
-    String tytul = "LITEROWIEC - ułóż wyraz z liter. ";
+    String tytul = "SYLABOWIEC - ułóż wyraz z sylab. ";
     if (mGlob.PELNA_WERSJA) tytul = tytul + "Wersja pełna.";
     else tytul = tytul + "Wersja darmowa.";
     this.setTitle(tytul);

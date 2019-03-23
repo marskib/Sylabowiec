@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Literowiec</string>
-    <string name="title_activity_scrolling">Literowiec - ustawienia</string>
+    <string name="app_name">Sylabowiec</string>
+    <string name="title_activity_scrolling">Sylabowiec - ustawienia</string>
 
     <string name="daidalos_hello">Hello World!</string>
     <string name="daidalos_app_name">aFileDialog</string>

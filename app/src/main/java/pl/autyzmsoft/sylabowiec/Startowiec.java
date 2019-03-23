@@ -31,7 +31,7 @@ public class Startowiec extends Activity {
         Thread.interrupted();
       }
 
-      Intent mainAplikacja = new Intent("autyzmsoft.pl.literowiec.MainActivity");
+      Intent mainAplikacja = new Intent("pl.autyzmsoft.sylabowiec.MainActivity");
       startActivity(mainAplikacja);
       return null;
     }
