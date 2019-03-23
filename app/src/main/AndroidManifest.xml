@@ -1,18 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="pl.autyzmsoft.sylabowiec">
+    package="pl.autyzmsoft.sylabowiec">
 
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+  <!-- android:icon="@mipmap/ic_launcher" -->
+  <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
   <application
-    android:allowBackup="true"
-    android:icon="@mipmap/ic_launcher"
-    android:label="@string/app_name"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:supportsRtl="true"
-    android:theme="@style/AppTheme">
-    <activity android:name=".MainActivity">
+      android:name=".ZmienneGlobalne"
+      android:allowBackup="true"
+      android:icon="@drawable/autyzmsoft"
+      android:label="@string/app_name"
+      android:roundIcon="@drawable/autyzmsoft"
+      android:supportsRtl="true"
+      android:theme="@style/AppTheme">
+
+    <activity
+        android:name="pl.autyzmsoft.sylabowiec.MainActivity"
+        android:screenOrientation="landscape">
+      <intent-filter>
+        <action android:name="pl.autyzmsoft.sylabowiec.MainActivity"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </activity>
+
+    <activity
+        android:name=".DialogModalny"
+        android:theme="@android:style/Theme.Dialog">
+      <intent-filter>
+        <action android:name="pl.autyzmsoft.sylabowiec.DialogModalny"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </activity>
+
+    <activity
+        android:name=".UstawieniaActivity"
+        android:label="@string/title_activity_ustawienia"
+        android:screenOrientation="landscape">
+      <intent-filter>
+        <action android:name="pl.autyzmsoft.sylabowiec.UstawieniaActivity"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </activity>
+
+    <activity
+        android:name=".ApkaInfo"
+        android:label="Informacje o aplikacji"
+        android:screenOrientation="landscape">
+    </activity>
+    <activity
+        android:name=".InternalExternalKlasa"
+        android:label="wybierz katalog"
+        android:screenOrientation="landscape">
+    </activity>
+    <activity
+        android:name=".FileChooserActivity"
+        android:label="@string/title_activity_file_choser"
+        android:screenOrientation="portrait">
+    </activity>
+    <activity
+        android:name=".WersjaDemoOstrzez"
+        android:screenOrientation="landscape">
+    </activity>
+    <activity
+
+        android:name="pl.autyzmsoft.sylabowiec.Startowiec"
+        android:label="@string/app_name"
+        android:screenOrientation="landscape">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
-
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>

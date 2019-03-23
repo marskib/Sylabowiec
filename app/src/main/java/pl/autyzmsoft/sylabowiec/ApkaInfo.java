@@ -1,4 +1,4 @@
-package pl.autyzmsoft.sylabowiec.;
+package pl.autyzmsoft.sylabowiec;
 
 import android.app.Activity;
 import android.content.Intent;

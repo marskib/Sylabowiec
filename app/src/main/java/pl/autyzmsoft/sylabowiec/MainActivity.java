@@ -1,12 +1,12 @@
-package pl.autyzmsoft.sylabowiec
+package pl.autyzmsoft.sylabowiec;
 
 import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
-import static autyzmsoft.pl.literowiec.ZmienneGlobalne.LATWE;
-import static autyzmsoft.pl.literowiec.ZmienneGlobalne.SREDNIE;
-import static autyzmsoft.pl.literowiec.ZmienneGlobalne.TRUDNE;
-import static autyzmsoft.pl.literowiec.ZmienneGlobalne.WSZYSTKIE;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.LATWE;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.SREDNIE;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.TRUDNE;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.WSZYSTKIE;
 
 import android.Manifest;
 import android.animation.Animator;
