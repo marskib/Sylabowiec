@@ -33,7 +33,7 @@
         android:layout_marginRight="2dp"
         android:paddingLeft="50dp"
         android:paddingRight="40dp"
-        android:visibility="invisible"
+        android:visibility= "invisible"
     />
 
     <!-- klawisz 'Again' pod bDalej: -->
