@@ -9,7 +9,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 /**
- * Klasa do etykiet-liter do ukladania
+ * Klasa do etykiet-sylab do ukladania
+ * Etykieta ma maks. 5 znaków
  */
 
 
@@ -17,7 +18,7 @@ import android.view.animation.Animation;
 public class MojTV extends android.support.v7.widget.AppCompatTextView {
 
   private boolean inArea = false; //czy jest w Obszarze
-  private String  origL  = "*";   //Litera z oryginalu; rozwiazuje problem Ola->OLA->Ola
+  private String  origS  = "*";   //Sylaba z oryginalu; rozwiazuje problem Ola->OLA->Ola
   private int mBlink = 0;         //do mrugania, zeby mozna bylo odwolac sie z klasy wewnetrznej Runnable
 
   public MojTV(Context context) { super(context); }
@@ -33,10 +34,10 @@ public class MojTV extends android.support.v7.widget.AppCompatTextView {
     this.inArea = inArea;
   }
 
-  public String getOrigL() {return origL; }
+  public String getOrigL() {return origS; }
 
   public void setOrigL(String origL) {
-    this.origL = origL;
+    this.origS = origL;
   }
 
 
@@ -100,30 +101,7 @@ public class MojTV extends android.support.v7.widget.AppCompatTextView {
   } //koniec Metody()
 
 
-
-
-
 }  //koniec Klasy
-
-
-
-
-// proby z blinkiem,,,,,,
-// Obiekt i metoda do realizowania kroku bGlowy :
-    /*
-
-    final Handler handler = new Handler();
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if (PAUZA) return;
-            krokGlowy();
-            krokOgona();
-            handler.postDelayed(this, 250);
-        }
-    };
-
-    */
 
 
 

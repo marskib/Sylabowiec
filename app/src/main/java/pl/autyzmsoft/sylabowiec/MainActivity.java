@@ -135,8 +135,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   ///polozenie  linii 'Trimowania' - srodek Obszaru, do tej linii dosuwam etykiety (kosmetyka
   // znaczaca)
-  //Kontener z obrazkiem (do [long]klikania (lepiej niz na image - rozwiazuje problem z
-  // niewidzialnym obrazkiem):
+  //Kontener z obrazkiem (do [long]klikania (lepiej niz na image - rozwiazuje problem z niewidzialnym obrazkiem):
   RelativeLayout l_imageContainer;
 
   //Placeholders'y na etykiety (12 szt.):
@@ -878,6 +877,19 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   }  //koniec Metedy()
 
+  private int lSylab(String wyraz) {
+  /* liczba sylab w wyrazie; '-' jest delimiterem */
+
+    lepiej dzilac na tablicy charow...
+
+    int count = 1;
+    for (int i=0; i<wyraz.length(); i++) {
+      if wyraz[i].equa
+
+
+    }
+  }
+
   private void rozrzucWyraz() {
     /* Rozrzucenie currWord po tablicy lbs (= po Ekranie)              */
     //Wyswietla tez nazwe pod obrazkiem
@@ -939,8 +951,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           int k;  //na losową pozycję
           do {
             k = rand.nextInt(lbs.length);
-          } while (lbs[k].getVisibility() == VISIBLE); //petla gwarantuje, ze trafiamy tylko w puste
-          // (=niewidoczne) etykiety
+          } while (lbs[k].getVisibility() == VISIBLE); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
 
           //Umieszczenie litery na wylosowanej pozycji (i w strukturze obiektu MojTV) +
           // pokazanie:
