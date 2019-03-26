@@ -878,16 +878,19 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }  //koniec Metedy()
 
   private int lSylab(String wyraz) {
-  /* liczba sylab w wyrazie; '-' jest delimiterem */
-
-    lepiej dzilac na tablicy charow...
-
-    int count = 1;
-    for (int i=0; i<wyraz.length(); i++) {
-      if wyraz[i].equa
-
-
+  /* liczba sylab w wyrazie; '-' jest delimiterem; wynik=o jeden wiecej niz liczba znakow '-' */
+    int count = 0;
+    for (int i = 0; i < wyraz.length(); i++) {
+      if (wyraz.charAt(i) == '-') {
+        count++;
+      }
     }
+    return count;
+  }
+
+  private String sylabaONumerze(String wyraz, int poz) {
+    final char[] tabChar = wyraz.toCharArray();       //bo latwiej operowac na Char'ach
+
   }
 
   private void rozrzucWyraz() {
@@ -943,7 +946,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     mHandl.postDelayed(new Runnable() {
       @Override
       public void run() {
-        //Kazda litera wyrazu ląduje w losowej komorce tablicy lbs :
+        //Kazda sylaba wyrazu ląduje w losowej komorce tablicy lbs :
         for (int i = 0; i < wyraz.length; i++) {
           String z = Character.toString(wyraz[i]); //pobranie litery z wyrazu
 

@@ -10,8 +10,7 @@ import android.view.animation.Animation;
 
 /**
  * Klasa do etykiet-sylab do ukladania
- * Etykieta ma maks. 5 znaków
- */
+*/
 
 
 
