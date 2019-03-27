@@ -11,34 +11,49 @@ public class Sylaby {
   private int lSylab;       //liczba sylab w wyrazie
 
 
+  public Sylaby() {
+    tab = new String[0];
+    lSylab = 0;
+  }
+
   public int getlSylab() {
     return lSylab;
   }
 
+  public String getSylabaAt(int i) {
+  /* Zwraca jedna z sylab w obiekcie Sylaby spod indeksu i */
+    return tab[i];
+  }
 
-  public Sylaby(String ciag) {
 
-    private char[] sylaba  = new char[0];
-    private char[] lancuch = new char[0];
+  public void zaladujCiag(String ciag) {
+
+    char[] sylaba  = new char[5];  //na wyluskana sylabę
+    char[] lancuch = new char[0];  //do latwiejszego operowania
 
     lancuch = ciag.toCharArray();
 
-    private int i = 0;
-    private int j = 0;
-    private int k = 0;
+    int i = 0;  //indeks na lancuch (=ciag)
+    int j = 0;  //indeks na 'globalną' tab
+    int k = 0;  //indeks na tab. sylaba
 
     lSylab = 0;
     do {
       sylaba[k] = lancuch[i];
+      k++;
       i++;
-      if (lancuch[i]=='-') {
+      if (lancuch[i]=='-'||lancuch[i]=='.') {
         tab[j] = sylaba.toString();
         lSylab++;
+
+        sylaba = null; //budujemy nast. sylabę
+
         j++;
         k = 0;
-      };
+      }
     } while (lancuch[i] != '.');
 
-  }  //Constructor
+  }  //function()
 
-}
+} //koniec Klasy
+

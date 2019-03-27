@@ -204,38 +204,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private Button bPomin;
   //potrzasanie litera[mi] - bledny ciag->short, litera ok->long ; definuję 'wysoko' - wydajnosc
 
+  //obiekt do przechowywania sylab bieżacego wyrazu:
+  public Sylaby sylaby;
 
 
-  /* eksperymenty ze status barem - 2018.08.11 */
-/*
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        Toast.makeText(this, "pkt1", Toast.LENGTH_SHORT).show();
-        if (hasFocus) {
-            Toast.makeText(this, "pkt2", Toast.LENGTH_SHORT).show();
-            hideSystemUI();
-        }
-    }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        Toast.makeText(this, "pkt3", Toast.LENGTH_SHORT).show();
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-            View.SYSTEM_UI_FLAG_IMMERSIVE
-                // Set the content to appear under the system bars so that the
-                // content doesn't resize when the system bars hide and show.
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                // Hide the nav bar and status bar
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-*/
 
   /* eksperymenty ze status barem - 2018.08.11 - KONIEC*/
   private Pamietacz mPamietacz;
@@ -463,8 +435,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
 
-        /* ZEZWOLENIA NA KARTE _ WERSJA na MARSHMALLOW, jezeli dziala na starszej wersji, to ten
-        kod wykona sie jako dummy */
+   /* ZEZWOLENIA NA KARTE _ WERSJA na MARSHMALLOW, jezeli dziala na starszej wersji, to ten
+    kod wykona sie jako dummy */
     int jestZezwolenie = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
     if (jestZezwolenie != PackageManager.PERMISSION_GRANTED) {
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
@@ -481,43 +453,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //3.Set content view AFTER ABOVE sequence (to avoid crash):
 
     setContentView(R.layout.activity_main);
-    //new MojeTlo().execute(); -- 2018.10.12
-
-    //ski ski 2018.09.10   ****proby z 'progress' barem:
-
-    //        final Handler hRefresh = new Handler(){
-    //
-    //            @Override
-    //            public void handleMessage(Message msg) {
-    //                switch(msg.what){
-    //                    case 1000:
-    //                        //Refreshing UI:
-    //                        break;
-    //                }
-    //            }
-    //        };
-    //
-    //         final ProgressDialog mProgressDlg = ProgressDialog.show(this, "App_Name", "Loading
-    // data...",
-    //         true, false);
-    //         new Thread(new Runnable(){
-    //         public void run() {
-    //         //Loading Data:
-    //
-    //             //ladowanieDanych();
-    //
-    //             try {
-    //                 Thread.sleep(5000);
-    //             } catch (InterruptedException e) {
-    //                 e.printStackTrace();
-    //             }
-    //
-    //             mProgressDlg.dismiss();
-    //        hRefresh.sendEmptyMessage(1000);
-    //    }
-    //}).start();
-
-    /****************** ski ski koniec prob z PRogres 'barem' ************************/
 
     mGlob = (ZmienneGlobalne) getApplication();
 
@@ -607,12 +542,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     currOptions = new KombinacjaOpcji();
     newOptions = new KombinacjaOpcji();
 
+    sylaby = new Sylaby();
     dajNextObrazek();                   //daje index currImage obrazka do prezentacji oraz wyraz currWord odnaleziony pod indeksem currImage
     setCurrentImage();                  //wyswietla currImage i odgrywa słowo okreslone przez currImage
     rozrzucWyraz();                     //rozrzuca litery wyrazu okreslonego przez currImage
 
-    pokazModal();                       //startowe okienko modalne z logo i objasnieniami
-    // 'klikologii'
+    pokazModal();                       //startowe okienko modalne z logo i objasnieniami 'klikologii'
 
   }  //koniec onCreate()
 
@@ -877,21 +812,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   }  //koniec Metedy()
 
-  private int lSylab(String wyraz) {
-  /* liczba sylab w wyrazie; '-' jest delimiterem; wynik=o jeden wiecej niz liczba znakow '-' */
-    int count = 0;
-    for (int i = 0; i < wyraz.length(); i++) {
-      if (wyraz.charAt(i) == '-') {
-        count++;
-      }
-    }
-    return count;
-  }
 
-  private String sylabaONumerze(String wyraz, int poz) {
-    final char[] tabChar = wyraz.toCharArray();       //bo latwiej operowac na Char'ach
-
-  }
 
   private void rozrzucWyraz() {
     /* Rozrzucenie currWord po tablicy lbs (= po Ekranie)              */
@@ -934,6 +855,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "0123456789AB";
 
     //Pobieramy wyraz do rozrzucenia:
+    sylaby.zaladujCiag(currWord);
+
+    /*
     final char[] wyraz = currWord.toCharArray();       //bo latwiej operowac na Char'ach
 
     final Random rand = new Random();
@@ -962,7 +886,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           lbs[k].setText(z);
           lbs[k].setTextColor(Color.BLACK);  //kosmetyka, ale wazna...
           lbs[k].setVisibility(VISIBLE);
-          /******/
+          *//******//*
           //podpiecie animacji:
           lbs[k].startAnimation(a);
         }
@@ -973,6 +897,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         }
       }  //run()
     }, DELAY_EXERC);
+*/
 
     //Odblokowanie dodatkowych klawiszy - chwilke po pokazaniu liter (lepszy efekt):
     Handler mH2 = new Handler();
