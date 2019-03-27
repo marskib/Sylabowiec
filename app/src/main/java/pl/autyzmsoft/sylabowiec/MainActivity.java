@@ -91,8 +91,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   //dzwiek blednie polozonej litery i/lub calego wyrazu
 
   private static final String DING_SND = "nagrania/komentarze/ding.mp3";
-
   //dzwiek poprawnie ulozonego wyrazu
+
   public static MojTV[] lbs;
 
   public static File katalogSD;                 //katalog z obrazkami na SD (internal i external)
