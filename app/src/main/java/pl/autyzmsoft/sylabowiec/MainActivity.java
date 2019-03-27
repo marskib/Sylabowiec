@@ -787,7 +787,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Uwaga - Uwaga : przyciecie do 12 liter !!!!
     currWord = nazwaPliku.substring(0, Math.min(MAXL, nazwaPliku.length()));
 
-    //Odsiewam/zamieniam ewentualne spacje z wyrazu bo problemy:
+    //Odsiewam/zamieniam ewentualne spacje z wyrazu bo problemy :
     if (currWord.contains(" ")) {
       //currWord = currWord.replaceAll("\\s","");
       currWord = currWord.replaceAll("\\s", "_");
