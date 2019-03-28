@@ -851,20 +851,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "W";
     //currWord   = "ze spacjom";
     //currWord   = "0123456789AB";
+    currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
+    //currWord   = "nie-za-po-mi-naj-ki";
 
     //Pobieramy wyraz do rozrzucenia:
     sylaby = new Sylaby(currWord);
-
-    //Sledzenie - wyrzucic:
-    String cosik = sylaby.getSylabaAt(0);
-    int len=cosik.length();
-    if (sylaby.getlSylab()==2)
-      cosik = sylaby.getSylabaAt(1);
-    if (sylaby.getlSylab()==3)
-      cosik = sylaby.getSylabaAt(2);
-    if (sylaby.getlSylab()==4)
-      cosik = sylaby.getSylabaAt(3);
-
 
     final Random rand = new Random();
     final Animation a = AnimationUtils.loadAnimation(MainActivity.this, R.anim.skalowanie);
@@ -883,7 +874,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           int k;  //na losową pozycję
           do {
             k = rand.nextInt(lbs.length);
-          } while (lbs[k].getVisibility() == VISIBLE); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
+          } while  ( (lbs[k].getVisibility() == VISIBLE) || (niedozwolone(k)) ); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
 
           //Umieszczenie litery na wylosowanej pozycji (i w strukturze obiektu MojTV) +
           // pokazanie:
@@ -895,16 +886,15 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           //podpiecie animacji:
           lbs[k].startAnimation(a);
         } //for
+        if (inUp)   //ulozylismy z malych (oryginalnych) liter. Jesli trzeba - podnosimy
+        {
+          podniesLabels();
+        }
       }  //run()
     }, DELAY_EXERC);
 
 
-
-
-
-
-
-/*
+    /*
 
     final char[] wyraz = currWord.toCharArray();       //bo latwiej operowac na Char'ach
 
@@ -956,6 +946,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }, 2 * DELAY_EXERC);
 
   } //koniecMetody();
+
+  //przymiarki - wyrzucic;
+  private boolean niedozwolone(int k) {
+    if (k==1||k==3||k==5||k==7||k==9||k==11) return true;
+    else return false;
+  }
 
   private void resetujLabelsy() {
     //Resetowanie tablicy i tym samym zwiazanycyh z nia kontrolek ekranowych:
