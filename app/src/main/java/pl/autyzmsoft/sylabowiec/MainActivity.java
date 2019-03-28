@@ -855,6 +855,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Pobieramy wyraz do rozrzucenia:
     sylaby = new Sylaby(currWord);
 
+    //Sledzenie - wyrzucic:
     String cosik = sylaby.getSylabaAt(0);
     int len=cosik.length();
     if (sylaby.getlSylab()==2)
@@ -864,7 +865,47 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     if (sylaby.getlSylab()==4)
       cosik = sylaby.getSylabaAt(3);
 
-    /*
+
+    final Random rand = new Random();
+    final Animation a = AnimationUtils.loadAnimation(MainActivity.this, R.anim.skalowanie);
+    a.setDuration(500);
+
+    //Pokazujemy z lekkim opoznieniem (efekciarstwo...):
+    Handler mHandl = new Handler();
+    mHandl.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        //Kazda sylaba wyrazu ląduje w losowej komorce tablicy lbs :
+        for (int i = 0; i < sylaby.getlSylab(); i++) {
+          String z = sylaby.getSylabaAt(i); //pobranie sylaby
+
+          //Losowanie pozycji w tablicy lbs:
+          int k;  //na losową pozycję
+          do {
+            k = rand.nextInt(lbs.length);
+          } while (lbs[k].getVisibility() == VISIBLE); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
+
+          //Umieszczenie litery na wylosowanej pozycji (i w strukturze obiektu MojTV) +
+          // pokazanie:
+          lbs[k].setOrigL(z);
+          lbs[k].setText(z);
+          lbs[k].setTextColor(Color.BLACK);  //kosmetyka, ale wazna...
+          lbs[k].setVisibility(VISIBLE);
+
+          //podpiecie animacji:
+          lbs[k].startAnimation(a);
+        } //for
+      }  //run()
+    }, DELAY_EXERC);
+
+
+
+
+
+
+
+/*
+
     final char[] wyraz = currWord.toCharArray();       //bo latwiej operowac na Char'ach
 
     final Random rand = new Random();
@@ -887,13 +928,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             k = rand.nextInt(lbs.length);
           } while (lbs[k].getVisibility() == VISIBLE); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
 
-          //Umieszczenie litery na wylosowanej pozycji (i w strukturze obiektu MojTV) +
-          // pokazanie:
+          //Umieszczenie sylaby na wylosowanej pozycji (i w strukturze obiektu MojTV) + pokazanie:
           lbs[k].setOrigL(z);
           lbs[k].setText(z);
           lbs[k].setTextColor(Color.BLACK);  //kosmetyka, ale wazna...
           lbs[k].setVisibility(VISIBLE);
-          *//******//*
+
           //podpiecie animacji:
           lbs[k].startAnimation(a);
         }

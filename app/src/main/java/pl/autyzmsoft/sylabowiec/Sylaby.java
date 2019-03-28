@@ -4,15 +4,14 @@ package pl.autyzmsoft.sylabowiec;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.MAXS;
 
 /**
- * Obiekt tej klasy (1 szt.) będzie przechowywał sylaby bieżącego wyrazy.
- * Dodatkowe klasa przechowuje liczbę sylab w bieżącym wyrazie.
+ * Obiekt tej klasy (1 szt.) będzie przechowywał sylaby bieżącego wyrazu.
+ * Dodatkowo klasa przechowuje liczbę sylab w bieżącym wyrazie.
  * 2019-03-27
  */
 public class Sylaby {
 
   private String[] tabSylab;     //tablica na przechowywanie sylab
   private int      lSylab;       //liczba sylab w wyrazie
-
 
 
   public int getlSylab() {
@@ -24,8 +23,7 @@ public class Sylaby {
     return tabSylab[i];
   }
 
-
-
+  //Konstruktor:
   public Sylaby(String ciag) {
     tabSylab = new String[MAXS];
     lSylab   = 0;
@@ -35,11 +33,11 @@ public class Sylaby {
     boolean koniec;                //do sterowania petla
 
     lancuch = ciag.toCharArray();
-    sylaba = "^^^^^^^^^".toCharArray();
+    sylaba = "~~~~~~~~~~~~~~".toCharArray();  //wypelniacz...
 
-    int i = -1;  //indeks na lancuch (=ciag) (uwaga na -1 - ma byc)
-    int j = 0;   //indeks na 'globalną' tablice tabSylab
-    int k = 0;   //indeks na tabSylab. sylaba
+    int i = -1;  //indeks na lancuch (=ciag) (uwaga na -1 -> ma byc!)
+    int j = 0;   //indeks na skłądową tabSylab
+    int k = 0;   //indeks na wewn. tablice 'sylaba'
 
     //Przegladamy caly ciag 'slo-necz-ni-ki' i wyluskujemy sylaby pomiedzy znakami '-' :
     lSylab = 0;
@@ -47,20 +45,16 @@ public class Sylaby {
     do {
       i = i + 1;
       koniec = (i==ciag.length());
-      if (!( (koniec)||(lancuch[i]=='-')) )  {
+      if (!( (koniec)||(lancuch[i]=='-')) ) { //uwaga - kolejnosc w alternatywie jest istotna (null-owe wartosci!!!)
         sylaba[k] = lancuch[i];
         k++;
       }
-      else{
-        //tabSylab[j] = String.valueOf(sylaba);//sylaba.toString();
-
-        tabSylab[j] = new String(sylaba);
-        tabSylab[j] = tabSylab[j].replace("^","");
-
-
+      else {
+        tabSylab[j] = String.valueOf(sylaba);  //tabSylab[j] = new String(sylaba); -> tak też można...
+        tabSylab[j] = tabSylab[j].replace("~","");
         lSylab += 1;
         //budujemy nast. sylabę:
-        sylaba = "^^^^^^^^^".toCharArray();
+        sylaba = "~~~~~~~~~~~~~~".toCharArray();
         k = 0;
         j++;
       }
