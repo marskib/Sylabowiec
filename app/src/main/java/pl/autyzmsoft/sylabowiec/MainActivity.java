@@ -680,7 +680,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           } else {
             mp = new MediaPlayer();
           }
-          final String sciezka_do_pliku = sciezka_do_pliku_parametr; //udziwniam, bo klasa wewn. i kompilator sie czepia....
+
+          String Msciezka_do_pliku_parametr = sciezka_do_pliku_parametr.replace("-",""); //przystosowanie Literowiec->Sylabowiec
+
+          final String sciezka_do_pliku = Msciezka_do_pliku_parametr; //udziwniam, bo klasa wewn. i kompilator sie czepia....
           AssetFileDescriptor descriptor = getAssets().openFd(sciezka_do_pliku);
           mp.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
           descriptor.close();
@@ -851,7 +854,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "W";
     //currWord   = "ze spacjom";
     //currWord   = "0123456789AB";
-    currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
+    //currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
     //currWord   = "nie-za-po-mi-naj-ki";
 
     //Pobieramy wyraz do rozrzucenia:
@@ -1710,18 +1713,23 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private boolean poprawnieUlozono() {
     /* **************************************** */
     /* zalozenie wejsciowe:                     */
-    // Wszystkie litery znajduja sie w Obszarze */
+    // Wszystkie sylaby znajduja sie w Obszarze */
     /* Sprawdzenie, czy poprawnie ulozone.      */
     /* **************************************** */
+
+    String mCurrWord; //dodatkowa w stosunku do Literowanki, bo to Sylabowiec i currWord=np. "nie-za-po-mi-naj-ki" -> trzeba 'strippowac' te myślniki....
 
     String coUlozyl = coWidacInObszar();
 
     //Uwaga - nie nalezy podnosic do upperCase obydwu stron "równania" i porownywac bez
     // warunku 'if' (jak ponizej) --> problemy (Mikolaj-Mikolaj):
     if (!inUp) {
-      return coUlozyl.equals(currWord);
+      mCurrWord = currWord.replace("-","");
+      return coUlozyl.equals(mCurrWord);
     } else {
-      return coUlozyl.equals(currWord.toUpperCase(Locale.getDefault()));
+      mCurrWord = currWord.toUpperCase(Locale.getDefault());
+      mCurrWord = mCurrWord.replace("-","");
+      return coUlozyl.equals(mCurrWord);
     }
 
   } //koniec Metody();
@@ -2738,7 +2746,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           break;
         case MotionEvent.ACTION_UP:
 
-          ((MojTV) view).setTextColor(Color.BLACK); //przywroceni koloru przeciaganej litery - kosmetyka
+          ((MojTV) view).setTextColor(Color.BLACK); //przywroceni koloru przeciaganej sylaby - kosmetyka
 
           //sledzenie:
           //int Xstop = X;
@@ -2747,8 +2755,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
                     /* Sprawdzenie, czy srodek etykiety jest w Obszarze; Jezeli tak - dosuniecie
                     do lTrim. : */
-          //1.Policzenie wspolrzednych srodka Litery: (zakladam, ze srodek litery jest
-          // w srodku kontrolki o szer w i wys. h)
+          //1.Policzenie wspolrzednych srodka Sylaby: (zakladam, ze srodek sylaby jest w srodku kontrolki o szer w i wys. h)
           layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
           int w = view.getWidth();
           int lm = layoutParams.leftMargin;
@@ -2769,11 +2776,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             // badanie ewentualnego ZWYCIESTWA :
             ((MojTV) view).setInArea(true);
 
-            if (ileWObszarze() == currWord.length()) {  //wszystkie litery wyrazu znalazly sie w
-              // Obszarze
+            if (ileWObszarze() == sylaby.getlSylab()) {  //wszystkie sylaby wyrazu znalazly sie w Obszarze
               if (poprawnieUlozono()) {
-                if (mGlob.LETTER_HOPP_EF)  //ostatnio polozona litera podskoczy z
-                // 'radosci' - efekciarstwo:
+                if (mGlob.LETTER_HOPP_EF)  //ostatnio polozona litera podskoczy z 'radosci' - efekciarstwo:
                 {
                   view.startAnimation(animShakeLong);
                 }
@@ -2782,12 +2787,13 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
                 reakcjaNaBledneUlozenie();
               }
             }
-            //Wyraz jeszcze nie dokonczony, badamy, czy poprawna kolejnosc liter:
+            //Wyraz jeszcze nie dokonczony, badamy, czy poprawna kolejnosc sylab:
             else {
               String whatSeen = coWidacInObszar();
               String mCurrWord = currWord;
+              mCurrWord = mCurrWord.replace("-","");
               if (inUp) {
-                mCurrWord = currWord.toUpperCase(Locale.getDefault());
+                mCurrWord = mCurrWord.toUpperCase(Locale.getDefault());
               }
 
               if (!mCurrWord.contains(whatSeen)) {
