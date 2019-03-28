@@ -1,5 +1,8 @@
 package pl.autyzmsoft.sylabowiec;
 
+
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.MAXS;
+
 /**
  * Obiekt tej klasy (1 szt.) będzie przechowywał sylaby bieżącego wyrazy.
  * Dodatkowe klasa przechowuje liczbę sylab w bieżącym wyrazie.
@@ -7,14 +10,10 @@ package pl.autyzmsoft.sylabowiec;
  */
 public class Sylaby {
 
-  private String[] tab;     //tablica na przechowywanie sylab
-  private int lSylab;       //liczba sylab w wyrazie
+  private String[] tabSylab;     //tablica na przechowywanie sylab
+  private int lSylab;            //liczba sylab w wyrazie
 
 
-  public Sylaby() {
-    tab = new String[0];
-    lSylab = 0;
-  }
 
   public int getlSylab() {
     return lSylab;
@@ -22,38 +21,51 @@ public class Sylaby {
 
   public String getSylabaAt(int i) {
   /* Zwraca jedna z sylab w obiekcie Sylaby spod indeksu i */
-    return tab[i];
+    return tabSylab[i];
   }
 
 
-  public void zaladujCiag(String ciag) {
 
-    char[] sylaba  = new char[5];  //na wyluskana sylabę
-    char[] lancuch = new char[0];  //do latwiejszego operowania
+  public Sylaby(String ciag) {
+    tabSylab = new String[MAXS];
+    lSylab   = 0;
+
+    char[] sylaba;                 //na wyluskana sylabę (np. 'chrząszcz')
+    char[] lancuch;                //do latwiejszego operowania na 'ciag'u
+    boolean koniec;                //do sterowania petla
 
     lancuch = ciag.toCharArray();
+    sylaba = "^^^^^^^^^".toCharArray();
 
-    int i = 0;  //indeks na lancuch (=ciag)
-    int j = 0;  //indeks na 'globalną' tab
-    int k = 0;  //indeks na tab. sylaba
+    int i = -1;  //indeks na lancuch (=ciag) (uwaga na -1 - ma byc)
+    int j = 0;   //indeks na 'globalną' tablice tabSylab
+    int k = 0;   //indeks na tabSylab. sylaba
 
+    //Przegladamy caly ciag 'slo-necz-ni-ki' i wyluskujemy sylaby pomiedzy znakami '-' :
     lSylab = 0;
+    koniec = false;
     do {
-      sylaba[k] = lancuch[i];
-      k++;
-      i++;
-      if (lancuch[i]=='-'||lancuch[i]=='.') {
-        tab[j] = sylaba.toString();
-        lSylab++;
-
-        sylaba = null; //budujemy nast. sylabę
-
-        j++;
-        k = 0;
+      i = i + 1;
+      koniec = (i==ciag.length());
+      if (!( (koniec)||(lancuch[i]=='-')) )  {
+        sylaba[k] = lancuch[i];
+        k++;
       }
-    } while (lancuch[i] != '.');
+      else{
+        //tabSylab[j] = String.valueOf(sylaba);//sylaba.toString();
 
-  }  //function()
+        tabSylab[j] = new String(sylaba);
+        tabSylab[j] = tabSylab[j].replace("^","");
+
+
+        lSylab += 1;
+        //budujemy nast. sylabę:
+        sylaba = "^^^^^^^^^".toCharArray();
+        k = 0;
+        j++;
+      }
+    } while (!koniec);
+  }  //Constructor()
 
 } //koniec Klasy
 

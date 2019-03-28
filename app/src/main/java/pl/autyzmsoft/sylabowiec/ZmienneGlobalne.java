@@ -31,6 +31,8 @@ public class ZmienneGlobalne extends Application {
   public final boolean PELNA_WERSJA = false;       //czy Pelna czy Darmowa wersja aplikacji
   public final boolean nieGrajJestemW105 = false;  //robocza na czas developmentu
 
+  public static final int MAXS = 6;                //maxymalna dopuszczalna liczba sylab w wyrazie (patrz: nie-za-po-mi-naj-ki)
+
   //Poziomy trudnosci:
   public static final int LATWE = 1;
   public static final int SREDNIE = 2;

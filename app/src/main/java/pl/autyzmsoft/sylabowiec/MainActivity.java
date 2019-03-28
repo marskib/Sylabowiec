@@ -4,6 +4,7 @@ import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.LATWE;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.MAXS;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.SREDNIE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.TRUDNE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.WSZYSTKIE;
@@ -72,8 +73,6 @@ import java.util.Random;
 //YouTube: https://www.youtube.com/watch?v=H3qr1yK6u3M   szukać:android drag and drop delaroy
 
 public class MainActivity extends Activity implements View.OnLongClickListener {
-
-  public static final int MAXL = 12;          //maxymalna dopuszczalna liczba liter w wyrazie
 
   public static final int DELAY_EXERC = 1000;
   //opoznienie w pokazywaniu rozrzuconych liter i podpisu pod Obrazkiem
@@ -223,7 +222,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /*************************************************************************************/
 
     int dlug_min = 1;
-    int dlug_max = MAXL;
+    int dlug_max = MAXS;
 
     switch (poziom) {
       case LATWE:
@@ -236,12 +235,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         break;
       case TRUDNE:
         dlug_min = 8;
-        dlug_max = MAXL;
+        dlug_max = MAXS;
         break;
       case WSZYSTKIE:
         dlug_min = 1;
         dlug_max = Integer.MAX_VALUE;
-        break; //nazwa dluzsza niz 12 (MAXL) znakow - trzeba ja uwzglednic, bo inaczej
+        break; //nazwa dluzsza niz 12 (MAXS) znakow - trzeba ja uwzglednic, bo inaczej
       // pozniej exception.. (potem i tak przytne do 12)
     }
 
@@ -542,7 +541,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     currOptions = new KombinacjaOpcji();
     newOptions = new KombinacjaOpcji();
 
-    sylaby = new Sylaby();
     dajNextObrazek();                   //daje index currImage obrazka do prezentacji oraz wyraz currWord odnaleziony pod indeksem currImage
     setCurrentImage();                  //wyswietla currImage i odgrywa słowo okreslone przez currImage
     rozrzucWyraz();                     //rozrzuca litery wyrazu okreslonego przez currImage
@@ -785,7 +783,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     nazwaPliku = usunLastDigitIfAny(nazwaPliku);
 
     //Uwaga - Uwaga : przyciecie do 12 liter !!!!
-    currWord = nazwaPliku.substring(0, Math.min(MAXL, nazwaPliku.length()));
+    currWord = nazwaPliku.substring(0, Math.min(19, nazwaPliku.length())); //19, bo max. nie-za-po-mi-naj-ki)
 
     //Odsiewam/zamieniam ewentualne spacje z wyrazu bo problemy :
     if (currWord.contains(" ")) {
@@ -855,7 +853,16 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "0123456789AB";
 
     //Pobieramy wyraz do rozrzucenia:
-    sylaby.zaladujCiag(currWord);
+    sylaby = new Sylaby(currWord);
+
+    String cosik = sylaby.getSylabaAt(0);
+    int len=cosik.length();
+    if (sylaby.getlSylab()==2)
+      cosik = sylaby.getSylabaAt(1);
+    if (sylaby.getlSylab()==3)
+      cosik = sylaby.getSylabaAt(2);
+    if (sylaby.getlSylab()==4)
+      cosik = sylaby.getSylabaAt(3);
 
     /*
     final char[] wyraz = currWord.toCharArray();       //bo latwiej operowac na Char'ach
@@ -1131,7 +1138,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Uwzględnia to problem MIKOŁAJ->Mikołaj
     //Wywolywane w kontekscie zmiany z Wielkich->małe, wiec staram sie, zeby wyraz z malymi
     // literami
-    //rozpoczynal sie tam, gdzie zaczynal sie wyraz z "macierzysty" (jezeli wyraz<MAXL znakow)
+    //rozpoczynal sie tam, gdzie zaczynal sie wyraz z "macierzysty" (jezeli wyraz<MAXS znakow)
 
     String coPokazac = currWord;
     restoreApplyLetterSpacing(tvShownWord);
@@ -1144,7 +1151,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //(wieloliterowy wyraz malymi literami moze byc dluzszy niz ten sam wyraz Wielkimi, bo
     // wielki ma usuniety letterSpacing(!)):
     final int pocz = tvShownWord.getLeft();
-    if (currWord.length() < MAXL) {
+    if (currWord.length() < MAXS) {
       tvShownWord.post(new Runnable() {
         @Override
         public void run() {
@@ -1572,7 +1579,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       // ustawiam na żywca....
       //tvShownWord.setLetterSpacing(lspacing);
       if (mGlob.ZE_SPACING) {
-        if (mTV.length() >= MAXL && inUp) {
+        if (mTV.length() >= MAXS && inUp) {
           return; //za dlugich wielkich nie rozszerzamy, bo moga sie nie zmiescic na
           // wielu urzadzeniach...
         }
@@ -1641,7 +1648,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     // miesci....
     //Zakladam, ze wywolywana tylko, gdy duze litery; przy malych- wszystko sie miesci
 
-    if (currWord.length() < MAXL) {
+    if (currWord.length() < MAXS) {
       return;
     }
 
@@ -2053,7 +2060,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     final int poprPion = 25;
     lPar.topMargin = marginesTop - poprPion;
-    int poprPoziom = (rootLayout.getRight() - imageView.getRight()) / MAXL;
+    int poprPoziom = (rootLayout.getRight() - imageView.getRight()) / MAXS;
     //troche w prawo, jesli dobre urzadzenie:
 
     if (sizeW > 1100) {
@@ -2428,7 +2435,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /*
      * ******************************************************************************************** */
 
-    MojTV[] tRob = new MojTV[MAXL];                //tablica robocza, do dzialań
+    MojTV[] tRob = new MojTV[MAXS];                //tablica robocza, do dzialań
     //Wszystkie z Obszaru odzwierciedlam w tRob:
     int licznik = 0;                               //po wyjsciu z petli bedzie zawieral liczbe
     // liter w Obszarze
@@ -2472,7 +2479,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /* ********************************************************** */
 
     //nieoptymalne?: 2018-10-23
-    //MojTV[] tRob = new MojTV[MAXL];                //tablica robocza, do dzialań
+    //MojTV[] tRob = new MojTV[MAXS];                //tablica robocza, do dzialań
     //tRob = posortowanaTablicaFromObszar();
 
     MojTV[] tRob = posortowanaTablicaFromObszar();    //tablica robocza, do dzialań
