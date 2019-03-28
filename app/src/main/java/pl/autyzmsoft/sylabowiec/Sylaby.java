@@ -11,7 +11,7 @@ import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.MAXS;
 public class Sylaby {
 
   private String[] tabSylab;     //tablica na przechowywanie sylab
-  private int lSylab;            //liczba sylab w wyrazie
+  private int      lSylab;       //liczba sylab w wyrazie
 
 
 
