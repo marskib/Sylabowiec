@@ -55,7 +55,7 @@
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/text_margin"
           android:checked="false"
-          android:text="łatwe (max. 4 litery) "
+          android:text="łatwe (1-2 sylaby) "
           android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
           android:textStyle="bold"/>
 
@@ -66,7 +66,7 @@
           android:layout_marginStart="@dimen/text_margin"
           android:layout_marginTop="@dimen/maly_odstep"
           android:checked="false"
-          android:text="średnie (5-7 liter)"
+          android:text="średnie (3 sylaby)"
           android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
 
           android:textStyle="bold"/>
@@ -77,7 +77,7 @@
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/text_margin"
           android:checked="false"
-          android:text="trudne (8-12 liter)"
+          android:text="trudne (4-6 sylab)"
           android:layout_marginTop="@dimen/maly_odstep"
           android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
           android:textStyle="bold"/>

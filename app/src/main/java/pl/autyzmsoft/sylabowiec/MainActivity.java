@@ -227,21 +227,20 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     switch (poziom) {
       case LATWE:
         dlug_min = 1;
-        dlug_max = 4;
+        dlug_max = 2;
         break;
       case SREDNIE:
-        dlug_min = 5;
-        dlug_max = 7;
+        dlug_min = 3;
+        dlug_max = 3;
         break;
       case TRUDNE:
-        dlug_min = 8;
+        dlug_min = 4;
         dlug_max = MAXS;
         break;
       case WSZYSTKIE:
         dlug_min = 1;
         dlug_max = Integer.MAX_VALUE;
-        break; //nazwa dluzsza niz 12 (MAXS) znakow - trzeba ja uwzglednic, bo inaczej
-      // pozniej exception.. (potem i tak przytne do 12)
+        break; //nazwa dluzsza niz 6 (MAXS) sylab - trzeba ja uwzglednic, bo inaczej pozniej exception.. (potem i tak przytne do 6)
     }
 
     //Tworze liste robocza:
@@ -251,24 +250,26 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       String elTmp = getRemovedExtensionName(el);
       int dlug0 = elTmp.length();         //uwaga na kot1
       elTmp = usunLastDigitIfAny(elTmp);  //gdyby byl kot1 to kot1->kot
-      int dlug = elTmp.length();
+
+      Sylaby sylTmp = new Sylaby((elTmp));
+      int dlug = sylTmp.getlSylab(); //w wersji Sylabowiec ; w wersji Literowanki->int dlug = elTmp.length();
 
       //Czysta sytuacja - wyraz miesci sie w kryterium:
       if ((dlug >= dlug_min) && (dlug <= dlug_max)) {
         lRob.add(el); //dodajemy z rozszerzeniem - pelna nazwa pliku!!!
       }
-      //Sprawdzamy, bo moze byc 'kot1', 'kot2' .... - taki wyraz, chc dluzszy, trzeba
-      // wziac, bo last digit bedzie w ptzyszlosci wyciety i zostanie 3-literowe kot, tak
+      //Sprawdzamy, bo moze byc 'kot1', 'kot2' .... - taki wyraz, choc dluzszy, trzeba
+      // wziac, bo last digit bedzie w przyszlosci wyciety i zostanie 3-literowe kot, tak
       // jak trzeba...
-      else {
-        if (dlug0 == dlug_max + 1) {
-          int idxEnd = dlug - 1;
-          Character lastChar = elTmp.charAt(idxEnd);
-          if (Character.isDigit(lastChar)) {
-            lRob.add(el);
-          }
-        }
-      }
+//      else { //2-019-03-31 -> to bylo w Literowance, w Literowcu wylaczam...
+//        if (dlug0 == dlug_max + 1) {
+//          int idxEnd = dlug - 1;
+//          Character lastChar = elTmp.charAt(idxEnd);
+//          if (Character.isDigit(lastChar)) {
+//            lRob.add(el);
+//          }
+//        }
+//      }
     } //for
 
     //Przepisanie lRob -> tabRob:
