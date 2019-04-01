@@ -137,8 +137,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   //Kontener z obrazkiem (do [long]klikania (lepiej niz na image - rozwiazuje problem z niewidzialnym obrazkiem):
   RelativeLayout l_imageContainer;
 
-  //Placeholders'y na etykiety (12 szt.):
-  MojTV L00, L01, L02, L03, L04, L05, L06, L07, L08, L09, L10, L11;
+  //Placeholders'y na etykiety (6 szt.):
+  MojTV L00, L01, L02, L03, L04, L05;
 
   TextView tvInfo, tvInfo1, tvInfo2, tvInfo3;
 
@@ -872,13 +872,13 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       public void run() {
         //Kazda sylaba wyrazu ląduje w losowej komorce tablicy lbs :
         for (int i = 0; i < sylaby.getlSylab(); i++) {
-          String z = sylaby.getSylabaAt(i); //pobranie sylaby
+          String z = Integer.toString(i); //ski ski ski sylaby.getSylabaAt(i); //pobranie sylaby
 
           //Losowanie pozycji w tablicy lbs:
           int k;  //na losową pozycję
           do {
             k = rand.nextInt(lbs.length);
-          } while  ( (lbs[k].getVisibility() == VISIBLE) || (niedozwolone(k)) ); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
+          } while  ( (lbs[k].getVisibility() == VISIBLE) ); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
 
           //Umieszczenie litery na wylosowanej pozycji (i w strukturze obiektu MojTV) +
           // pokazanie:
@@ -951,11 +951,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   } //koniecMetody();
 
-  //przymiarki - wyrzucic;
-  private boolean niedozwolone(int k) {
-    if (k==1||k==3||k==5||k==7||k==9||k==11) return true;
-    else return false;
-  }
 
   private void resetujLabelsy() {
     //Resetowanie tablicy i tym samym zwiazanycyh z nia kontrolek ekranowych:
@@ -1929,15 +1924,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     L03 = (MojTV) findViewById(R.id.L03);
     L04 = (MojTV) findViewById(R.id.L04);
     L05 = (MojTV) findViewById(R.id.L05);
-    L06 = (MojTV) findViewById(R.id.L06);
-    L07 = (MojTV) findViewById(R.id.L07);
-    L08 = (MojTV) findViewById(R.id.L08);
-    L09 = (MojTV) findViewById(R.id.L09);
-    L10 = (MojTV) findViewById(R.id.L10);
-    L11 = (MojTV) findViewById(R.id.L11);
 
     //ustawienie tablicy do operowania na ww. etykietach:
-    lbs = new MojTV[]{L00, L01, L02, L03, L04, L05, L06, L07, L08, L09, L10, L11};
+    lbs = new MojTV[] {L00, L01, L02, L03, L04, L05};
 
     //podpiecie listenerow pod labelsy:
     for (MojTV lb : lbs) {
@@ -2121,150 +2110,62 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     int lsize = (int) getResources().getDimension(R.dimen.litera_size);
     //Toast.makeText(this,"litera_size: "+pxToSp(lsize),Toast.LENGTH_SHORT).show();
 
-    //L01:  //dalej trzeba uzywac Runnable - czekanie az obiekt L00 'usadowi' sie - inaczej
-    // wartosci nieustalobe, czyli ok. 0....
+
+    //L01*:
     L00.post(new Runnable() {
       @Override
-      public void run() { //czekanie aż policzy/usadowi sie L01
+      public void run() { //czekanie aż policzy/usadowi się L01
         RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L01.getLayoutParams();
         lParX.leftMargin = ((RelativeLayout.LayoutParams) L00.getLayoutParams()).leftMargin + poprawka;
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_1st_row);
         int marginesTop = 1 * odstepWpionie - L00.getHeight() / 2 - poprPion;
         lParX.topMargin = marginesTop;
         L01.setLayoutParams(lParX); //n
       }
     });
 
-    //L02:
-    L01.post(new Runnable() {
-      @Override
-      public void run() { //czekanie aż policzy/usadowi się L01
-        RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L02.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L01.getLayoutParams()).leftMargin + poprawka;
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_1st_row);
-        int marginesTop = 1 * odstepWpionie - L00.getHeight() / 2 - poprPion;
-        lParX.topMargin = marginesTop;
-        L02.setLayoutParams(lParX); //n
-      }
-    });
 
-    //L03:
+    //L02*: (2-gi rząd):
+    lPar = (RelativeLayout.LayoutParams) L02.getLayoutParams();
+    lPar.leftMargin = ((RelativeLayout.LayoutParams) imageView.getLayoutParams()).leftMargin + imageView.getLayoutParams().width + od_obrazka / 4;
+    marginesTop = 2 * odstepWpionie - L00.getHeight() / 2; //2- bo 2-gi wiersz
+    lPar.topMargin = marginesTop;
+    lPar.leftMargin = imageView.getRight() + poprPoziom / 4;
+    L02.setLayoutParams(lPar);
+
+
+    //L03*:
     L02.post(new Runnable() {
       @Override
-      public void run() { //czekanie aż policzy/usadowi się L02
+      public void run() {
         RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L03.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L02.getLayoutParams()).leftMargin + poprawka;//(int) (0.80*poprawka);
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_1st_row);
-        int marginesTop = 1 * odstepWpionie - L00.getHeight() / 2 - poprPion;
+        lParX.leftMargin = ((RelativeLayout.LayoutParams) L02.getLayoutParams()).leftMargin + poprawka;//(int) (0.90*poprawka);;
+        int marginesTop = 2 * odstepWpionie - L02.getHeight() / 2;
         lParX.topMargin = marginesTop;
         L03.setLayoutParams(lParX); //n
       }
     });
 
-    //L04: (2-gi rząd):
+
+    //L04*: (3-ci rząd):
     lPar = (RelativeLayout.LayoutParams) L04.getLayoutParams();
-    lPar.leftMargin = ((RelativeLayout.LayoutParams) imageView.getLayoutParams()).leftMargin + imageView.getLayoutParams().width + od_obrazka / 4;
-    //marginesTop = (int) getResources().getDimension(R.dimen.margin_top_size_2nd_row);
-    marginesTop = 2 * odstepWpionie - L00.getHeight() / 2; //2- bo 2-gi wiersz
-    lPar.topMargin = marginesTop;
-    lPar.leftMargin = imageView.getRight() + poprPoziom / 4;
+    lPar.leftMargin = ((RelativeLayout.LayoutParams) imageView.getLayoutParams()).leftMargin + imageView.getLayoutParams().width + od_obrazka / 2;
+    marginesTop = 3 * odstepWpionie - L00.getHeight() / 2; //3- bo 3-szy wiersz
+    lPar.topMargin = marginesTop + poprPion;
+    lPar.leftMargin = imageView.getRight() + poprPoziom / 4; //bylo: - L00.getPaddingLeft() + poprPoziom;
     L04.setLayoutParams(lPar);
 
-    //L05
+    //L05*:
     L04.post(new Runnable() {
       @Override
       public void run() {
         RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L05.getLayoutParams();
         lParX.leftMargin = ((RelativeLayout.LayoutParams) L04.getLayoutParams()).leftMargin + poprawka;
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_2nd_row);
-        int marginesTop = 2 * odstepWpionie - L00.getHeight() / 2;
+        int marginesTop = 3 * odstepWpionie - L04.getHeight() / 2 + poprPion;
         lParX.topMargin = marginesTop;
-        L05.setLayoutParams(lParX);
+        L05.setLayoutParams(lParX); //n
       }
     });
 
-    //L06:
-    L05.post(new Runnable() {
-      @Override
-      public void run() {
-        RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L06.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L05.getLayoutParams()).leftMargin + poprawka;//(int) (0.90*poprawka);;
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_2nd_row);
-        int marginesTop = 2 * odstepWpionie - L00.getHeight() / 2;
-        lParX.topMargin = marginesTop;
-        L06.setLayoutParams(lParX); //n
-      }
-    });
-
-    //L07:
-    L06.post(new Runnable() {
-      @Override
-      public void run() {
-        RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L07.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L06.getLayoutParams()).leftMargin + poprawka;
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_2nd_row);
-        int marginesTop = 2 * odstepWpionie - L00.getHeight() / 2;
-        lParX.topMargin = marginesTop;
-        L07.setLayoutParams(lParX); //n
-      }
-    });
-
-    //L08: (3-ci rząd):
-    lPar = (RelativeLayout.LayoutParams) L08.getLayoutParams();
-    lPar.leftMargin = ((RelativeLayout.LayoutParams) imageView.getLayoutParams()).leftMargin + imageView.getLayoutParams().width + od_obrazka / 2;
-    //marginesTop = (int) getResources().getDimension(R.dimen.margin_top_size_3rd_row);
-    marginesTop = 3 * odstepWpionie - L00.getHeight() / 2; //3- bo 3-szy wiersz
-    lPar.topMargin = marginesTop + poprPion;
-    lPar.leftMargin = imageView.getRight() - L00.getPaddingLeft() + poprPoziom;
-    L08.setLayoutParams(lPar);
-
-    //L09:
-    L08.post(new Runnable() {
-      @Override
-      public void run() {
-        RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L09.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L08.getLayoutParams()).leftMargin + poprawka;
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_3rd_row);
-        int marginesTop = 3 * odstepWpionie - L00.getHeight() / 2 + poprPion;
-        lParX.topMargin = marginesTop;
-        L09.setLayoutParams(lParX); //n
-      }
-    });
-
-    //L10:
-    L09.post(new Runnable() {
-      @Override
-      public void run() {
-        RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L10.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L09.getLayoutParams()).leftMargin + poprawka;
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_3rd_row);
-        int marginesTop = 3 * odstepWpionie - L00.getHeight() / 2 + poprPion;
-        lParX.topMargin = marginesTop;
-        L10.setLayoutParams(lParX); //n
-      }
-    });
-
-    //L11:
-    L10.post(new Runnable() {
-      @Override
-      public void run() {
-        RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L11.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L10.getLayoutParams()).leftMargin + poprawka;//(int) (0.80*poprawka);
-        //int marginesTop = (int) getResources().getDimension(R.dimen
-        // .margin_top_size_3rd_row);
-        int marginesTop = 3 * odstepWpionie - L00.getHeight() / 2 + poprPion;
-        lParX.topMargin = marginesTop;
-        L11.setLayoutParams(lParX); //n
-      }
-    });
 
     //Dodatkowe przemieszanie wyzej-nizej po kazdej etykiecie:
     for (final MojTV lb : lbs) {
@@ -2285,11 +2186,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           }
 
           //Zmieniamy w 2-gim wierszu :
-          if (lb == lbs[4] || lb == lbs[5] || lb == lbs[6] || lb == lbs[7]) {
+          if (lb == lbs[2] || lb == lbs[3]) {
             lParX.topMargin += k;
           }
           //Zmieniamy w 1-szym wierszu; w 1-szym wierszu pozwalam tylko w dol :
-          if (lb == lbs[0] || lb == lbs[1] || lb == lbs[2] || lb == lbs[3]) {
+          if (lb == lbs[0] || lb == lbs[1]) {
             //w 1-szym wierszu zmieniamy tylko przy duzych gestosciach, inaczej
             // główki liter wystają poza górną krawędź ekranu:
             if (density > DisplayMetrics.DENSITY_MEDIUM) {
@@ -2301,7 +2202,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             }
           }
           //Zmieniamy w 3-cim wierszu :
-          if (lb == lbs[8] || lb == lbs[9] || lb == lbs[10] || lb == lbs[11]) { //w 3-cim wierszu pozwalam tylko w gore
+          if (lb == lbs[4] || lb == lbs[5]) { //w 3-cim wierszu pozwalam tylko w gore
             k = Math.abs(k);
             lParX.topMargin -= k;
           }
@@ -2321,12 +2222,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         /* Cofa w lewo skrajne etykiety 1-go i 3-go rzedu, bo na niektórych urządzeniach wystają
         za bandę */
 
-    lbs[11].post(new Runnable() { //lbs[11] bo czekam, az wszystko zostanie ulozone (doswiadczlnie)
+    lbs[5].post(new Runnable() { //lbs[11] bo czekam, az wszystko zostanie ulozone (doswiadczlnie)
       @Override
       public void run() {
         for (MojTV lb : lbs) {
           //tylko 3-cia kolumna, 1-szy i 3-ci rzad:
-          if (lb == lbs[3] || lb == lbs[11]) {
+          if (lb == lbs[1] || lb == lbs[5]) {
             int lewy = xLp - (int) (1.55 * lbs[0].getWidth());  //lbs[0] bo potrzebne cos 'statycznego' - doswiadczalnie
             RelativeLayout.LayoutParams lParY = (RelativeLayout.LayoutParams) lb.getLayoutParams();
             lParY.leftMargin = lewy;

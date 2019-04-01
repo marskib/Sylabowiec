@@ -248,19 +248,9 @@
         android:text="Ą" />
     <!--android:layout_marginTop="@dimen/margin_top_size_1st_row"-->
 
+
     <pl.autyzmsoft.sylabowiec.MojTV
         android:id="@+id/L01"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/litera_size"
-        android:padding="@dimen/padding_ski"
-        android:layout_marginLeft="400dp"
-        android:textStyle="bold"
-        android:text="Ź" />
-
-    <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L02"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -270,20 +260,10 @@
         android:textStyle="bold"
         android:text="Ć" />
 
-    <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L03"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/litera_size"
-        android:padding="@dimen/padding_ski"
-        android:layout_marginLeft="600dp"
-        android:textStyle="bold"
-        android:text="D" />
 
     <!-- 2-gi rząd -->
     <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L04"
+        android:id="@+id/L02"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -293,19 +273,9 @@
         android:textStyle="bold"
         android:text="E" />
 
-    <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L05"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/litera_size"
-        android:padding="@dimen/padding_ski"
-        android:layout_marginLeft="400dp"
-        android:textStyle="bold"
-        android:text="F" />
 
     <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L06"
+        android:id="@+id/L03"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -315,22 +285,11 @@
         android:textStyle="bold"
         android:text="G" />
 
-    <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L07"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/litera_size"
-        android:padding="@dimen/padding_ski"
-        android:layout_marginLeft="600dp"
-        android:textStyle="bold"
-        android:text="H" />
 
     <!-- 3-ci rząd -->
 
     <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L08"
-
+        android:id="@+id/L04"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/litera_size"
@@ -339,20 +298,9 @@
         android:textStyle="bold"
         android:text="I" />
 
-    <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L09"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/litera_size"
-        android:padding="@dimen/padding_ski"
-        android:layout_marginLeft="400dp"
-        android:textStyle="bold"
-        android:text="J" />
 
     <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L10"
-
+        android:id="@+id/L05"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/litera_size"
@@ -361,16 +309,6 @@
         android:textStyle="bold"
         android:text="K" />
 
-    <pl.autyzmsoft.sylabowiec.MojTV
-        android:id="@+id/L11"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/litera_size"
-        android:padding="@dimen/padding_ski"
-        android:layout_marginLeft="600dp"
-        android:textStyle="bold"
-        android:text="L" />
 
 
     <!--Probniki na rozmiary liter Malych i Wielkich (litery dibieram arbitralnie, lepiej zeby nie wypadaly jedna na drugiej-odsuwam w leftMargin...) : -->
