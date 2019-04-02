@@ -855,7 +855,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "W";
     //currWord   = "ze spacjom";
     //currWord   = "0123456789AB";
-    //currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
+    currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
     //currWord   = "nie-za-po-mi-naj-ki";
 
     //Pobieramy wyraz do rozrzucenia:
@@ -872,7 +872,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       public void run() {
         //Kazda sylaba wyrazu ląduje w losowej komorce tablicy lbs :
         for (int i = 0; i < sylaby.getlSylab(); i++) {
-          String z = Integer.toString(i); //ski ski ski sylaby.getSylabaAt(i); //pobranie sylaby
+          String z = sylaby.getSylabaAt(i); //pobranie sylaby
+          //String z = Integer.toString(i); //do testowania
 
           //Losowanie pozycji w tablicy lbs:
           int k;  //na losową pozycję
@@ -2116,7 +2117,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       @Override
       public void run() { //czekanie aż policzy/usadowi się L01
         RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L01.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L00.getLayoutParams()).leftMargin + poprawka;
+        lParX.leftMargin = ((RelativeLayout.LayoutParams) L00.getLayoutParams()).leftMargin + (int) (1.8*poprawka);
         int marginesTop = 1 * odstepWpionie - L00.getHeight() / 2 - poprPion;
         lParX.topMargin = marginesTop;
         L01.setLayoutParams(lParX); //n
@@ -2138,7 +2139,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       @Override
       public void run() {
         RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L03.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L02.getLayoutParams()).leftMargin + poprawka;//(int) (0.90*poprawka);;
+        lParX.leftMargin = ((RelativeLayout.LayoutParams) L02.getLayoutParams()).leftMargin + 2*poprawka;
         int marginesTop = 2 * odstepWpionie - L02.getHeight() / 2;
         lParX.topMargin = marginesTop;
         L03.setLayoutParams(lParX); //n
@@ -2151,7 +2152,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     lPar.leftMargin = ((RelativeLayout.LayoutParams) imageView.getLayoutParams()).leftMargin + imageView.getLayoutParams().width + od_obrazka / 2;
     marginesTop = 3 * odstepWpionie - L00.getHeight() / 2; //3- bo 3-szy wiersz
     lPar.topMargin = marginesTop + poprPion;
-    lPar.leftMargin = imageView.getRight() + poprPoziom / 4; //bylo: - L00.getPaddingLeft() + poprPoziom;
+    lPar.leftMargin = imageView.getRight() + poprPoziom/2; //bylo: - L00.getPaddingLeft() + poprPoziom;
     L04.setLayoutParams(lPar);
 
     //L05*:
@@ -2159,7 +2160,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       @Override
       public void run() {
         RelativeLayout.LayoutParams lParX = (RelativeLayout.LayoutParams) L05.getLayoutParams();
-        lParX.leftMargin = ((RelativeLayout.LayoutParams) L04.getLayoutParams()).leftMargin + poprawka;
+        lParX.leftMargin = ((RelativeLayout.LayoutParams) L04.getLayoutParams()).leftMargin + 2*poprawka;
         int marginesTop = 3 * odstepWpionie - L04.getHeight() / 2 + poprPion;
         lParX.topMargin = marginesTop;
         L05.setLayoutParams(lParX); //n
@@ -2213,7 +2214,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }  //for
 
     //cofniecie w lewo skrajnych etykiet, bo na niektorych urzadz. wyłażą...:
-    cofnijWlewo();
+    //cofnijWlewo();
 
   }  //koniec Metody()
 
@@ -2221,6 +2222,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private void cofnijWlewo() {
         /* Cofa w lewo skrajne etykiety 1-go i 3-go rzedu, bo na niektórych urządzeniach wystają
         za bandę */
+    /* 2019-04-01- Sylabowiec - nie wykorzystuję... */
 
     lbs[5].post(new Runnable() { //lbs[11] bo czekam, az wszystko zostanie ulozone (doswiadczlnie)
       @Override
