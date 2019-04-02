@@ -855,9 +855,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "W";
     //currWord   = "ze spacjom";
     //currWord   = "0123456789AB";
-//    currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
-    currWord   = "1hrząszcz-2hrząszcz-3hrząszcz-4hrząszcz-5hrząszcz-6hrząszcz";
+    //currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
+    //currWord   = "1hrząszcz-2hrząszcz-3hrząszcz-4hrząszcz-5hrząszcz-6hrząszcz";
+    //currWord   = "chleb-chleb-chleb-chleb-chleb-chleb";
     //currWord   = "nie-za-po-mi-naj-ki";
+    currWord     = "Mi-ko-łaj";
 
     //Pobieramy wyraz do rozrzucenia:
     sylaby = new Sylaby(currWord);
@@ -874,7 +876,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         //Kazda sylaba wyrazu ląduje w losowej komorce tablicy lbs :
         for (int i = 0; i < sylaby.getlSylab(); i++) {
           String z = sylaby.getSylabaAt(i); //pobranie sylaby
-          //String z = Integer.toString(i); //do testowania
+          //String z = Integer.toString(i); //do celów testowania
 
           //Losowanie pozycji w tablicy lbs:
           int k;  //na losową pozycję
@@ -882,9 +884,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             k = rand.nextInt(lbs.length);
           } while  ( (lbs[k].getVisibility() == VISIBLE) ); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
 
-          //Umieszczenie litery na wylosowanej pozycji (i w strukturze obiektu MojTV) +
-          // pokazanie:
-          lbs[k].setOrigL(z);
+          //Umieszczenie sylaby na wylosowanej pozycji (i w strukturze obiektu MojTV) + pokazanie:
+          lbs[k].setOrigSyl(z);
           lbs[k].setText(z);
           lbs[k].setTextColor(Color.BLACK);  //kosmetyka, ale wazna...
           lbs[k].setVisibility(VISIBLE);
@@ -898,49 +899,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         }
       }  //run()
     }, DELAY_EXERC);
-
-
-    /*
-
-    final char[] wyraz = currWord.toCharArray();       //bo latwiej operowac na Char'ach
-
-    final Random rand = new Random();
-
-    final Animation a = AnimationUtils.loadAnimation(MainActivity.this, R.anim.skalowanie);
-    a.setDuration(500);
-
-    //Pokazujemy z lekkim opoznieniem (efekciarstwo...):
-    Handler mHandl = new Handler();
-    mHandl.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        //Kazda sylaba wyrazu ląduje w losowej komorce tablicy lbs :
-        for (int i = 0; i < wyraz.length; i++) {
-          String z = Character.toString(wyraz[i]); //pobranie litery z wyrazu
-
-          //Losowanie pozycji w tablicy lbs:
-          int k;  //na losową pozycję
-          do {
-            k = rand.nextInt(lbs.length);
-          } while (lbs[k].getVisibility() == VISIBLE); //petla gwarantuje, ze trafiamy tylko w puste (=niewidoczne) etykiety
-
-          //Umieszczenie sylaby na wylosowanej pozycji (i w strukturze obiektu MojTV) + pokazanie:
-          lbs[k].setOrigL(z);
-          lbs[k].setText(z);
-          lbs[k].setTextColor(Color.BLACK);  //kosmetyka, ale wazna...
-          lbs[k].setVisibility(VISIBLE);
-
-          //podpiecie animacji:
-          lbs[k].startAnimation(a);
-        }
-        if (inUp)             //ulozylismy z malych (oryginalnych) liter. Jesli trzeba -
-        // podnosimy
-        {
-          podniesLabels();
-        }
-      }  //run()
-    }, DELAY_EXERC);
-*/
 
     //Odblokowanie dodatkowych klawiszy - chwilke po pokazaniu liter (lepszy efekt):
     Handler mH2 = new Handler();
@@ -958,7 +916,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Resetowanie tablicy i tym samym zwiazanycyh z nia kontrolek ekranowych:
     for (MojTV lb : lbs) {
       lb.setText("*");
-      lb.setOrigL("*");
+      lb.setOrigSyl("*");
       lb.setInArea(false);
       lb.setVisibility(INVISIBLE);
     }
@@ -1111,7 +1069,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     String coWidac;
     for (MojTV lb : lbs) {
-      if (!lb.getOrigL().equals("*")) { //(lb.getVisibility()== View.VISIBLE) {
+      if (!lb.getOrigSyl().equals("*")) { //(lb.getVisibility()== View.VISIBLE) {
         coWidac = lb.getText().toString();
         coWidac = coWidac.toUpperCase(Locale.getDefault());
         lb.setText(coWidac);
@@ -1126,8 +1084,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     String coPokazac;
     for (MojTV lb : lbs) {
-      if (!lb.getOrigL().equals("*")) { //(lb.getVisibility()==View.VISIBLE) {
-        coPokazac = lb.getOrigL();
+      if (!lb.getOrigSyl().equals("*")) { //(lb.getVisibility()==View.VISIBLE) {
+        coPokazac = lb.getOrigSyl();
         lb.setText(coPokazac);
       }
     }
@@ -2066,12 +2024,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private void ustawLadnieEtykiety() {
     /*
      * *************************************************************************************************** */
-    /* Ustawiam Literki/Etykiety L0n wzgledem obrazka i wzgledem siebie - na lewo od obrazka
-     *  */
-        /* Kazdy rząd (3 rzedy) ustawiam niejako osobno, poczynajac od 1-go elementu w rzedzie
-        jako od wzorca. */
-    /*
-     * *************************************************************************************************** */
+    /* Ustawiam Literki/Etykiety L0n wzgledem obrazka i wzgledem siebie - na lewo od obrazka               */
+    /* Kazdy rząd (3 rzedy) ustawiam niejako osobno, poczynajac od 1-go elementu w rzedzie jako od wzorca. */
+     /* *************************************************************************************************** */
 
     //wstawka dla duzych ekranow - powiekszam litery:
     //        if (sizeW>1100) {
@@ -2215,38 +2170,36 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }  //for
 
     //cofniecie w lewo skrajnych etykiet, bo na niektorych urzadz. wyłażą...:
-    cofnijWlewo();
+    //cofnijWlewo();
 
   }  //koniec Metody()
 
 
   private void cofnijWlewo() {
-        /* Cofa w lewo skrajne etykiety 1-go i 3-go rzedu, bo na niektórych urządzeniach wystają
-        za bandę */
+    /* Cofa w lewo skrajne etykiety 1-go i 3-go rzedu, bo na niektórych urządzeniach wystają za bandę */
     /* 2019-04-01- Sylabowiec - nie wykorzystuję... */
 
-    if (! (lbs[1].length()>5||lbs[3].length()>5||lbs[5].length()>5) ) {
+    boolean saDlugie = (lbs[1].length()>=5||lbs[3].length()>=5||lbs[5].length()>=5);
+    if (!saDlugie) {
       return;
     }
 
     lbs[5].post(new Runnable() { //lbs[11] bo czekam, az wszystko zostanie ulozone (doswiadczlnie)
       @Override
       public void run() {
-        for (MojTV lb : lbs) {
+        for (int i=0; i<lbs.length; i++) {
           //tylko 3-cia kolumna, 1-szy i 3-ci rzad:
-          if (lb == lbs[1] || lb==lbs[3] || lb == lbs[5]) {
-            if (lb.getText().length()>5) {
+          if (i==1 || i==3 || i==5) {
+            //if (lbs[i].length()>=5) {
               //int lewy = xLp - (int) (1.55 * lbs[0].getWidth());  //lbs[0] bo potrzebne cos 'statycznego' - doswiadczalnie
               //RelativeLayout.LayoutParams lParY = (RelativeLayout.LayoutParams) lb.getLayoutParams();
               //lParY.leftMargin = lewy;
               //lb.setLayoutParams(lParY);
 
-              RelativeLayout.LayoutParams lParY = (RelativeLayout.LayoutParams) lb.getLayoutParams();
-              lParY.leftMargin -= 200;
-              lb.setLayoutParams(lParY);
-
-
-            }
+              RelativeLayout.LayoutParams lParY = (RelativeLayout.LayoutParams) lbs[i].getLayoutParams();
+              lParY.leftMargin -= 100;
+              lbs[i].setLayoutParams(lParY);
+            //}
           }
         }
       }
@@ -2452,7 +2405,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     int licznik = ileWObszarze();
 
     for (int i = 0; i < licznik; i++) {
-      //sb.append(tRob[i].getOrigL());
+      //sb.append(tRob[i].getOrigSyl());
       sb.append(tRob[i].getText());
     }
 
@@ -2472,7 +2425,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     for (MojTV lb : lbs) {
       if (!lb.equals("*")) {
-        String etyk = lb.getOrigL();
+        String etyk = lb.getOrigSyl();
         if (etyk.equals(coDostalem) && !lb.isInArea()) {  //tylko mrugamy poza Obszarem - inaczej
           // niejednznacznosci....
 
@@ -2657,7 +2610,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           //ileWObszarze(); -> sledzenie
           //a potem sie to ww. zmodyfikuje w action up....
 
-          //Toast.makeText(MainActivity.this, ((MojTV) view).getOrigL(), Toast
+          //Toast.makeText(MainActivity.this, ((MojTV) view).getOrigSyl(), Toast
           // .LENGTH_SHORT).show();
 
           break;

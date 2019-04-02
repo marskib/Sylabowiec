@@ -16,8 +16,8 @@ import android.view.animation.Animation;
 
 public class MojTV extends android.support.v7.widget.AppCompatTextView {
 
-  private boolean inArea = false; //czy jest w Obszarze
-  private String  origS  = "*";   //Sylaba z oryginalu; rozwiazuje problem Ola->OLA->Ola
+  private boolean inArea   = false; //czy jest w Obszarze
+  private String  origSyl  = "*";   //Sylaba z oryginalu; rozwiazuje problem Ola->OLA->Ola
   private int mBlink = 0;         //do mrugania, zeby mozna bylo odwolac sie z klasy wewnetrznej Runnable
 
   public MojTV(Context context) { super(context); }
@@ -33,10 +33,10 @@ public class MojTV extends android.support.v7.widget.AppCompatTextView {
     this.inArea = inArea;
   }
 
-  public String getOrigL() {return origS; }
+  public String getOrigSyl() {return origSyl; }
 
-  public void setOrigL(String origL) {
-    this.origS = origL;
+  public void setOrigSyl(String origSyl) {
+    this.origSyl = origSyl;
   }
 
 
