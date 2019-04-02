@@ -855,7 +855,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "W";
     //currWord   = "ze spacjom";
     //currWord   = "0123456789AB";
-    currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
+//    currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
+    currWord   = "1hrząszcz-2hrząszcz-3hrząszcz-4hrząszcz-5hrząszcz-6hrząszcz";
     //currWord   = "nie-za-po-mi-naj-ki";
 
     //Pobieramy wyraz do rozrzucenia:
@@ -2214,7 +2215,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }  //for
 
     //cofniecie w lewo skrajnych etykiet, bo na niektorych urzadz. wyłażą...:
-    //cofnijWlewo();
+    cofnijWlewo();
 
   }  //koniec Metody()
 
@@ -2224,16 +2225,28 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         za bandę */
     /* 2019-04-01- Sylabowiec - nie wykorzystuję... */
 
+    if (! (lbs[1].length()>5||lbs[3].length()>5||lbs[5].length()>5) ) {
+      return;
+    }
+
     lbs[5].post(new Runnable() { //lbs[11] bo czekam, az wszystko zostanie ulozone (doswiadczlnie)
       @Override
       public void run() {
         for (MojTV lb : lbs) {
           //tylko 3-cia kolumna, 1-szy i 3-ci rzad:
-          if (lb == lbs[1] || lb == lbs[5]) {
-            int lewy = xLp - (int) (1.55 * lbs[0].getWidth());  //lbs[0] bo potrzebne cos 'statycznego' - doswiadczalnie
-            RelativeLayout.LayoutParams lParY = (RelativeLayout.LayoutParams) lb.getLayoutParams();
-            lParY.leftMargin = lewy;
-            lb.setLayoutParams(lParY);
+          if (lb == lbs[1] || lb==lbs[3] || lb == lbs[5]) {
+            if (lb.getText().length()>5) {
+              //int lewy = xLp - (int) (1.55 * lbs[0].getWidth());  //lbs[0] bo potrzebne cos 'statycznego' - doswiadczalnie
+              //RelativeLayout.LayoutParams lParY = (RelativeLayout.LayoutParams) lb.getLayoutParams();
+              //lParY.leftMargin = lewy;
+              //lb.setLayoutParams(lParY);
+
+              RelativeLayout.LayoutParams lParY = (RelativeLayout.LayoutParams) lb.getLayoutParams();
+              lParY.leftMargin -= 200;
+              lb.setLayoutParams(lParY);
+
+
+            }
           }
         }
       }
