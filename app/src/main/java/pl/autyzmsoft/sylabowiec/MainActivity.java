@@ -859,7 +859,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "1hrząszcz-2hrząszcz-3hrząszcz-4hrząszcz-5hrząszcz-6hrząszcz";
     //currWord   = "chleb-chleb-chleb-chleb-chleb-chleb";
     //currWord   = "nie-za-po-mi-naj-ki";
-    currWord     = "Mi-ko-łaj";
+    //currWord     = "Mi-ko-łaj";
 
     //Pobieramy wyraz do rozrzucenia:
     sylaby = new Sylaby(currWord);
