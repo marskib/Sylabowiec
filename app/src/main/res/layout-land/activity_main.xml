@@ -245,6 +245,9 @@
         android:textSize="@dimen/litera_size"
         android:padding="@dimen/padding_ski"
         android:textStyle="bold"
+
+        android:maxLines="1"
+
         android:text="Ą" />
     <!--android:layout_marginTop="@dimen/margin_top_size_1st_row"-->
 
@@ -258,6 +261,9 @@
         android:textSize="@dimen/litera_size"
         android:padding="@dimen/padding_ski"
         android:textStyle="bold"
+
+        android:maxLines="1"
+
         android:text="Ć" />
 
 
@@ -271,6 +277,9 @@
         android:padding="@dimen/padding_ski"
         android:layout_marginLeft="300dp"
         android:textStyle="bold"
+
+        android:maxLines="1"
+
         android:text="E" />
 
 
@@ -283,6 +292,9 @@
         android:padding="@dimen/padding_ski"
         android:layout_marginLeft="500dp"
         android:textStyle="bold"
+
+        android:maxLines="1"
+
         android:text="G" />
 
 
@@ -296,6 +308,9 @@
         android:padding="@dimen/padding_ski"
         android:layout_marginLeft="300dp"
         android:textStyle="bold"
+
+        android:maxLines="1"
+
         android:text="I" />
 
 
@@ -307,6 +322,9 @@
         android:padding="@dimen/padding_ski"
         android:layout_marginLeft="500dp"
         android:textStyle="bold"
+
+        android:maxLines="1"
+
         android:text="K" />
 
 
