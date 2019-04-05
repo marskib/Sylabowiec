@@ -26,7 +26,9 @@ public class Sylaby {
   public int dlugoscNajdluzszej() {
   /* Zwraca dlugosc najdluzszej sylaby wyrazu */
     int max = 0;
-    for (String s : tabSylab) {
+    String s;
+    for (int i=0; i<lSylab; i++ ) {
+      s = tabSylab[i];
       if (s.length()>max) {
         max = s.length();
       }

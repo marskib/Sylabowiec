@@ -861,7 +861,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord     = "Mi-ko-łaj";
     //currWord     = "chrząszcz";
     //currWord     = "a-a-a-a-a-a";
-    currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
+    //currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
     //currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
 
 

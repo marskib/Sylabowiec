@@ -28,7 +28,7 @@ import java.io.File;
 public class ZmienneGlobalne extends Application {
 
 
-  public final boolean PELNA_WERSJA = false;       //czy Pelna czy Darmowa wersja aplikacji
+  public final boolean PELNA_WERSJA = true;       //czy Pelna czy Darmowa wersja aplikacji
   public final boolean nieGrajJestemW105 = false;  //robocza na czas developmentu
 
   public static final int MAXS = 6;                //maxymalna dopuszczalna liczba sylab w wyrazie (patrz: nie-za-po-mi-naj-ki)
