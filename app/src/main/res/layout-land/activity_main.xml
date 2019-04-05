@@ -329,7 +329,7 @@
 
 
 
-    <!--Probniki na rozmiary liter Malych i Wielkich (litery dibieram arbitralnie, lepiej zeby nie wypadaly jedna na drugiej-odsuwam w leftMargin...) : -->
+    <!--Probniki na rozmiary liter Malych i Wielkich (litery dobieram arbitralnie, lepiej zeby nie wypadaly jedna na drugiej-odsuwam w leftMargin...) : -->
 <!--  2018-07-21 - usuwam, bo wprowadzilem ustawiana programowo grawitacje
 
     <TextView

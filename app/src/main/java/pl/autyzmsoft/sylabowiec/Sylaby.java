@@ -5,7 +5,7 @@ import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.MAXS;
 
 /**
  * Obiekt tej klasy (1 szt.) będzie przechowywał sylaby bieżącego wyrazu.
- * Dodatkowo klasa przechowuje liczbę sylab w bieżącym wyrazie.
+ * Dodatkowo klasa przechowuje/udostępnia liczbę sylab w bieżącym wyrazie.
  * 2019-03-27
  */
 public class Sylaby {
@@ -21,6 +21,17 @@ public class Sylaby {
   public String getSylabaAt(int i) {
   /* Zwraca jedna z sylab w obiekcie Sylaby spod indeksu i */
     return tabSylab[i];
+  }
+
+  public int dlugoscNajdluzszej() {
+  /* Zwraca dlugosc najdluzszej sylaby wyrazu */
+    int max = 0;
+    for (String s : tabSylab) {
+      if (s.length()>max) {
+        max = s.length();
+      }
+    }
+    return max;
   }
 
   //Konstruktor:

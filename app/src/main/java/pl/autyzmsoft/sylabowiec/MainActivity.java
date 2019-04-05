@@ -861,8 +861,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord     = "Mi-ko-łaj";
     //currWord     = "chrząszcz";
     //currWord     = "a-a-a-a-a-a";
-    //currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
-    currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
+    currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
+    //currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
 
 
 
@@ -1123,8 +1123,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         int rightT = tvShownWord.getRight();  //T - od 'textV..'
         int rightL = lObszar.getRight();      //L - od 'lOb...'
 
-        //bDajGestosc.setText("TV : "+Integer.toString(rightT)+" Ol :"+Integer.toString
-        // (rightL)); //sledzenie
+        //bDajGestosc.setText("TV : "+Integer.toString(rightT)+" Ol :"+Integer.toString(rightL)); //sledzenie
 
         if (rightT >= rightL) {
           addGravityToParent();
@@ -1621,13 +1620,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private void addGravityToParent() {
     /*
      * **************************************************************************************** */
-    /* Dodanie grawitacji sciagajacej do prawego boku do lObszar;
-     *  */
-    /* Dzieki temu, ze mamy gwarancje, jezeli wyraz wystaje za lObszar, to zostanie "cofnięty"  */
-    /* i pokazany w całości w lObszar.
-     *  Ł*/
-    /*
-     * **************************************************************************************** */
+    /* Dodanie grawitacji sciagajacej do prawego boku do lObszar;     *  */
+    /* Dzieki temu, mamy gwarancje, jezeli wyraz wystaje za lObszar, to zostanie "cofnięty"  */
+    /* i pokazany w całości w lObszar.     */
+    /* **************************************************************************************** */
 
     RelativeLayout.LayoutParams lPar = (RelativeLayout.LayoutParams) lObszar.getLayoutParams();
 
@@ -2065,6 +2061,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     lPar.leftMargin = imageView.getRight() - L00.getPaddingLeft() + poprPoziom;
+    //Jesli dlugie sylaby, to 1-szy rząd troche na lewo, zeby zmniejszyc szansę, że coś 'wylezie' z prawej strony:
+    //(inne rzędy - "raczej" ok...
+    if (sylaby.dlugoscNajdluzszej()>=5) {
+      lPar.leftMargin -= poprPoziom/2;
+    }
 
     L00.setLayoutParams(lPar);
 
