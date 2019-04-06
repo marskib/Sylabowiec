@@ -59,7 +59,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -214,7 +213,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private float tvWyrazSize;  //rozmiar wyrazu pod obrazkiem
 
   private double screenInches;
-
 
   private static String[] listaOgraniczonaDoPoziomuTrudnosci(String[] lista, int poziom) {
     /*************************************************************************************/
@@ -1893,7 +1891,16 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     //podpiecie listenerow pod labelsy:
     for (MojTV lb : lbs) {
-      lb.setOnTouchListener(new ChoiceTouchListener());
+      lb.setOnTouchListener(new ChoiceTouchListener()); //na prezesuwanie sylaby
+
+//      jezeli OnCloick() w tym miejscu (ponizej), to 'gryzie' sie z onTouch i nie zadziala...; przenosze w srodek onTouch'a ...
+//      lb.setOnClickListener(new OnClickListener() {     //na odegranie sylaby
+//        @Override
+//        public void onClick(final View view) {
+//          Toast.makeText(getApplicationContext(), "Kliknieto sylabe...2", Toast.LENGTH_SHORT).show();
+//          odegrajZAssets("nagrania/wyrazy/chleb.ogg",0);
+//        }
+//      });
     }
 
     //Listenery na obszarze na Obrazek:
@@ -2591,6 +2598,21 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private final class ChoiceTouchListener implements OnTouchListener {
 
     public boolean onTouch(View view, MotionEvent event) {
+
+
+      boolean grac = true;
+      if (grac) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+          String syl = ((TextView) view).getText().toString();
+          syl = syl.toLowerCase(Locale.getDefault());
+          odegrajZAssets("nagrania/sylaby/"+syl+".ogg", 0);
+
+        }
+      }
+
+
+
       final int X = (int) event.getRawX();
       final int Y = (int) event.getRawY();
       switch (event.getAction() & MotionEvent.ACTION_MASK) {
