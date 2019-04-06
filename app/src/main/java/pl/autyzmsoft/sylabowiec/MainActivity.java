@@ -215,6 +215,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private double screenInches;
 
+
   private static String[] listaOgraniczonaDoPoziomuTrudnosci(String[] lista, int poziom) {
     /*************************************************************************************/
     /* Ograniczenie Listy obrazkow (Assets bądź SD) do wybranego poziomu.                */
@@ -651,7 +652,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     String rdzenNazwy = usunLastDigitIfAny(getRemovedExtensionName(nazwaObrazka));
     if (!mGlob.ZRODLEM_JEST_KATALOG) {
       //odeggranie z Assets (tam TYLKO ogg):
-      String sciezka_do_pliku_dzwiekowego = "nagrania/" + rdzenNazwy + ".ogg";
+      String sciezka_do_pliku_dzwiekowego = "nagrania/wyrazy/" + rdzenNazwy + ".ogg";
       odegrajZAssets(sciezka_do_pliku_dzwiekowego, opozniacz);
     } else {  //pobranie nagrania z directory
       //odegranie z SD (na razie nie zajmujemy sie rozszerzeniem=typ pliku dzwiekowego jest

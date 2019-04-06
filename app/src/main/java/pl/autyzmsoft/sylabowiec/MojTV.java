@@ -5,8 +5,10 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Toast;
 
 /**
  * Klasa do etykiet-sylab do ukladania
@@ -14,19 +16,29 @@ import android.view.animation.Animation;
 
 
 
-public class MojTV extends android.support.v7.widget.AppCompatTextView {
+public class MojTV extends android.support.v7.widget.AppCompatTextView implements View.OnClickListener{
 
   private boolean inArea   = false; //czy jest w Obszarze
   private String  origSyl  = "*";   //Sylaba z oryginalu; rozwiazuje problem Ola->OLA->Ola
   private int mBlink = 0;         //do mrugania, zeby mozna bylo odwolac sie z klasy wewnetrznej Runnable
 
-  public MojTV(Context context) { super(context); }
+  public MojTV(Context context) { super(context);
+  setOnClickListener(this);
+  }
 
   //Potrzebny w xml'u:
-  public MojTV(Context context, AttributeSet attrs) {super(context, attrs);}
+  public MojTV(Context context, AttributeSet attrs) {
+    super(context, attrs);
+    setOnClickListener(this);
+  }
 
   public boolean isInArea() {
     return inArea;
+  }
+
+  @Override
+  public void onClick(final View view) {
+    Toast.makeText(getContext(), "Kliknieto sylabe...2", Toast.LENGTH_SHORT).show();
   }
 
   public void setInArea(boolean inArea) {
