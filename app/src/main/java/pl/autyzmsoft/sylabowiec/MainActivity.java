@@ -2604,7 +2604,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       if (grac) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-          String syl = ((TextView) view).getText().toString();
+          String syl = ((MojTV) view).getOrigSyl();  //lub getText().toString();
           syl = syl.toLowerCase(Locale.getDefault());
           odegrajZAssets("nagrania/sylaby/"+syl+".ogg", 0);
 
