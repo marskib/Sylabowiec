@@ -2595,28 +2595,38 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     return Math.round(px / scaledDensity);
   }
 
+
+
+
+
   private final class ChoiceTouchListener implements OnTouchListener {
+
+    private boolean bylMoove = false; //Semafor blokujacy odgrywanie sylaby podczas jej przesuwania; Sylaba bedzie odgrywac się tylko po 'funkcjonalnym' OnClick
+
+    private void przywrocKolor(final View view, int czas) {
+    /* ****************************************************************** */
+    /* przywroceni koloru przeciaganej bądż KLIKNIETEJ sylaby - kosmetyka */
+    /* ****************************************************************** */
+      Handler handler = new Handler();
+      handler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          ((MojTV) view).setTextColor(Color.BLACK);
+        }
+      },czas);
+    }
+
 
     public boolean onTouch(View view, MotionEvent event) {
 
-
-      boolean grac = true;
-      if (grac) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-          String syl = ((MojTV) view).getOrigSyl();  //lub getText().toString();
-          syl = syl.toLowerCase(Locale.getDefault());
-          odegrajZAssets("nagrania/sylaby/"+syl+".ogg", 0);
-
-        }
-      }
-
-
-
       final int X = (int) event.getRawX();
       final int Y = (int) event.getRawY();
+
       switch (event.getAction() & MotionEvent.ACTION_MASK) {
         case MotionEvent.ACTION_MOVE:
+
+          bylMoove = true;
+
           layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
           layoutParams.leftMargin = X - _xDelta;
           layoutParams.topMargin = Y - _yDelta;
@@ -2625,6 +2635,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           view.setLayoutParams(layoutParams);
           break;
         case MotionEvent.ACTION_DOWN:
+
+          bylMoove = false;
+
           lParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
           _xDelta = X - lParams.leftMargin;
           _yDelta = Y - lParams.topMargin;
@@ -2640,13 +2653,30 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           //ileWObszarze(); -> sledzenie
           //a potem sie to ww. zmodyfikuje w action up....
 
-          //Toast.makeText(MainActivity.this, ((MojTV) view).getOrigSyl(), Toast
-          // .LENGTH_SHORT).show();
-
+          //Toast.makeText(MainActivity.this, ((MojTV) view).getOrigSyl(), Toast.LENGTH_SHORT).show();
           break;
+
         case MotionEvent.ACTION_UP:
 
-          ((MojTV) view).setTextColor(Color.BLACK); //przywroceni koloru przeciaganej sylaby - kosmetyka
+          /**** Odgrywanie sylaby (ewentualne) **************************/
+          boolean byloGranie = false;
+          boolean grac = true;
+          if (grac) {
+            if (!bylMoove) { //Sylaba nie odegra sie po zakanczenu ciagniecia (tak jest najsensowniej...)
+              String syl = ((MojTV) view).getOrigSyl();
+              syl = syl.toLowerCase(Locale.getDefault());
+              odegrajZAssets("nagrania/sylaby/" + syl + ".ogg", 0);
+              byloGranie = true;
+            }
+          }
+          //przywroceni koloru przeciaganej sylaby - kosmetyka
+          if (byloGranie)
+            przywrocKolor(view,1000);  //zeby kliknieta(=odgrywana) sylaba 'świeciła' dłużej
+          else
+            przywrocKolor(view,10);
+          /*******************************/
+
+
 
           //sledzenie:
           //int Xstop = X;
