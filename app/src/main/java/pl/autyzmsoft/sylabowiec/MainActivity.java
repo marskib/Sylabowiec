@@ -2673,10 +2673,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           if (byloGranie)
             przywrocKolor(view,1000);  //zeby kliknieta(=odgrywana) sylaba 'świeciła' dłużej
           else
-            przywrocKolor(view,10);
+            przywrocKolor(view,0);
           /*******************************/
-
-
 
           //sledzenie:
           //int Xstop = X;
@@ -2727,11 +2725,13 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
               }
 
               if (!mCurrWord.contains(whatSeen)) {
-                reakcjaNaBledneUlozenie();
+                if (!byloGranie)   //ten if zapobiega 'wygluszeniu' odegrania sylaby przez inny efekt dzwiekowy
+                  reakcjaNaBledneUlozenie();
               } else {//polozona (poprawnie) litera 'bujnie' się; odegrany zostanie
                 // 'plusk' :
                 if (mGlob.SND_LETTER_OK_EF) {
-                  odegrajZAssets(PLUSK_SND, 0);
+                  if (!byloGranie)  //ten if zapobiega 'wygluszeniu' odegrania sylaby przez inny efekt dzwiekowy (j.w.)
+                    odegrajZAssets(PLUSK_SND, 0);
                 }
                 if (mGlob.LETTER_HOPP_EF) {
                   view.startAnimation(animShakeLong);
