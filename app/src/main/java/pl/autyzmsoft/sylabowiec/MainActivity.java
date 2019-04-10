@@ -2659,18 +2659,18 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         case MotionEvent.ACTION_UP:
 
           /**** Odgrywanie sylaby (ewentualne) **************************/
-          boolean byloGranie = false;
+          boolean byloGranieSylaby = false; //zeby dluzej utrzymac czerwony kolor; zeby nie dac sie zagluszyc przez ding/brr
           boolean grac = true;
           if (grac) {
-            if (!bylMoove) { //Sylaba nie odegra sie po zakanczenu ciagniecia (tak jest najsensowniej...)
+            if (!bylMoove) { //zeby Sylaba nie odegrala sie po zakonczenu ciagniecia (tak jest najsensowniej...)
               String syl = ((MojTV) view).getOrigSyl();
               syl = syl.toLowerCase(Locale.getDefault());
               odegrajZAssets("nagrania/sylaby/" + syl + ".ogg", 0);
-              byloGranie = true;
+              byloGranieSylaby = true;
             }
           }
           //przywroceni koloru przeciaganej sylaby - kosmetyka
-          if (byloGranie)
+          if (byloGranieSylaby)
             przywrocKolor(view,1000);  //zeby kliknieta(=odgrywana) sylaba 'świeciła' dłużej
           else
             przywrocKolor(view,0);
@@ -2712,7 +2712,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
                 }
                 Zwyciestwo();
               } else {
-                reakcjaNaBledneUlozenie();
+                if (!byloGranieSylaby)   //ten if zapobiega 'wygluszeniu' odegrania sylaby przez inny efekt dzwiekowy
+                  reakcjaNaBledneUlozenie();
               }
             }
             //Wyraz jeszcze nie dokonczony, badamy, czy poprawna kolejnosc sylab:
@@ -2725,12 +2726,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
               }
 
               if (!mCurrWord.contains(whatSeen)) {
-                if (!byloGranie)   //ten if zapobiega 'wygluszeniu' odegrania sylaby przez inny efekt dzwiekowy
+                if (!byloGranieSylaby)   //ten if zapobiega 'wygluszeniu' odegrania sylaby przez inny efekt dzwiekowy
                   reakcjaNaBledneUlozenie();
               } else {//polozona (poprawnie) litera 'bujnie' się; odegrany zostanie
                 // 'plusk' :
                 if (mGlob.SND_LETTER_OK_EF) {
-                  if (!byloGranie)  //ten if zapobiega 'wygluszeniu' odegrania sylaby przez inny efekt dzwiekowy (j.w.)
+                  if (!byloGranieSylaby)  //ten if zapobiega 'wygluszeniu' odegrania sylaby przez inny efekt dzwiekowy (tak samo j.w.)
                     odegrajZAssets(PLUSK_SND, 0);
                 }
                 if (mGlob.LETTER_HOPP_EF) {

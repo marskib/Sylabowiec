@@ -125,7 +125,7 @@ public class ZmienneGlobalne extends Application {
 
     ODMOWA_DOST = false;              //w wersji Androida <= 5 dostep jest automatyczny, wiec muszę to ustawic bo logika aplikacji by przeszkadzala...
 
-    POKAZ_MODAL = true;               //nie pokazuje okienka modalnego na starcie (na czas developmentu - zebu ulatwic uruchamianie)
+    POKAZ_MODAL = false;               //nie pokazuje okienka modalnego na starcie (na czas developmentu - zebu ulatwic uruchamianie)
 
     ZRODLEM_JEST_KATALOG = false;        //startujemy ze zrodlem w Assets
     WYBRANY_KATALOG = "*^5%dummy";       //"nic jeszcze nie wybrano" - lepiej to niz null, bo z null'em problemy...
