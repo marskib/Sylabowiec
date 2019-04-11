@@ -707,7 +707,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
      * Odegranie Sylaby; nie używam odegrajZAssets() w sposob bezposredni,
      * bo mogą się zdarzyć wyrazy 1-dno sylabowe, a przy takich (często) nie ma
      * sylaby w /nagrania/sylaby/... , ale jest caly wyraz w nagrania/wyrazy...
-     * Wtedy warto sprawdzić /nagrania/sylaby - wieksze p-stwo, ze odegramy dzwiek
+     * Wtedy warto sprawdzić /nagrania/wyrazy - wieksze p-stwo, ze odegramy dzwiek
      */
 
     if (mGlob.nieGrajJestemW105) {
@@ -716,7 +716,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     String pliczek = sylaba + ".ogg";
     try {
-      if ( Arrays.asList(getResources().getAssets().list("nagrania/sylaby/")).contains(pliczek) )
+      if ( Arrays.asList(getResources().getAssets().list("nagrania/sylaby")).contains(pliczek) )
           odegrajZAssets("nagrania/sylaby/"+pliczek,0);
       else //jak nie ma w kat. /sylaby , to sprawdzam w kat. /wyrazy - moze tam jest....
           odegrajZAssets("nagrania/wyrazy/"+pliczek,0);
@@ -2835,7 +2835,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     void pobierzZeZmiennychGlobalnych() {
       ZRODLEM_JEST_KATALOG = mGlob.ZRODLEM_JEST_KATALOG;
       WYBRANY_KATALOG = mGlob.WYBRANY_KATALOG;
-     //koniec Metody() POZIOM = mGlob.POZIOM;
+      POZIOM = mGlob.POZIOM;
       jAng = mGlob.ANG;
       //jNiem = mGlob.NIEM;
       //jFranc = mGlob.FRANC;

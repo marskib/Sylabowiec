@@ -5,14 +5,12 @@ import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.SREDNIE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.TRUDNE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.WSZYSTKIE;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,7 +41,6 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
   CheckBox cb_Nazwa;
   CheckBox cb_UpLo;
   CheckBox cb_Again;
-  CheckBox cb_Spacing;
   CheckBox cb_RoznObr;
 
   RadioButton rb_NoPictures;
@@ -121,7 +118,6 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
     boolean isCheckedUpLo    = cb_UpLo.isChecked();
     boolean isCheckedAgain   = cb_Again.isChecked();
     boolean isCheckedRozObr  = cb_RoznObr.isChecked();
-    boolean isCheckedSpacing = cb_Spacing.isChecked();
     mGlob.BHINT_ALL        = isCheckedPodp;
     mGlob.BPOMIN_ALL       = isCheckedPomin;
     mGlob.Z_NAZWA          = isCheckedNazwa;
