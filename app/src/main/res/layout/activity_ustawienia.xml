@@ -191,7 +191,7 @@
       android:layout_below="@+id/cb_Podp"
       android:layout_marginTop="@dimen/text_margin"
       android:layout_marginLeft="@dimen/text_margin"
-      android:text=" klawisz Pomin Ćwiczenie [ X ]"
+      android:text=" klawisz Pomiń Ćwiczenie [ X ]"
       android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
       android:textStyle="bold"
       />
@@ -220,34 +220,12 @@
       android:textStyle="bold"
       />
 
-    <CheckBox
-      android:id="@+id/cb_Spacing"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/cb_Again"
-      android:layout_marginTop="@dimen/text_margin"
-      android:layout_marginLeft="@dimen/text_margin"
-      android:text=" Duże odstępy między literami w ułożonym wyrazie"
-      android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
-      android:textStyle="bold"
-      />
-
-    <TextView
-      android:id="@+id/tv_Spacing"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_below="@id/cb_Spacing"
-      android:text="(duże odstępy są zalecane w przypadku małych dzieci)"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="-5dp"
-      />
-
 
     <CheckBox
       android:id="@+id/cb_RoznicujObrazki"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@id/cb_Spacing"
+      android:layout_below="@id/cb_Again"
       android:layout_marginLeft="@dimen/text_margin"
       android:layout_marginTop="@dimen/text_margin"
       android:text=" Za każdym razem staraj się pokazać inny obrazek"

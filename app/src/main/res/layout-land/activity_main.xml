@@ -174,7 +174,6 @@
             android:textAlignment="center"
             android:textSize="@dimen/litera_size"
             android:textStyle="bold"
-            android:letterSpacing="@dimen/lspacing_ski"
             android:visibility="invisible"
 
             android:padding="@dimen/padding_ski"

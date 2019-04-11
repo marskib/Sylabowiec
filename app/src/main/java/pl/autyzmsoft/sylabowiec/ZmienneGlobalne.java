@@ -54,7 +54,7 @@ public class ZmienneGlobalne extends Application {
   public boolean DEZAP;               //dezaprobata 'nie-e.m4a.' jesli zle ulozono wyraz
 
   public boolean Z_NAZWA;             //czy ma byc nazwa pod obrazkiem
-  public boolean ZE_SPACING;          //czy w ulozonym wyrazie robic duze odstepy miedzy literami (API dependent)
+  //public boolean ZE_SPACING;   wylaczam w Sylabowcu       //czy w ulozonym wyrazie robic duze odstepy miedzy literami (API dependent)
   public boolean ODMOWA_DOST;         //na etapie instalacji/1-go uruchomienia user odmowil dostepu do kart(y); dotyczy androida 6 i więcej
 
 
@@ -130,8 +130,6 @@ public class ZmienneGlobalne extends Application {
     ZRODLEM_JEST_KATALOG = false;        //startujemy ze zrodlem w Assets
     WYBRANY_KATALOG = "*^5%dummy";       //"nic jeszcze nie wybrano" - lepiej to niz null, bo z null'em problemy...
 
-    ZE_SPACING = (Build.VERSION.SDK_INT >= 21);   //bo API dependent
-
   } //koniec Metody()
 
 
@@ -155,7 +153,6 @@ public class ZmienneGlobalne extends Application {
     DEZAP = sharedPreferences.getBoolean("DEZAP", this.DEZAP);
 
     Z_NAZWA = sharedPreferences.getBoolean("Z_NAZWA", this.Z_NAZWA);
-    ZE_SPACING = sharedPreferences.getBoolean("ZE_SPACING", this.ZE_SPACING);
     ODMOWA_DOST = sharedPreferences.getBoolean("ODMOWA_DOST", this.ODMOWA_DOST);
 
     POZIOM = sharedPreferences.getInt("POZIOM", this.POZIOM);

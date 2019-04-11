@@ -1132,8 +1132,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     tvNazwa.setText(tvNazwa.getText().toString().toUpperCase(Locale.getDefault())); //podniesienie nazwy pod Obrazkiem
 
-    ewentualnieSciesnij(); //Sciesniam jezeli b.dlugi wyraz z letterSpacing>0 , bo wychodzi
-    // za Obszar no mater what...
     korygujJesliWystaje();
 
   }  //koniec Metody()
@@ -1161,11 +1159,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Wyraz z Obszaru zmniejszany jest do małych (scislej: oryginalnych) liter.
     //Uwzględnia to problem MIKOŁAJ->Mikołaj
     //Wywolywane w kontekscie zmiany z Wielkich->małe, wiec staram sie, zeby wyraz z malymi
-    // literami
-    //rozpoczynal sie tam, gdzie zaczynal sie wyraz z "macierzysty" (jezeli wyraz<MAXS znakow)
+    // literamirozpoczynal sie tam, gdzie zaczynal sie wyraz z "macierzysty" (jezeli wyraz<MAXS znakow)
 
     String coPokazac = currWord;
-    restoreApplyLetterSpacing(tvShownWord);
     tvShownWord.setText(coPokazac);
 
     //Jezeli wyraz nie jest zbyt dlugi, to wyraz zacznie sie tam, gdzie zaczynal sie wyraz z
@@ -1514,10 +1510,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /*
      * ******************************************************************************************* */
 
-    //Przywracamy wielkosc letterSpacing, bo mogly byc zmienione przy b. dlugich wyrazach
-    // (length>10) o wielkich literach:
-    restoreApplyLetterSpacing(tvShownWord);
-
     //Wyswietlenie wyrazu rozpoczynam od miejsca, gdzie user umiescil 1-sza litere (z
     // ewentualnymi poprawkami):
     LinearLayout.LayoutParams lPar;
@@ -1544,10 +1536,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //ski ski --
 
     tvShownWord.setLayoutParams(lPar);
-
-    if (inUp) {
-      ewentualnieSciesnij();  //reakcja na b.dlugi wyraz wielkimi literami (>10)
-    }
 
     pokazWyraz();                     //w Obszarze pokazany zostaje ulozony wyraz
     // (umieszczaam w tvSHownWord; + ewentualna korekcja polozenia)
@@ -1594,27 +1582,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     lObszar.setLayoutParams(lPar);
   }
 
-  private void restoreApplyLetterSpacing(TextView mTV) {
-    //Przywracamy wielkosc letterSpacing (po zmianie wymuszonej przez dlugi wyraz) +
-    // ewentualna reakcja na ustawienia globalne
 
-    if (Build.VERSION.SDK_INT >= 21) {
-      //float lspacing = getResources().getDimension(R.dimen.lspacing_ski); nie dziala,
-      // ustawiam na żywca....
-      //tvShownWord.setLetterSpacing(lspacing);
-      if (mGlob.ZE_SPACING) {
-        if (mTV.length() >= MAXS && inUp) {
-          return; //za dlugich wielkich nie rozszerzamy, bo moga sie nie zmiescic na
-          // wielu urzadzeniach...
-        }
-        mTV.setLetterSpacing((float) 0.1);   //UWAGA!!! - na "żywca"... patrz wyżej
-        //!!! BARDZO WAZNE: !!!
-        korygujJesliWystaje();
-      } else {
-        mTV.setLetterSpacing((float) 0.0);   //UWAGA!!! - na "żywca"... patrz wyżej
-      }
-    }
-  }
 
   private void pokazWyraz() {
     //Pokazanie ulozonego wyrazu w Obszarze;
@@ -1662,35 +1630,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     lObszar.setLayoutParams(lPar);
   } //koniec Metody()
 
-  private void ewentualnieSciesnij() {
-    //Jesli wyraz dluzszy niz 11, to sciesniam (jesli szeroki)
-    //Sciesnianie jest API dependent, wiec badam.
-    //Jezeli API<21 nie robie nic, bo taki wyraz nie jest sciesniony i na pewno(?) sie
-    // miesci....
-    //Zakladam, ze wywolywana tylko, gdy duze litery; przy malych- wszystko sie miesci
 
-    if (currWord.length() < MAXS) {
-      return;
-    }
-
-    int versionINT = Build.VERSION.SDK_INT;
-
-    //        String manufacturer = Build.MANUFACTURER;
-    //        String model = Build.MODEL;
-    //        String versionRelease = Build.VERSION.RELEASE;
-    //
-    //        Log.e("MyActivity", "manufacturer " + manufacturer
-    //                + " \n model " + model
-    //                + " \n version " + versionINT
-    //                + " \n version " + versionREL
-    //                + " \n versionRelease " + versionRelease
-    //        );
-
-    if (versionINT >= 21) {
-      tvShownWord.setLetterSpacing(0);
-    }
-    //
-  } //koniec Metody()
 
   private boolean poprawnieUlozono() {
     /* **************************************** */
@@ -1817,7 +1757,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
     odblokujZablokujKlawiszeDodatkowe();    //pokaze/ukryje klawisze zgodnie z sytuacja na UstawieniaActivity = w obiekcie mGlob
     pokazUkryjNazwe();                      //j.w. - nazwa pod obrazkiem
-    restoreApplyLetterSpacing(tvShownWord); //reakcja na ewentualna zmiane odstepu miedzy literami w ulozonym wyrazie
 
     //Badamy najistotniejsze opcje; Gdyby zmieniono Katalog lub poziom, to naczytanie na nowo:
     newOptions.pobierzZeZmiennychGlobalnych();         //jaki byl wynik ostatniej 'wizyty' w UstawieniaActivity
@@ -2506,7 +2445,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     SharedPreferences.Editor edit = sharedPreferences.edit();
 
     edit.putBoolean("Z_NAZWA", mGlob.Z_NAZWA);
-    edit.putBoolean("ZE_SPACING", mGlob.ZE_SPACING);
 
     edit.putInt("POZIOM", mGlob.POZIOM);
 
