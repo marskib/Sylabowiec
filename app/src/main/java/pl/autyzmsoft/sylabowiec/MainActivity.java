@@ -63,6 +63,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
 
@@ -663,7 +664,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private void odegrajZAssets(final String sciezka_do_pliku_parametr, int delay_milisek) {
     /* ***************************************************************** */
-    // Odegranie dzwieku umieszczonego w Assets (w katalogu 'nagrania'):
+    // Odegranie dzwieku umieszczonego w Assets (w katalogu i podkatalogach 'nagrania'):
     /* ***************************************************************** */
 
     if (mGlob.nieGrajJestemW105) {
@@ -691,16 +692,40 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           mp.setVolume(1f, 1f);
           mp.setLooping(false);
           mp.start();
-          //Toast.makeText(getApplicationContext(),"Odgrywam: "+sciezka_do_pliku,Toast
-          // .LENGTH_SHORT).show();
+          //Toast.makeText(getApplicationContext(),"Odgrywam: "+sciezka_do_pliku,Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-          //Toast.makeText(getApplicationContext(), "Nie można odegrać pliku z
-          // dźwiękiem.", Toast.LENGTH_LONG).show();
+          //Toast.makeText(getApplicationContext(), "Nie można odegrać pliku z dźwiękiem.", Toast.LENGTH_LONG).show();
           e.printStackTrace();
         }
       }
     }, delay_milisek);
   } //koniec Metody()
+
+
+  private void grajSylabeZAssets(String sylaba) {
+    /**
+     * Odegranie Sylaby; nie używam odegrajZAssets() w sposob bezposredni,
+     * bo mogą się zdarzyć wyrazy 1-dno sylabowe, a przy takich (często) nie ma
+     * sylaby w /nagrania/sylaby/... , ale jest caly wyraz w nagrania/wyrazy...
+     * Wtedy warto sprawdzić /nagrania/sylaby - wieksze p-stwo, ze odegramy dzwiek
+     */
+
+    if (mGlob.nieGrajJestemW105) {
+      return; //na czas developmentu....
+    }
+
+    String pliczek = sylaba + ".ogg";
+    try {
+      if ( Arrays.asList(getResources().getAssets().list("nagrania/sylaby/")).contains(pliczek) )
+          odegrajZAssets("nagrania/sylaby/"+pliczek,0);
+      else //jak nie ma w kat. /sylaby , to sprawdzam w kat. /wyrazy - moze tam jest....
+          odegrajZAssets("nagrania/wyrazy/"+pliczek,0);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
 
   private void odegrajZkartySD(final String sciezka_do_pliku_parametr, int delay_milisek) {
     /* ************************************** */
@@ -2598,15 +2623,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
 
-
   private final class ChoiceTouchListener implements OnTouchListener {
 
     private boolean bylMoove = false; //Semafor blokujacy odgrywanie sylaby podczas jej przesuwania; Sylaba bedzie odgrywac się tylko po 'funkcjonalnym' OnClick
 
     private void przywrocKolor(final View view, int czas) {
-    /* ****************************************************************** */
-    /* przywroceni koloru przeciaganej bądż KLIKNIETEJ sylaby - kosmetyka */
-    /* ****************************************************************** */
+      /* ****************************************************************** */
+      /* przywroceni koloru przeciaganej bądż KLIKNIETEJ sylaby - kosmetyka */
+      /* ****************************************************************** */
       Handler handler = new Handler();
       handler.postDelayed(new Runnable() {
         @Override
@@ -2665,7 +2689,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             if (!bylMoove) { //zeby Sylaba nie odegrala sie po zakonczenu ciagniecia (tak jest najsensowniej...)
               String syl = ((MojTV) view).getOrigSyl();
               syl = syl.toLowerCase(Locale.getDefault());
-              odegrajZAssets("nagrania/sylaby/" + syl + ".ogg", 0);
+              grajSylabeZAssets(syl);
               byloGranieSylaby = true;
             }
           }
@@ -2840,8 +2864,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           odegrajZAssets(DEZAP_SND, 320);  //"y-y" męski glos dezaprobaty
         }
       }
-    }
-  } //koniec Metody()
+    }//koniec Metody()
+  } //koniec Klasy ChoceTouchListener
+
 
   /*Klasa do sprawdzania czy podczas zmiany ustawien uzytkownik zmienil (klikaniem) zrodlo
   obrazkow */
@@ -2872,7 +2897,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     void pobierzZeZmiennychGlobalnych() {
       ZRODLEM_JEST_KATALOG = mGlob.ZRODLEM_JEST_KATALOG;
       WYBRANY_KATALOG = mGlob.WYBRANY_KATALOG;
-      POZIOM = mGlob.POZIOM;
+     //koniec Metody() POZIOM = mGlob.POZIOM;
       jAng = mGlob.ANG;
       //jNiem = mGlob.NIEM;
       //jFranc = mGlob.FRANC;
