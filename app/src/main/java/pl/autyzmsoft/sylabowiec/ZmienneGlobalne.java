@@ -29,7 +29,7 @@ public class ZmienneGlobalne extends Application {
 
 
   public final boolean PELNA_WERSJA = false;       //czy Pelna czy Darmowa wersja aplikacji
-  public final boolean nieGrajJestemW105 = true;  //robocza na czas developmentu
+  public final boolean nieGrajJestemW105 = false;  //robocza na czas developmentu
 
   public static final int MAXS = 6;                //maxymalna dopuszczalna liczba sylab w wyrazie (patrz: nie-za-po-mi-naj-ki)
 
@@ -70,9 +70,6 @@ public class ZmienneGlobalne extends Application {
   public boolean SND_ERROR_EF;        //czy dzwiek 'brr' gdy zle polozona litera )rowniez ostatnia)
   public boolean SND_LETTER_OK_EF;    //czy dzwiek PLUSK, gdy litera polozona poprawnie (nie dotyczy ostatniej)
   public boolean SND_VICTORY_EF;      //czy dzwiek 'ding' gdy poprawnie ulozono wyraz (przy ostatniej poprawnej literze)
-
-  //Jezyki obce:
-  public boolean ANG;
 
 
   public boolean POKAZ_MODAL;        //czy pokazywac okienko modalne przy starcie (ergonomia developmentu, w produkcyjnej na true)
@@ -119,9 +116,6 @@ public class ZmienneGlobalne extends Application {
     SND_ERROR_EF = true;           //Onomastyka -> SND = sound
     SND_LETTER_OK_EF = true;
     SND_VICTORY_EF = true;
-
-    //Jezyki obce:
-    ANG = false;
 
     ODMOWA_DOST = false;              //w wersji Androida <= 5 dostep jest automatyczny, wiec muszę to ustawic bo logika aplikacji by przeszkadzala...
 
@@ -172,8 +166,6 @@ public class ZmienneGlobalne extends Application {
     ROZNICUJ_OBRAZKI = sharedPreferences.getBoolean("ROZNICUJ_OBRAZKI", this.ROZNICUJ_OBRAZKI);
 
     ZRODLEM_JEST_KATALOG = sharedPreferences.getBoolean("ZRODLEM_JEST_KATALOG", this.ZRODLEM_JEST_KATALOG);
-
-    ANG = sharedPreferences.getBoolean("ANG", this.ANG);
 
     //Jesli zrodlem miałby byc katalogAssets, to potrzebne dotatkowe sprawdzenie,bo gdyby pomiedzy uruchomieniami
     //zlikwidowano wybrany katalogAssets to mamy problem, i wtedy przelaczamy sie na zrodlo z zasobow aplikacji:

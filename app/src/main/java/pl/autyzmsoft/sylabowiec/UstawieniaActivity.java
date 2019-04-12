@@ -65,9 +65,6 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
   CheckBox cb_SndOKEf;
   CheckBox cb_SndVictEf;
 
-  CheckBox cb_ang;
-
-
   TextView sciezka; //informacyjny teksci pokazujacy biezacy katalogAssets i/lub liczbe obrazkow
 
   ZmienneGlobalne mGlob;
@@ -255,60 +252,6 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
 
 
 
-/* stara wersja, gdy byly 3 jezyki.
-Zostawiam, bo dobry przyklad jak z 3 opcij checkBox zrobic 'ideologiczną' RadioGrupe...
-
-  public void jezykiOnClick(View view) {
-  //Wybor jezyka.
-  //Kod ponizej symuluje zachowanie checkbox'ów jak radiobattons w RadioGrup
-
-    int licznik = 0;
-    if (cb_ang.isChecked())   licznik++;
-    if (cb_niem.isChecked())  licznik++;
-    if (cb_franc.isChecked()) licznik++;
-
-    //wylaczenie kliknietego wlączonego checkboxa:
-    if (licznik==0) {
-      ((CheckBox)view).setChecked(false);
-      if (view==cb_ang)   mGlob.ANG   = false;
-      if (view==cb_niem)  mGlob.NIEM  = false;
-      if (view==cb_franc) mGlob.FRANC = false;
-      return;
-    }
-
-    cb_ang.setChecked(false);
-    cb_niem.setChecked(false);
-    cb_franc.setChecked(false);
-    mGlob.ANG   = false;
-    mGlob.NIEM  = false;
-    mGlob.FRANC = false;
-
-    ((CheckBox)view).setChecked(true);
-    if (view==cb_ang)   mGlob.ANG   = true;
-    if (view==cb_niem)  mGlob.NIEM  = true;
-    if (view==cb_franc) mGlob.FRANC = true;
-
-    //Przejscie na Assets, zeby nie bylo 'kwasow' na onResume w MainActivity.
-    //Jest to pojscie na skroty i na 'łatwiznę'..., ale... :
-    rb_zAssets.setChecked(true);
-
-  }
-  */
-
-  public void jezykiOnClick(View view) {
-    mGlob.ANG = cb_ang.isChecked();
-    if (cb_ang.isChecked()) {
-      //ostrzezenie o 'ulomnosci' tej opcji:
-      Dialog zapytanie;
-      zapytanie = createAlertDialogWithButtons_Jezyki();
-      zapytanie.show();
-      //Przejscie na liste z Assets (zeby nie bylo problemow w MainActivity):
-      rb_zAssets.setChecked(true);
-      mGlob.ZRODLEM_JEST_KATALOG = false;
-      MainActivity.katalogAssets = "obrazki_ang";
-      sciezka.setText("        "); //Pokazanie 'nowej' liczby obrazkow (atrapa/wymazanie de facto, maniana, bo j.obce to wstawka....):
-    }
-  }
 
 
   private void przywrocUstDomyslne() {
@@ -406,26 +349,6 @@ Zostawiam, bo dobry przyklad jak z 3 opcij checkBox zrobic 'ideologiczną' Radio
     /* ********************************************************************************************** */
     /* Obsluga klikniec na radio buttony 'Obrazki z zasobow aplikacji', 'Obrazki z wlasnego katalogu' */
     /* ********************************************************************************************** */
-
-    //UWAGA - ponizej wstawka spowodowana dodanie funkconalnosci 'jezyk obcy':
-    //Jesli jest jezyk, to usuwam jego wybor, zeby nie bylo niedomowien/problemow: (doklejka po dodaniu funkcjonalnosci 'j.obcy'),
-    //a liste z Assets ustawiam na standardową:
-    if (cb_ang.isChecked()) {
-      cb_ang.setChecked(false);
-      mGlob.ANG = false;
-      MainActivity.katalogAssets = "obrazki_demo_ver"; //w 'sztuczny; sposob przywracam wartosci, zeby dobrze policzylo ponizej w (****)...
-      if (mGlob.PELNA_WERSJA) {
-        MainActivity.katalogAssets = "obrazki_pelna_ver";
-      }
-      AssetManager mgr = getAssets();
-      try {
-        MainActivity.listaObrazkowAssets = mgr.list(MainActivity.katalogAssets);  //laduje wszystkie obrazki z Assets
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    //Wstawka - koniec poprawek zwiazanych z 'jezykiem obcym'
-
 
     if (arg0==rb_zAssets) {
       sciezka.setText(""); //kosmetyka - znika z ekranu
@@ -590,20 +513,6 @@ Zostawiam, bo dobry przyklad jak z 3 opcij checkBox zrobic 'ideologiczną' Radio
     isChecked    = mGlob.SND_VICTORY_EF;
     cb_SndVictEf.setChecked(isChecked);
     /* efekciarstwo - koniec */
-
-    /* jezyki obce: */
-    cb_ang    = (CheckBox) findViewById(R.id.cb_ang);
-    isChecked = mGlob.ANG;
-    cb_ang.setChecked(isChecked);
-
-    //cb_niem    = (CheckBox) findViewById(R.id.cb_niem);
-    //isChecked  = mGlob.NIEM;
-    //cb_niem.setChecked(isChecked);
-
-    //cb_franc   = (CheckBox) findViewById(R.id.cb_franc);
-    //isChecked  = mGlob.FRANC;
-    //cb_franc.setChecked(isChecked);
-    /* jezyki obce - koniec: */
 
 
     /* żródło: */

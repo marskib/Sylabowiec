@@ -494,9 +494,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     if (mGlob.PELNA_WERSJA) {
       katalogAssets = "obrazki_pelna_ver";
     }
-    if (mGlob.ANG) { //jezeli ang., to no matter what... (doklejka...)
-      katalogAssets = "obrazki_ang";
-    }
 
 
     dostosujDoUrzadzen();
@@ -702,6 +699,22 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
 
+  private void grajSylabe(String sylaba) {
+    if (!mGlob.ZRODLEM_JEST_KATALOG)
+      grajSylabeZAssets(sylaba);
+    else
+      getGrajSylabeZKatalogu(sylaba);
+    return;
+  }
+
+  private void getGrajSylabeZKatalogu(String sylaba) {
+    /**
+     * na razie puste; jak grajSylabeZAsstes()-> TO DO
+      */
+    return;
+  }
+
+
   private void grajSylabeZAssets(String sylaba) {
     /**
      * Odegranie Sylaby; nie używam odegrajZAssets() w sposob bezposredni,
@@ -883,6 +896,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord     = "a-a-a-a-a-a";
     //currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
     //currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
+    currWord   = "Mi-ko-łaj";
 
 
 
@@ -1152,12 +1166,15 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
   private void restoreOriginalWyraz() {
-    //Wyraz z Obszaru zmniejszany jest do małych (scislej: oryginalnych) liter.
-    //Uwzględnia to problem MIKOŁAJ->Mikołaj
-    //Wywolywane w kontekscie zmiany z Wielkich->małe, wiec staram sie, zeby wyraz z malymi
-    // literamirozpoczynal sie tam, gdzie zaczynal sie wyraz z "macierzysty" (jezeli wyraz<MAXS znakow)
+    /**
+     *Wyraz z Obszaru zmniejszany jest do małych (scislej: oryginalnych) liter.
+     *Uwzględnia to problem MIKOŁAJ->Mikołaj
+     *Wywolywane w kontekscie zmiany z Wielkich->małe, wiec staram sie, zeby wyraz z malymi
+     *literami rozpoczynal sie tam, gdzie zaczynal sie wyraz z "macierzysty" (jezeli wyraz<MAXS znakow)
+     */
 
-    String coPokazac = currWord;
+
+    String coPokazac = currWord.replace("-","");
     tvShownWord.setText(coPokazac);
 
     //Jezeli wyraz nie jest zbyt dlugi, to wyraz zacznie sie tam, gdzie zaczynal sie wyraz z
@@ -1419,12 +1436,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //teraz konkretny (losowy) plik:
     String doZagrania = dajLosowyPlik(komcie_path);
 
-    //jezeli angielski to wymuszenie (jedynego) angielskiego komunikatu (wstawka):
-    if (mGlob.ANG) {
-      komcie_path = "nagrania/komentarze/pozytywy/female";
-      doZagrania = "07-ok.ogg";
-    }
-
     odegrajZAssets(komcie_path + "/" + doZagrania, 400);    //pochwala glosowa
 
     if (mGlob.TYLKO_GLOS) {
@@ -1663,33 +1674,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     return licznik;
   }
 
-  private void ustawListyNaJezykObcy() {
-    /**
-     * W zaleznosci od wybranego j.obcego ustawia listy globalne (listy z Assets)
-     */
-    if (mGlob.ANG) {
-      katalogAssets = "obrazki_ang";
-    }
-
-        /* zostawiam, moze kiedys.... :
-        if (mGlob.FRANC) {
-            katalogAssets = "obrazki_franc";
-        }
-        if (mGlob.NIEM) {
-            katalogAssets = "obrazki_niem";
-        }
-        */
-
-    //Pobranie nowej listy obrazkow z Assets:
-    AssetManager mgr = getAssets();
-    try {
-      listaObrazkowAssets = mgr.list(katalogAssets);  //laduje obrazki z Assets
-      listaOper = listaOgraniczonaDoPoziomuTrudnosci(listaObrazkowAssets, mGlob.POZIOM);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }  //koniec Metody()
-
 
   private void ustawListyNaJezykPolski() {
     /**
@@ -1758,29 +1742,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     newOptions.pobierzZeZmiennychGlobalnych();         //jaki byl wynik ostatniej 'wizyty' w UstawieniaActivity
     if (!newOptions.takaSamaJak(currOptions)) {        //musimy naczytac ponownie, bo zmieniono zrodlo obrazkow (chocby poprzez zmiane poziomu trudnosci) i/lub jezyk
 
-      //Czy aby to ponizej nie bylo powodem zmian 'jezykowych' (zapamietujemy, bo sie przyda za chwile):
-      boolean powrotDoJPol = currOptions.isReturnToPolish(newOptions);
-      boolean przejscieNaJObcy = (mGlob.ANG);  //) || mGlob.FRANC || mGlob.NIEM);
-
       currOptions.pobierzZeZmiennychGlobalnych();    //zapamietanie na przyszlosc
-
-      /****** WSTAWKA, jezeli zmiany były związane z wyborem j.obcego lub z powrotem do języka polskiego ******************************** */
-      //Powodem zmian bylo wejscie do jezyka obcego:
-      if (przejscieNaJObcy) {
-        ustawListyNaJezykObcy();
-      }
-      //Powodem zmiany byl powrot z jezyka obcego do polskiego.
-      //Trzeba (niestety) naczytac na nowo zmienione listy:
-      if (powrotDoJPol) {
-        ustawListyNaJezykPolski();
-      }
-
-      if (przejscieNaJObcy || powrotDoJPol) {
-        mPamietacz = new Pamietacz(listaOper); //nowa lista, wiec Pamietacz na nowo....
-        bDalej.callOnClick();
-        return;
-      }
-      /************** koniec zmian zwiazanych z jezykiem obcym lub powrotem do polskiego **********/
 
       //Zmiany byly "normalne", nie zwiazane z jezykiem (bo sterowanie doszlo tutaj):
       if (!mGlob.ZRODLEM_JEST_KATALOG) {
@@ -2468,8 +2430,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     edit.putBoolean("ROZNICUJ_OBRAZKI", mGlob.ROZNICUJ_OBRAZKI);
 
-    edit.putBoolean("ANG", mGlob.ANG);
-
     edit.putBoolean("ZRODLEM_JEST_KATALOG", mGlob.ZRODLEM_JEST_KATALOG);
     edit.putString("WYBRANY_KATALOG", mGlob.WYBRANY_KATALOG);
 
@@ -2623,7 +2583,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             if (!bylMoove) { //zeby Sylaba nie odegrala sie po zakonczenu ciagniecia (tak jest najsensowniej...)
               String syl = ((MojTV) view).getOrigSyl();
               syl = syl.toLowerCase(Locale.getDefault());
-              grajSylabeZAssets(syl);
+              grajSylabe(syl);
               byloGranieSylaby = true;
             }
           }
@@ -2832,9 +2792,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       ZRODLEM_JEST_KATALOG = mGlob.ZRODLEM_JEST_KATALOG;
       WYBRANY_KATALOG = mGlob.WYBRANY_KATALOG;
       POZIOM = mGlob.POZIOM;
-      jAng = mGlob.ANG;
-      //jNiem = mGlob.NIEM;
-      //jFranc = mGlob.FRANC;
     }
 
 
