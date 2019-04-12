@@ -710,10 +710,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
      * Wtedy warto sprawdzić /nagrania/wyrazy - wieksze p-stwo, ze odegramy dzwiek
      */
 
-    if (mGlob.nieGrajJestemW105) {
-      return; //na czas developmentu....
-    }
-
     String pliczek = sylaba + ".ogg";
     try {
       if ( Arrays.asList(getResources().getAssets().list("nagrania/sylaby")).contains(pliczek) )
