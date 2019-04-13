@@ -896,8 +896,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord     = "a-a-a-a-a-a";
     //currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
     //currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
-    currWord   = "Mi-ko-łaj";
-
 
 
 
@@ -2223,25 +2221,24 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   public void bHintOnClick(View view) {
-    /* Podpowiada kolejna litere do ulozenia */
-        /* Idea algorytmu - iteruje po currWord i wskazuje 1sza litere nie na swoim miejscu w
-        Obszarze */
-
-        /* Wziete z Sylabowanki (Lazarus):
-        (* Idea algorytmu : przegladam wyraz sylaba po sylabie (od lewej) i jezeli przegladana
-        sylaba nie jest na swoim       *)
-        (* miejscu w ramce, to wyrozniam ją (inaczej: pokazuję pierwszą sylabę, która nie jest na
-         swoim miejscu)              *)
-        (* Inne podejscia prowadzily do b. skomplikowanego algorytmu.
-                                     *)
-        */
+    /**
+    Podpowiada kolejna sylabe do ulozenia
+    Idea algorytmu - iteruje po currWord i wskazuje 1-sza sylabe nie na swoim miejscu w Obszarze
+    Wziete z Sylabowanki (Lazarus):
+    Idea algorytmu : przegladam wyraz sylaba po sylabie (od lewej) i jezeli przegladana
+    sylaba nie jest na swoim miejscu w ramce, to wyrozniam ją (inaczej: pokazuję pierwszą sylabę,
+    która nie jest na swoim miejscu).
+    Inne podejscia prowadzily do b. skomplikowanego algorytmu.
+    */
 
     final char[] wyraz = currWord.toCharArray();       //bo latwiej operowac na Char'ach
 
-    for (int i = 0; i < wyraz.length; i++) {
-      char litera = wyraz[i];
-      if (!jestGdzieTrzeba(litera, i)) {
-        podswietlLabel(wyraz[i]);
+    int lsylab = sylaby.getlSylab();
+    for (int i = 0; i < lsylab; i++) {
+      String sylaba = sylaby.getSylabaAt(i);
+      if (!jestGdzieTrzeba(sylaba, i)) {
+        //podswietlLabel(wyraz[i]);
+        podswietlLabel(sylaba);
         break;
       }
     }
@@ -2249,8 +2246,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }  //koniec Metody()
 
 
-  private boolean jestGdzieTrzeba(char litera, int pozycja) {
-    /* Bada, czy przekazana 'litera' znajduje sie na pozycji 'pozycja' w Obszarze */
+  private boolean jestGdzieTrzeba(String sylaba, int pozycja) {
+    /* Bada, czy przekazana 'sylaba' znajduje sie na pozycji 'pozycja' w Obszarze */
 
     String textInArea = coWidacInObszar();
 
@@ -2281,8 +2278,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private MojTV[] posortowanaTablicaFromObszar() {
     /*
      * ******************************************************************************************** */
-        /* Znajdujace sie w Obszarze elementy zwraca w tablicy, POSORTOWANEJ wg. lefej fizycznej
-        wsp. X */
+    /* Znajdujace sie w Obszarze elementy zwraca w tablicy, POSORTOWANEJ wg. lefej fizycznej wsp. X */
     /*
      * ******************************************************************************************** */
 
@@ -2541,6 +2537,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       final int Y = (int) event.getRawY();
 
       switch (event.getAction() & MotionEvent.ACTION_MASK) {
+
         case MotionEvent.ACTION_MOVE:
 
           bylMoove = true;
@@ -2552,6 +2549,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           layoutParams.bottomMargin = -250;
           view.setLayoutParams(layoutParams);
           break;
+
         case MotionEvent.ACTION_DOWN:
 
           bylMoove = false;
@@ -2599,8 +2597,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           //tvInfo.setText("xKontrolki=" + Integer.toString(layoutParams.leftMargin));
           //tvInfo1.setText("xPalca=" + Integer.toString(Xstop));
 
-                    /* Sprawdzenie, czy srodek etykiety jest w Obszarze; Jezeli tak - dosuniecie
-                    do lTrim. : */
+          /* Sprawdzenie, czy srodek etykiety jest w Obszarze; Jezeli tak - dosuniecie do lTrim. : */
           //1.Policzenie wspolrzednych srodka Sylaby: (zakladam, ze srodek sylaby jest w srodku kontrolki o szer w i wys. h)
           layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
           int w = view.getWidth();
@@ -2625,9 +2622,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             if (ileWObszarze() == sylaby.getlSylab()) {  //wszystkie sylaby wyrazu znalazly sie w Obszarze
               if (poprawnieUlozono()) {
                 if (mGlob.LETTER_HOPP_EF)  //ostatnio polozona litera podskoczy z 'radosci' - efekciarstwo:
-                {
                   view.startAnimation(animShakeLong);
-                }
                 Zwyciestwo();
               } else {
                 if (!byloGranieSylaby)   //ten if zapobiega 'wygluszeniu' odegrania sylaby przez inny efekt dzwiekowy
@@ -2687,12 +2682,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
             view.dispatchTouchEvent(event);
 
-                        /*tak bylo do 2018.10.07; zastapilem przez sekwencje powyzej
-                        layoutParams.leftMargin = xLp - w + view.getPaddingRight(); //dosuniecie
-                        w lewo
-                        rootLayout.invalidate();
-                        view.dispatchTouchEvent(event);
-                        */
           }
 
           //Dosuniecie w LEWO, ale dotyczy etykiet SPOZA "światła" Obszaru:
@@ -2702,8 +2691,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             view.dispatchTouchEvent(event); // Dispatch touch event to view
           }
 
-          //3.Jezeli srodek litery za górnym lub dolnym brzegiem ekranu - dosuwam z
-          // powrotem:
+          //3.Jezeli srodek litery za górnym lub dolnym brzegiem ekranu - dosuwam z powrotem:
           if (yLit < 0) {
             //layoutParams.topMargin += Math.abs(layoutParams.topMargin);
             layoutParams.topMargin = 0;
@@ -2711,17 +2699,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           if (yLit > sizeH) {
             layoutParams.topMargin = sizeH - (int) (0.7 * h);
           }
-
           //sledzenie:
-          //tvInfo2.setText("xLit="+Integer.toString(xLit)+" yLit="+Integer.toString
-          // (yLit));
+          //tvInfo2.setText("xLit="+Integer.toString(xLit)+" yLit="+Integer.toString(yLit));
           break;
-                /*
-                case MotionEvent.ACTION_POINTER_DOWN:
-                    break;
-                case MotionEvent.ACTION_POINTER_UP:
-                    break;
-                */
       }
       rootLayout.invalidate();
       return true;

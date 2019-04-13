@@ -19,25 +19,25 @@ public class Sylaby {
   }
 
   public String getSylabaAt(int i) {
-  /* Zwraca jedna z sylab w obiekcie Sylaby spod indeksu i */
+  /* Zwraca sylabę z obiektu Sylaby spod indeksu i */
     return tabSylab[i];
   }
 
   public int dlugoscNajdluzszej() {
   /* Zwraca dlugosc najdluzszej sylaby wyrazu */
-    int max = 0;
-    String s;
+    int max = 0, dlug;
     for (int i=0; i<lSylab; i++ ) {
-      s = tabSylab[i];
-      if (s.length()>max) {
-        max = s.length();
-      }
+      dlug = tabSylab[i].length();
+      if (dlug>max)  max=dlug;
     }
     return max;
   }
 
   //Konstruktor:
   public Sylaby(String ciag) {
+    /**
+     * przyklad parametru: "nie-za-po-mi-naj-ki"
+    */
     tabSylab = new String[MAXS];
     lSylab   = 0;
 
