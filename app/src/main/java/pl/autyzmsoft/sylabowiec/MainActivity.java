@@ -1594,7 +1594,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Wyraz skladam z tego, co widac na ekranie, nie uzywając currWord (bo problemśy z
     // duze/male litery)
 
-    tvShownWord.setText(coWidacInObszar());
+    tvShownWord.setText(coWidacInObszarLiterowo());
 
     //Kolor biore z etykiet, bo fabryczny jest troche za jasny... kosmetyka
     ColorStateList kolor = null;
@@ -1646,7 +1646,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     String mCurrWord; //dodatkowa w stosunku do Literowanki, bo to Sylabowiec i currWord=np. "nie-za-po-mi-naj-ki" -> trzeba 'strippowac' te myślniki....
 
-    String coUlozyl = coWidacInObszar();
+    String coUlozyl = coWidacInObszarLiterowo();
 
     //Uwaga - nie nalezy podnosic do upperCase obydwu stron "równania" i porownywac bez
     // warunku 'if' (jak ponizej) --> problemy (Mikolaj-Mikolaj):
@@ -2223,7 +2223,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   public void bHintOnClick(View view) {
     /**
     Podpowiada kolejna sylabe do ulozenia
-    Idea algorytmu - iteruje po currWord i wskazuje 1-sza sylabe nie na swoim miejscu w Obszarze
+    Idea algorytmu - iteruje po obiekcie 'sylaby i wskazuje 1-sza sylabe nie na swoim miejscu w Obszarze
     Wziete z Sylabowanki (Lazarus):
     Idea algorytmu : przegladam wyraz sylaba po sylabie (od lewej) i jezeli przegladana
     sylaba nie jest na swoim miejscu w ramce, to wyrozniam ją (inaczej: pokazuję pierwszą sylabę,
@@ -2249,28 +2249,24 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private boolean jestGdzieTrzeba(String sylaba, int pozycja) {
     /* Bada, czy przekazana 'sylaba' znajduje sie na pozycji 'pozycja' w Obszarze */
 
-    String textInArea = coWidacInObszar();
+    String[] textInArea = coWidacInObszarSylabowo();
 
     if (textInArea == null) //w Obszarze nic jeszcze nie ma
     {
       return false;
     }
 
-    if (pozycja > (textInArea.length() - 1))   //text w Obszarze jest krotszy niz pozycja litery
-    {
-      return false;
+    if (!(pozycja>(ileWObszarze()-1))) {                            //(textInArea.length() - 1))   //text w Obszarze jest krotszy niz pozycja litery
+        //Sylaba w tekscie w Obszarze i Sylaba w parametrach jako Stringi (do porownań):
+        String sylabaWtext = textInArea[pozycja];                   //String litWtext = Character.toString(tChar[pozycja]);
+        String sylabaWpar = sylaba;                                 //String litWpar  = Character.toString(sylaba);
+        //Bedziemy porownywac przez upperCasy - bezpieczniej:
+        sylabaWtext = sylabaWtext.toUpperCase(Locale.getDefault()); //litWtext = litWtext.toUpperCase(Locale.getDefault());
+        sylabaWpar = sylabaWpar.toUpperCase(Locale.getDefault());         //litWpar = litWpar.toUpperCase(Locale.getDefault());
+        return (sylabaWpar.equals(sylabaWtext));
     }
-
-    char[] tChar = textInArea.toCharArray();
-
-    //Litera w tekscie w Obszarze i litera w parametrach jako Stringi (do porownań):
-    String litWtext = Character.toString(tChar[pozycja]);
-    String litWpar = Character.toString(litera);
-    //Bedziemy porownywac przez upperCasy - bezpieczniej:
-    litWtext = litWtext.toUpperCase(Locale.getDefault());
-    litWpar = litWpar.toUpperCase(Locale.getDefault());
-
-    return (litWpar.equals(litWtext));
+    else
+        return false;
 
   } //koniec Metody()
 
@@ -2320,9 +2316,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
 
-  private String coWidacInObszar() {
+  private String coWidacInObszarLiterowo() {
     /* ********************************************************** */
     /* Zwraca w postaci Stringa to, co AKTUALNIE widac w Obszarze */
+    /* (widziane jako ciąg LITER(!)                               */
     /* ********************************************************** */
 
     //nieoptymalne?: 2018-10-23
@@ -2350,27 +2347,36 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   } //koniec Metody()
 
+  private String[] coWidacInObszarSylabowo() {
+    /* ******************************************************************* */
+    /* Zwraca w postaci tablicy Stringów to, co AKTUALNIE widac w Obszarze */
+    /* (widziane jako ciąg SYLAB(!)                                        */
+    /* ******************************************************************* */
 
-  private void podswietlLabel(char c) {
-    //Podswietla pierwsza napotkana etykiete zawierajaca znak z parametru */
+    MojTV[] tRob = posortowanaTablicaFromObszar();
+    String[] tStr = new String[MAXS];
+    for (int i = 0; i < tRob.length; i++) {
+      tStr[i] = tRob[i].getText().toString();
+    }
+    return tStr;
+  }
 
-    String coDostalem = String.valueOf(c);
+
+  private void podswietlLabel(String c) {
+    //Podswietla pierwsza napotkana etykiete zawierajaca sylabe z parametru */
+
+    String coDostalem = c; //w Literowance->String.valueOf(c);
 
     for (MojTV lb : lbs) {
       if (!lb.equals("*")) {
         String etyk = lb.getOrigSyl();
-        if (etyk.equals(coDostalem) && !lb.isInArea()) {  //tylko mrugamy poza Obszarem - inaczej
-          // niejednznacznosci....
-
-          //lb.blink(5); -- inna wersja
+        if (etyk.equals(coDostalem) && !lb.isInArea()) {  //tylko mrugamy poza Obszarem - inaczej niejednznacznosci....
           lb.makeMeBlink(400, 5, 4, RED);
-
           return;
         }
       }
     }
-
-    //Nie mrugnal litera spoza Obszaru, zatem walę po calym Obszarze, bo ulozono 'kaszanę' i
+    //Nie mrugnal sylabą spoza Obszaru, zatem walę po calym Obszarze, bo ulozono 'kaszanę' i
     // trzeba jakos dac znac:
     //koniecznie odblokowuję bAgain (jesli zablokowany)....:
     bAgain.setEnabled(true);
@@ -2631,7 +2637,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             }
             //Wyraz jeszcze nie dokonczony, badamy, czy poprawna kolejnosc sylab:
             else {
-              String whatSeen = coWidacInObszar();
+              String whatSeen = coWidacInObszarLiterowo();
               String mCurrWord = currWord;
               mCurrWord = mCurrWord.replace("-","");
               if (inUp) {
