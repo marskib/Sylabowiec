@@ -2355,7 +2355,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     MojTV[] tRob = posortowanaTablicaFromObszar();
     String[] tStr = new String[MAXS];
-    for (int i = 0; i < tRob.length; i++) {
+    //Jaka jest licznosc tablicy tRob[] ?:
+    int licznik = ileWObszarze();
+    for (int i = 0; i < licznik; i++) {
       tStr[i] = tRob[i].getText().toString();
     }
     return tStr;
@@ -2363,7 +2365,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   private void podswietlLabel(String c) {
-    //Podswietla pierwsza napotkana etykiete zawierajaca sylabe z parametru */
+  /* Podswietla pierwsza napotkana etykiete zawierajaca sylabe z parametru */
 
     String coDostalem = c; //w Literowance->String.valueOf(c);
 
