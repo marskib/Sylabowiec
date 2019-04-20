@@ -198,6 +198,12 @@
                   android:text="bez nazwy   "
                   android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
                   android:textStyle="bold"/>
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/text_margin"
+                  android:text="^^^^^^^"
+                  />
 
               <RadioButton
                   android:id="@+id/rb_normNazwa"
@@ -221,16 +227,7 @@
 
           </RadioGroup>
 
-          <TextView
-              android:id="@+id/tv_wypelniacz0"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_toStartOf="@+id/rb_posylabNazwa"
 
-
-              android:layout_marginTop="@dimen/text_margin"
-              android:text="^^^^^^^"
-          />
 
       </RelativeLayout>
       ***********************************************************

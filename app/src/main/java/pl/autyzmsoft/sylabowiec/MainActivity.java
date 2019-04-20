@@ -82,7 +82,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   //Pliki dzwiekowe komentarzy-nagrod:
   private static final String DEZAP_SND = "nagrania/komentarze/negatywy/male/nie_e2.m4a";  //dzwiek dezaprobaty, gdy bledny caly wyraz
 
-  private static final String PLUSK_SND = "nagrania/komentarze/plusk_curbed.ogg";//dzwiek poprawnie polozonej litery
+  private static final String PLUSK_SND = "nagrania/komentarze/efekty/plusk_curbed.ogg";//dzwiek poprawnie polozonej litery
 
   private static final String BRR_SND = "nagrania/komentarze/efekty/brrr.mp3";  //dzwiek blednie polozonej litery i/lub calego wyrazu
 
