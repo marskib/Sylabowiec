@@ -80,17 +80,15 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   public static final long DELAY_ORDER = 600; //opoznienie uporządkowania Obszaru po Zwyciestwie
 
   //Pliki dzwiekowe komentarzy-nagrod:
-  private static final String DEZAP_SND = "nagrania/komentarze/negatywy/male/nie-e2.m4a";
-  //dzwiek dezaprobaty, gdy bledny caly wyraz
+  private static final String DEZAP_SND = "nagrania/komentarze/negatywy/male/nie_e2.m4a";  //dzwiek dezaprobaty, gdy bledny caly wyraz
 
-  private static final String PLUSK_SND = "nagrania/komentarze/plusk_curbed.ogg";
-  //dzwiek poprawnie polozonej litery
+  private static final String PLUSK_SND = "nagrania/komentarze/plusk_curbed.ogg";//dzwiek poprawnie polozonej litery
 
-  private static final String BRR_SND = "nagrania/komentarze/brrr.mp3";
-  //dzwiek blednie polozonej litery i/lub calego wyrazu
+  private static final String BRR_SND = "nagrania/komentarze/efekty/brrr.mp3";  //dzwiek blednie polozonej litery i/lub calego wyrazu
 
-  private static final String DING_SND = "nagrania/komentarze/ding.mp3";
-  //dzwiek poprawnie ulozonego wyrazu
+  private static final String DING_SND = "nagrania/komentarze/efekty/ding.mp3";  //dzwiek poprawnie ulozonego wyrazu
+
+  private static final String OKLASKI_SND = "nagrania/komentarze/efekty/oklaski.ogg";  //dzwiek poprawnie ulozonego wyrazu
 
   public static MojTV[] lbs;
 
@@ -1419,7 +1417,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       return;
     }
     if (mGlob.TYLKO_OKLASKI) {
-      odegrajZAssets("nagrania/komentarze/oklaski.ogg", 400);
+      odegrajZAssets(OKLASKI_SND, 400);
       return;
     }
 
@@ -1441,7 +1439,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     //teraz Oklaski (bo to jeszcze pozostalo):
-    odegrajZAssets("nagrania/komentarze/oklaski.ogg", 2900); //oklaski
+    odegrajZAssets(OKLASKI_SND, 2900); //oklaski
 
   } //koniec Metody()
 

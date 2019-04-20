@@ -159,13 +159,89 @@
 
       </LinearLayout>
 
+      ***********************************************************
+      <RelativeLayout
+          android:id="@+id/l_NameChooser"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+
+          android:layout_below="@+id/l_FileChooser"
+
+          android:layout_marginLeft="@dimen/text_margin"
+          android:layout_marginRight="@dimen/text_margin"
+          android:layout_marginTop="@dimen/text_margin"
+          android:background="@drawable/border_skib_maroon"
+          android:orientation="vertical"
+          android:padding="@dimen/maly_odstep">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="@dimen/maly_odstep"
+              android:text="Nazwa pod obrazkiem"
+              android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"/>
+
+
+          <RadioGroup
+              android:id="@+id/rg_nazwa"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/text_margin"
+              android:gravity="center_horizontal"
+              android:orientation="horizontal">
+
+              <RadioButton
+                  android:id="@+id/rb_bezNazwy"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:checked="true"
+                  android:text="bez nazwy   "
+                  android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
+                  android:textStyle="bold"/>
+
+              <RadioButton
+                  android:id="@+id/rb_normNazwa"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginLeft="@dimen/text_margin"
+                  android:checked="false"
+                  android:text="nazwa normalnie"
+                  android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
+                  android:textStyle="bold"/>
+
+              <RadioButton
+                  android:id="@+id/rb_posylabNazwa"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginLeft="@dimen/text_margin"
+                  android:checked="false"
+                  android:text="nazwa sylabowo"
+                  android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
+                  android:textStyle="bold"/>
+
+          </RadioGroup>
+
+          <TextView
+              android:id="@+id/tv_wypelniacz0"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_toStartOf="@+id/rb_posylabNazwa"
+
+
+              android:layout_marginTop="@dimen/text_margin"
+              android:text="^^^^^^^"
+          />
+
+      </RelativeLayout>
+      ***********************************************************
+
 
     <CheckBox
       android:id="@+id/cb_Nazwa"
       android:text=" Nazwa pod obrazkiem"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@id/l_FileChooser"
+      android:layout_below="@id/l_NameChooser"
       android:layout_marginTop="@dimen/text_margin"
       android:textStyle="bold"
       android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
