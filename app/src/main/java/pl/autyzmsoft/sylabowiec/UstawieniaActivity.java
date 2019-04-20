@@ -1,6 +1,9 @@
 package pl.autyzmsoft.sylabowiec;
 
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NODISPL;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.LATWE;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NORMAL;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.POSYLAB;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.SREDNIE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.TRUDNE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.WSZYSTKIE;
@@ -10,7 +13,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,7 +23,6 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Zawiera ekran z Ustawieniami. Wywolywana na long toucha na obrazku.
@@ -38,10 +39,16 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
 
   CheckBox cb_Podp;
   CheckBox cb_Pomin;
-  CheckBox cb_Nazwa;
   CheckBox cb_UpLo;
   CheckBox cb_Again;
   CheckBox cb_RoznObr;
+
+
+  //zamiast CheckBox cb_Nazwa:
+  RadioButton rb_bezNazwy;
+  RadioButton rb_normNazwa;
+  RadioButton rb_posylabNazwa;
+
 
   RadioButton rb_NoPictures;
   RadioButton rb_NoSound;
@@ -111,16 +118,23 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
     //Przekazanie checkboxow:
     boolean isCheckedPodp    = cb_Podp.isChecked();
     boolean isCheckedPomin   = cb_Pomin.isChecked();
-    boolean isCheckedNazwa   = cb_Nazwa.isChecked();
     boolean isCheckedUpLo    = cb_UpLo.isChecked();
     boolean isCheckedAgain   = cb_Again.isChecked();
     boolean isCheckedRozObr  = cb_RoznObr.isChecked();
     mGlob.BHINT_ALL        = isCheckedPodp;
     mGlob.BPOMIN_ALL       = isCheckedPomin;
-    mGlob.Z_NAZWA          = isCheckedNazwa;
     mGlob.BUPLOW_ALL       = isCheckedUpLo;
     mGlob.BAGAIN_ALL       = isCheckedAgain;
     mGlob.ROZNICUJ_OBRAZKI = isCheckedRozObr;
+
+    //Przekazanie sposobu wyswietlania nazwy pod obrazkiem:
+    boolean isCheckedbezNazwy     = rb_bezNazwy.isChecked();
+    boolean isCheckednormNazwa    = rb_normNazwa.isChecked();
+    boolean isCheckedposylabNazwa = rb_posylabNazwa.isChecked();
+    if (isCheckedbezNazwy)     mGlob.JAK_WYSW_NAZWE = NODISPL;
+    if (isCheckednormNazwa)    mGlob.JAK_WYSW_NAZWE = NORMAL;
+    if (isCheckedposylabNazwa) mGlob.JAK_WYSW_NAZWE = POSYLAB;
+
 
     //Przekazanie Poziomu trudnosci:
     boolean isCheckedLatwe     = rb_Latwe.isChecked();
@@ -420,10 +434,6 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
     isChecked = mGlob.BPOMIN_ALL;
     cb_Pomin.setChecked(isChecked);
 
-    cb_Nazwa  = (CheckBox) findViewById(R.id.cb_Nazwa);
-    isChecked = mGlob.Z_NAZWA;
-    cb_Nazwa.setChecked(isChecked);
-
     cb_UpLo  = (CheckBox) findViewById(R.id.cb_UpLo);
     isChecked = mGlob.BUPLOW_ALL;
     cb_UpLo.setChecked(isChecked);
@@ -446,6 +456,18 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
     rb_SoundPicture.setChecked(isChecked);
     /* zobrazowanie - koniec */
 
+    /* sposob wyswietlania nazwy pod obrazkiem: */
+    rb_bezNazwy = (RadioButton) findViewById(R.id.rb_bezNazwy);
+    isChecked   = (mGlob.JAK_WYSW_NAZWE == NODISPL);
+    rb_bezNazwy.setChecked(isChecked);
+
+    rb_normNazwa = (RadioButton) findViewById(R.id.rb_normNazwa);
+    isChecked    = (mGlob.JAK_WYSW_NAZWE == NORMAL);
+    rb_normNazwa.setChecked(isChecked);
+
+    rb_posylabNazwa = (RadioButton) findViewById(R.id.rb_posylabNazwa);
+    isChecked       = (mGlob.JAK_WYSW_NAZWE == POSYLAB);
+    rb_posylabNazwa.setChecked(isChecked);
 
     /* poziomy trudnosci: */
     rb_Latwe     = (RadioButton) findViewById(R.id.rb_latwe);

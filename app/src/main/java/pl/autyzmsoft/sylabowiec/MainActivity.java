@@ -3,6 +3,7 @@ package pl.autyzmsoft.sylabowiec;
 import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NODISPL;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.LATWE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.MAXS;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.SREDNIE;
@@ -608,9 +609,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         Animation a = AnimationUtils.loadAnimation(this, R.anim.skalowanie);
         imageView.startAnimation(a);
       }
-      //Ewentualna nazwa pod obrazkiem (robie tutaj, bo lepszy efekt wizualny niż gdzie
-      // indziej):
-      if (mGlob.Z_NAZWA) {
+      //Ewentualna nazwa pod obrazkiem (robie tutaj, bo lepszy efekt wizualny niż gdzie indziej):
+      if (mGlob.JAK_WYSW_NAZWE != NODISPL) {
         pokazUkryjNazwe();
         Animation b = AnimationUtils.loadAnimation(this, R.anim.skalowanie);
         tvNazwa.startAnimation(b);
@@ -833,7 +833,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     tvNazwa.setVisibility(INVISIBLE);  //wymazanie (rowniez) ewentualnej poprz. nazwy
 
-    if (!mGlob.Z_NAZWA) {
+    if (mGlob.JAK_WYSW_NAZWE == NODISPL) {
       return;
     }
 
@@ -1166,7 +1166,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
      *Wyraz z Obszaru zmniejszany jest do małych (scislej: oryginalnych) liter.
      *Uwzględnia to problem MIKOŁAJ->Mikołaj
      *Wywolywane w kontekscie zmiany z Wielkich->małe, wiec staram sie, zeby wyraz z malymi
-     *literami rozpoczynal sie tam, gdzie zaczynal sie wyraz z "macierzysty" (jezeli wyraz<MAXS znakow)
+     *literami rozpoczynal sie tam, gdzie zaczynal sie wyraz  "macierzysty" (jezeli wyraz<10 znakow)
      */
 
 
@@ -1180,7 +1180,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //(wieloliterowy wyraz malymi literami moze byc dluzszy niz ten sam wyraz Wielkimi, bo
     // wielki ma usuniety letterSpacing(!)):
     final int pocz = tvShownWord.getLeft();
-    if (currWord.length() < MAXS) {
+    if (currWord.length() < 10) {
       tvShownWord.post(new Runnable() {
         @Override
         public void run() {
@@ -1387,7 +1387,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private void Zwyciestwo() {
     /* **************************************************************** */
-    /* Dzialania po Zwyciestwie = poprawnym polozeniu ostatniej litery: */
+    /* Dzialania po Zwyciestwie = poprawnym polozeniu ostatniej sylaby: */
     /* Porzadkowanie Obszaru, blokowanie klawiszy, dzwieki              */
     /* **************************************************************** */
     if (mGlob.SND_VICTORY_EF) {
@@ -2395,16 +2395,16 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   protected void onDestroy() {
     /* Zapisanie (niektorych!) ustawienia w SharedPreferences na przyszła sesję */
     super.onDestroy();
-    ZapishDoSharedPreferences();
+    ZapiszDoSharedPreferences();
   } //onDestroy
 
-  private void ZapishDoSharedPreferences() {
+  private void ZapiszDoSharedPreferences() {
     /* Zapisanie (niektorych!) ustawienia w SharedPreferences na przyszła sesję */
 
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     SharedPreferences.Editor edit = sharedPreferences.edit();
 
-    edit.putBoolean("Z_NAZWA", mGlob.Z_NAZWA);
+    edit.putInt("JAK_WYSW_NAZWE", mGlob.JAK_WYSW_NAZWE);
 
     edit.putInt("POZIOM", mGlob.POZIOM);
 
@@ -2738,8 +2738,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         odegrajZAssets(BRR_SND, 20); //dzwiek 'brrrrr'
       }
 
-      if (ileWObszarze() == currWord.length()) { //jezeli wszystkie litery polozone, ale źle (patrz
-        // zalozenie wejsciowe), to glos dezaprobaty:
+      if (ileWObszarze() == sylaby.getlSylab()) { //jezeli wszystkie litery polozone, ale źle (patrz zalozenie wejsciowe), to glos dezaprobaty:
         if (mGlob.DEZAP) {
           odegrajZAssets(DEZAP_SND, 320);  //"y-y" męski glos dezaprobaty
         }

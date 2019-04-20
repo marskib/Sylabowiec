@@ -37,6 +37,12 @@ public class ZmienneGlobalne extends Application {
   public static final int SREDNIE = 2;
   public static final int TRUDNE = 3;
   public static final int WSZYSTKIE = 0;
+
+  //Jak wyswietlac nazwe pod obrazkiem:
+  public static final int NODISPL = 0;  //nie wyswietlac
+  public static final int NORMAL  = 1;  //wyswietlac normalnie -> truskawki
+  public static final int POSYLAB = 2;  //posylabowana -> trus-kaw-ki
+
   public final int MAX_OBR_LIMIT = 2;               //maksymalna liczba obrazkow w katalogu, gdy wersja DARMOWA
   public final boolean DLA_KRZYSKA = false;        //Czy dla Krzyska do testowania - jesli tak -> wylaczam logo i strone www
   public boolean ZRODLEM_JEST_KATALOG; //Co jest aktualnie źródlem obrazków - Asstes czy Katalog (np. katalogAssets na karcie SD)
@@ -52,8 +58,13 @@ public class ZmienneGlobalne extends Application {
   public boolean BEZ_KOMENT;          //Bez Komentarza-Nagrody po wybraniu klawisza
   public boolean DEZAP;               //dezaprobata 'nie-e.m4a.' jesli zle ulozono wyraz
 
-  public boolean Z_NAZWA;             //czy ma byc nazwa pod obrazkiem
+  //public boolean Z_NAZWA; w Sylabowcu jest inne rozwiazanie             //czy ma byc nazwa pod obrazkiem
+  public int JAK_WYSW_NAZWE;          //w jaki (if any) sposob wyswietlac nazwe pod obrazkiem; 0-invisible; 1-normalnie; 2-posylabowana (trus-kaw-ki)
+
+
+
   //public boolean ZE_SPACING;   wylaczam w Sylabowcu       //czy w ulozonym wyrazie robic duze odstepy miedzy literami (API dependent)
+
   public boolean ODMOWA_DOST;         //na etapie instalacji/1-go uruchomienia user odmowil dostepu do kart(y); dotyczy androida 6 i więcej
 
 
@@ -91,9 +102,10 @@ public class ZmienneGlobalne extends Application {
 
     BEZ_OBRAZKOW = false;
     BEZ_DZWIEKU = false;
-    Z_NAZWA = true;
 
-    POZIOM = LATWE;//WSZYSTKIE;
+    JAK_WYSW_NAZWE = NORMAL;
+
+    POZIOM = SREDNIE;//WSZYSTKIE;
 
     //Komentarze-Nagrody:
     GLOS_OKLASKI = true;
@@ -145,7 +157,7 @@ public class ZmienneGlobalne extends Application {
     TYLKO_GLOS = sharedPreferences.getBoolean("TYLKO_GLOS", this.TYLKO_GLOS);
     DEZAP = sharedPreferences.getBoolean("DEZAP", this.DEZAP);
 
-    Z_NAZWA = sharedPreferences.getBoolean("Z_NAZWA", this.Z_NAZWA);
+    JAK_WYSW_NAZWE = sharedPreferences.getInt("JAK_WYSW_NAZWE", this.JAK_WYSW_NAZWE);
     ODMOWA_DOST = sharedPreferences.getBoolean("ODMOWA_DOST", this.ODMOWA_DOST);
 
     POZIOM = sharedPreferences.getInt("POZIOM", this.POZIOM);

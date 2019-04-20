@@ -103,9 +103,7 @@
           android:id="@+id/l_FileChooser"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-
           android:layout_below="@+id/l_Poziom"
-
           android:layout_marginLeft="@dimen/text_margin"
           android:layout_marginRight="@dimen/text_margin"
           android:layout_marginTop="@dimen/text_margin"
@@ -119,7 +117,6 @@
               android:layout_marginLeft="@dimen/maly_odstep"
               android:text="Źródło obrazków i nagrań"
               android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"/>
-
 
           <RadioGroup
               android:id="@+id/rg_zrodlo"
@@ -156,17 +153,14 @@
               android:layout_gravity="center_horizontal"
               android:layout_marginTop="@dimen/text_margin"
               android:text="Wybrany katalog: "/>
-
       </LinearLayout>
 
-      ***********************************************************
-      <RelativeLayout
+
+      <LinearLayout
           android:id="@+id/l_NameChooser"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-
           android:layout_below="@+id/l_FileChooser"
-
           android:layout_marginLeft="@dimen/text_margin"
           android:layout_marginRight="@dimen/text_margin"
           android:layout_marginTop="@dimen/text_margin"
@@ -181,12 +175,17 @@
               android:text="Nazwa pod obrazkiem"
               android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"/>
 
+          <!-- wypelniacz: -->
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="@dimen/maly_odstep"
+              android:textSize="10sp"/>
 
           <RadioGroup
               android:id="@+id/rg_nazwa"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/text_margin"
               android:gravity="center_horizontal"
               android:orientation="horizontal">
 
@@ -198,12 +197,6 @@
                   android:text="bez nazwy   "
                   android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
                   android:textStyle="bold"/>
-              <TextView
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/text_margin"
-                  android:text="^^^^^^^"
-                  />
 
               <RadioButton
                   android:id="@+id/rb_normNazwa"
@@ -224,14 +217,17 @@
                   android:text="nazwa sylabowo"
                   android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
                   android:textStyle="bold"/>
-
           </RadioGroup>
+          <!-- wypelniacz: -->
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="@dimen/maly_odstep"
+              android:textSize="15sp"/>
+      </LinearLayout>
 
 
-
-      </RelativeLayout>
-      ***********************************************************
-
+<!--
 
     <CheckBox
       android:id="@+id/cb_Nazwa"
@@ -244,12 +240,13 @@
       android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
       android:layout_marginLeft="@dimen/text_margin"
       />
+-->
 
     <CheckBox
       android:id="@+id/cb_Podp"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/cb_Nazwa"
+      android:layout_below="@+id/l_NameChooser"
       android:layout_marginTop="@dimen/text_margin"
       android:layout_marginLeft="@dimen/text_margin"
       android:text=" klawisz Podpowiedź [ ? ]"
