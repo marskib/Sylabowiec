@@ -214,7 +214,7 @@
                   android:layout_height="wrap_content"
                   android:layout_marginLeft="@dimen/text_margin"
                   android:checked="false"
-                  android:text="nazwa sylabowo"
+                  android:text="nazwa sylabami"
                   android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
                   android:textStyle="bold"/>
           </RadioGroup>

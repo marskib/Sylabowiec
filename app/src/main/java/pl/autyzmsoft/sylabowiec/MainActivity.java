@@ -3,9 +3,11 @@ package pl.autyzmsoft.sylabowiec;
 import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
-import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NODISPL;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.LATWE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.MAXS;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NODISPL;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NORMAL;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.POSYLAB;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.SREDNIE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.TRUDNE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.WSZYSTKIE;
@@ -837,7 +839,17 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       return;
     }
 
-    tvNazwa.setText(currWord);
+    switch (mGlob.JAK_WYSW_NAZWE) {
+      case NORMAL:
+        String str = currWord;
+        str = str.replace("-","");
+        tvNazwa.setText(str);
+        break;
+      case POSYLAB:
+        tvNazwa.setText(currWord); //currWord jest posylabowany, nie robimy nic
+        break;
+    }
+
     if (inUp) {
       tvNazwa.setText(tvNazwa.getText().toString().toUpperCase(Locale.getDefault()));
     }
@@ -1005,9 +1017,28 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   } //koniecMetody()
 
+
+  private void unieczynnijNaChwile(final Button klawisz, int chwila) {
+    /**
+     * Na chwile unieczynnnia podany klawisz
+     * Uzywana w bAgainObCkick(), zeby zapobiec problemom gdy 2 szybkie kliki na klawiszu bAgain1
+     */
+    klawisz.setEnabled(false);
+      Handler mHandl = new Handler();
+      mHandl.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+              klawisz.setEnabled(true);
+          }
+      }, chwila);
+  }
+
   public void bAgainOnClick(View v) {
     //bAgain -  kl. pod Obszarem
     //bAgain1 - kl. pod bDalej
+
+    //trzeba zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
+    if (v==bAgain1) unieczynnijNaChwile(bAgain1,500);
 
     //Usuniecie Grawitacji z lObszar, bo mogla byc ustawiona w korygujJesliWystaje() ):
     usunGrawitacje();
@@ -1548,8 +1579,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       lb.setVisibility(INVISIBLE);
     }
 
-    //Przywrocenie/pokazanie klawisza bDalej i bAgain1 oraz niektorych dodatkowych (z lekkim
-    // opoznieniem):
+    //Przywrocenie/pokazanie klawisza bDalej i bAgain1 oraz niektorych dodatkowych (z lekkim opoznieniem):
     Handler mHandl = new Handler();
     mHandl.postDelayed(new Runnable() {
       @Override
