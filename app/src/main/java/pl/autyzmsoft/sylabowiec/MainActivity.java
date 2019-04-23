@@ -703,11 +703,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     if (!mGlob.ZRODLEM_JEST_KATALOG)
       grajSylabeZAssets(sylaba);
     else
-      getGrajSylabeZKatalogu(sylaba);
+      grajSylabeZKatalogu(sylaba);
     return;
   }
 
-  private void getGrajSylabeZKatalogu(String sylaba) {
+  private void grajSylabeZKatalogu(String sylaba) {
     /**
      * na razie puste; jak grajSylabeZAsstes()-> TO DO
       */
@@ -906,6 +906,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord     = "a-a-a-a-a-a";
     //currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
     //currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
+    currWord = "pies1";
 
 
 

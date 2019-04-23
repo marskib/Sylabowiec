@@ -1,6 +1,8 @@
 package pl.autyzmsoft.sylabowiec;
 
 
+import static pl.autyzmsoft.sylabowiec.MainActivity.getRemovedExtensionName;
+import static pl.autyzmsoft.sylabowiec.MainActivity.usunLastDigitIfAny;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.MAXS;
 
 /**
@@ -45,8 +47,10 @@ public class Sylaby {
     char[] lancuch;                //do latwiejszego operowania na 'ciag'u
     boolean koniec;                //do sterowania petla
 
+    ciag = getRemovedExtensionName(ciag); //na wszelki wypadek
+    ciag = usunLastDigitIfAny(ciag);      //na wszelki wypadek
     lancuch = ciag.toCharArray();
-    sylaba = "~~~~~~~~~~~~~~".toCharArray();  //wypelniacz...
+    sylaba  = "~~~~~~~~~~~~~~".toCharArray();  //wypelniacz...
 
     int i = -1;  //indeks na lancuch (=ciag) (uwaga na -1 -> ma byc!)
     int j = 0;   //indeks na skłądową tabSylab

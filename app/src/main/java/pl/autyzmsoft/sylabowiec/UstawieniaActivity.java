@@ -1,7 +1,7 @@
 package pl.autyzmsoft.sylabowiec;
 
-import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NODISPL;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.LATWE;
+import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NODISPL;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NORMAL;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.POSYLAB;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.SREDNIE;
@@ -23,6 +23,9 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Zawiera ekran z Ustawieniami. Wywolywana na long toucha na obrazku.
@@ -413,7 +416,7 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
 
 
   private void toast(String napis) {
-    Toast.makeText(getApplicationContext(),napis,Toast.LENGTH_SHORT).show();
+    Toast.makeText(getApplicationContext(),napis,Toast.LENGTH_LONG).show();
   }
 
 
@@ -585,9 +588,45 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
   /**
   Sprawdzenie, czy w Zasobach i/lub w katalogu znajduja sie wszystkie
   sylaby potrzebne do odegrania pokazywanych słów.
-  Przeglada wyrazy wyluskijac sylaby (delimiter '-') i szuka potrzebnej sylaby.
+  Przeglada wyrazy wyłuskijac sylaby (delimiter '-') i szuka potrzebnej sylaby.
   Wyswietla raport.
   */
+    List<String> listaSylab = null;
+    try {
+      listaSylab = Arrays.asList(getResources().getAssets().list("nagrania/sylaby"));
+    } catch (IOException e) {
+      Toast.makeText(mGlob, "Problem ze stworzeniem listy sylab z Assets", Toast.LENGTH_LONG).show();
+      e.printStackTrace();
+    }
 
+    String wynik = "";
+
+    String[] listaWyrazow = MainActivity.listaObrazkowAssets;
+    Sylaby sylaby;
+    String pliczek;
+    for (int i = 0; i < listaWyrazow.length; i++) {
+
+      sylaby = new Sylaby(listaWyrazow[i]);
+
+      for (int k=0; k<sylaby.getlSylab(); k++){
+
+        pliczek = sylaby.getSylabaAt(k) + ".ogg";
+
+        if (!listaSylab.contains(pliczek)) {
+
+          //jesli nie ma w sylabach, to moze w wyrazach (np. jednosylabowce - chleb):
+          List<String> lWyrazow = null;
+          lWyrazow = Arrays.asList(listaWyrazow);
+
+
+          if (!lWyrazow.contains(pliczek)) {
+            wynik = wynik + " | " + pliczek;
+          }
+        }
+
+      }
+
+    }
+    toast(wynik);
   }
 }

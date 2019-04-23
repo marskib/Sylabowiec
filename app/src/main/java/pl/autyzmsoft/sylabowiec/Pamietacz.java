@@ -15,7 +15,7 @@ public class Pamietacz {
   private ArrayList<Integer> listaShadow;          //kiedy glowna lista sie wyczerpie, odtworzymy ją z Shadow
 
   //Numer poprzednio wylosowanego obrazka (przy TEJ SAMEJ listaZasobow; chodzi o to, zeby przy wyczerpaniu sie listy,
-  //nie startowal z nowa lista od tego samego obrazka (szczegiolnie widiczne przy krotkich listach):
+  //nie startowal z nowa lista od tego samego obrazka (szczegolnie widiczne przy krotkich listach):
   private int popObr;
 
   public Pamietacz(String[] tabZrodlo) {
