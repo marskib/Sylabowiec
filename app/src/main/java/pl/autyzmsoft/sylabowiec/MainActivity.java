@@ -977,6 +977,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //sledzenie:
     //bUpperLower.setText(sizeW+"x"+sizeH);
 
+    //Trzeba bDalej==v zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
+    unieczynnijNaChwile((Button)v,500);
+
     //Usuniecie Grawitacji z lObszar, bo mogla byc ustawiona w korygujJesliWystaje() ):
     usunGrawitacje();
 
@@ -1021,9 +1024,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private void unieczynnijNaChwile(final Button klawisz, int chwila) {
     /**
      * Na chwile unieczynnnia podany klawisz
-     * Uzywana w bAgainObCkick(), zeby zapobiec problemom gdy 2 szybkie kliki na klawiszu bAgain1
+     * Uzywana w bAgainO.Ckick()i bDalejOnClick(), zeby zapobiec problemom gdy 2 szybkie kliki na klawiszu in question
      */
-    klawisz.setEnabled(false);
+      klawisz.setEnabled(false);
       Handler mHandl = new Handler();
       mHandl.postDelayed(new Runnable() {
           @Override

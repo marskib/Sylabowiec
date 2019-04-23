@@ -581,4 +581,13 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
   } //koniec metody()
 
 
+  public void bSprawdzOnClick(View view) {
+  /**
+  Sprawdzenie, czy w Zasobach i/lub w katalogu znajduja sie wszystkie
+  sylaby potrzebne do odegrania pokazywanych słów.
+  Przeglada wyrazy wyluskijac sylaby (delimiter '-') i szuka potrzebnej sylaby.
+  Wyswietla raport.
+  */
+
+  }
 }

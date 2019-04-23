@@ -144,6 +144,7 @@
                   android:text="mój katalog"
                   android:textSize="@dimen/nazwa_text_rozmiar_uwaga_na_huawei"
                   android:textStyle="bold"/>
+
           </RadioGroup>
 
           <TextView
@@ -153,6 +154,16 @@
               android:layout_gravity="center_horizontal"
               android:layout_marginTop="@dimen/text_margin"
               android:text="Wybrany katalog: "/>
+
+        <Button
+            android:id="@+id/bSprawdz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="-30dp"
+            android:onClick="bSprawdzOnClick"
+            android:text="Sprawdź sylaby"/>
       </LinearLayout>
 
 
