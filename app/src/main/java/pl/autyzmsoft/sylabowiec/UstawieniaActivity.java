@@ -1,7 +1,6 @@
 package pl.autyzmsoft.sylabowiec;
 
 import static pl.autyzmsoft.sylabowiec.MainActivity.getRemovedExtensionName;
-import static pl.autyzmsoft.sylabowiec.MainActivity.usunLastDigitIfAny;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.LATWE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NODISPL;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NORMAL;
@@ -15,7 +14,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Zawiera ekran z Ustawieniami. Wywolywana na long toucha na obrazku.
@@ -592,7 +591,7 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
   /**
   Sprawdzenie, czy w Zasobach i/lub w katalogu znajduja sie wszystkie
   sylaby potrzebne do odegrania pokazywanych słów.
-  Przeglada slowa wyłuskijac sylaby (delimiter '-') i szuka potrzebnej sylaby.
+  Przeglada slowa wyłuskując sylaby i szuka potrzebnej sylaby.
   Wyswietla raport.
   */
 
@@ -603,77 +602,75 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
       Toast.makeText(mGlob, "Problem ze stworzeniem listy sylab z Assets", Toast.LENGTH_LONG).show();
       e.printStackTrace();
     }
+    //Elementom z listaSylab ucinamy rozszerzenia nazw plikow + małe litery (na przyszle porownanie):
+    for (int i = 0; i < listaSylab.size(); i++) {
+      String rob = listaSylab.get(i);
+      rob = getRemovedExtensionName(rob);
+      rob = rob.toLowerCase(Locale.getDefault());
+      listaSylab.set(i, rob);
+    }
 
 
-
-    String[] listaStringSlow = null;
+    //Tworzenie listySlow (na wszelki wypadek), bo listaSlow bedzie przegladana,
+    // gdy nie znajdziemy sylaby na listaSylab:
+    /*** mozna tak:
+    String[] listaSlowString = null; //najpierw robocza lista stringow (zeby na niej ucinac i pomniejszc (na przyszle porownania))
     AssetManager mgr = getAssets();
     try {
-      listaStringSlow = mgr.list("nagrania/slowa");  //laduje wszystkie obrazki z Assets
+      listaSlowString = mgr.list("nagrania/slowa");  //laduje wszystkie slowa z Assets
     }
     catch (IOException e) {
       e.printStackTrace();
     }
-
-
-    //Tworzenie listySlow (na wszelki wypadek), bo
-    //listaSlow bedzie przegladana, gdy nie znajdziemy sylaby na liscie sylab:
+    //listaSlow wlasciwa:
     ArrayList<String> listaSlow = new ArrayList<String>();
-    for (String s : listaStringSlow) {
+    for (String s : listaSlowString) {
       s = getRemovedExtensionName(s);
+      s = s.toLowerCase(Locale.getDefault());
       listaSlow.add(s);
+    }
+    */
+    //lub mozna tak:
+    List<String> listaSlow = null;
+    try {
+      listaSlow = Arrays.asList(getResources().getAssets().list("nagrania/slowa"));
+    } catch (IOException e) {
+       Toast.makeText(mGlob, "Problem ze stworzeniem listy slow z Assets", Toast.LENGTH_LONG).show();
+       e.printStackTrace();
+    }
+    //Elementom z listaSlow ucinamy rozszerzenia nazw plikow + małe litery (na przyszle porownanie):
+    for (int i = 0; i < listaSlow.size(); i++) {
+      String rob = listaSlow.get(i);
+      rob = getRemovedExtensionName(rob);
+      rob = rob.toLowerCase(Locale.getDefault());
+      listaSlow.set(i, rob);
     }
 
 
+    //Glowny algorytm:
     //Przegladanie listy obrazkow i sprawdzanie, czy aplikacje zawiera potrzebne sylaby:
     String wynik = "";
+    ArrayList<String> listaBrakow = new ArrayList<String>(); //lista brakujacych sylab
     for (String el : MainActivity.listaObrazkowAssets) {
       Sylaby sylTmp = new Sylaby(el);
       for (int i=0; i<sylTmp.getlSylab(); i++) {
         String sylStr = sylTmp.getSylabaAt(i);
+        sylStr = sylStr.toLowerCase(Locale.getDefault());
         if (listaSylab.contains(sylStr)) {
           continue;
         }
-        else {  //dodatkowo zagladam do listaSlow, bo moze tam cos jest (przybadek jednosylabowcow, ktore nie musza buc na listaSylab: chleb, kot
-            if (!listaSlow.contains(sylStr)) {
-              wynik = wynik + " | " + sylStr;
+        //jesli nie znajde sylaby na listaSylab dodatkowo zagladam do listaSlow,
+        // bo moze tam cos jest (przybadek jednosylabowcow, ktore nie musza buc na listaSylab: chleb, kot:
+        else {
+            if (! listaSlow.contains(sylStr)) {
+              if (! listaBrakow.contains(sylStr)) {  //zeby nie duplikowac sylab na liscie brakow
+                  wynik = wynik + " | " + sylStr;
+                  listaBrakow.add(sylStr);
+              }
             }
         }
       }
     }
-
-/*
-    //List<String> lWyrazow = new ArrayList<>(kkjkjkjkj);
-
-    //lWyrazow = Arrays.asList(listaWyrazow);
-    for (String s : listaWyrazow) {
-      s = getRemovedExtensionName(s);
-      s = MainActivity.usunLastDigitIfAny(s);
-      lWyrazow.add(s);
-    }
-
-    Sylaby sylaby;
-    String pliczek;
-    for (int i = 0; i < listaWyrazow.length; i++) {
-
-      sylaby = new Sylaby(listaWyrazow[i]);
-
-      for (int k=0; k<sylaby.getlSylab(); k++){
-
-        pliczek = sylaby.getSylabaAt(k) + ".ogg";
-
-        if (!listaSylab.contains(pliczek)) {
-
-          //jesli nie ma w sylabach, to moze w wyrazach (np. jednosylabowce - chleb):
-          if (!lWyrazow.contains(pliczek)) {
-            wynik = wynik + " | " + pliczek;
-          }
-        }
-
-      }
-
-    }*/
-
     //Raport:
     toast(wynik);
   }
