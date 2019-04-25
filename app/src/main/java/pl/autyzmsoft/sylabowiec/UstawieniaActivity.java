@@ -1,5 +1,7 @@
 package pl.autyzmsoft.sylabowiec;
 
+import static pl.autyzmsoft.sylabowiec.MainActivity.getRemovedExtensionName;
+import static pl.autyzmsoft.sylabowiec.MainActivity.usunLastDigitIfAny;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.LATWE;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NODISPL;
 import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.NORMAL;
@@ -13,6 +15,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -588,9 +592,10 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
   /**
   Sprawdzenie, czy w Zasobach i/lub w katalogu znajduja sie wszystkie
   sylaby potrzebne do odegrania pokazywanych słów.
-  Przeglada wyrazy wyłuskijac sylaby (delimiter '-') i szuka potrzebnej sylaby.
+  Przeglada slowa wyłuskijac sylaby (delimiter '-') i szuka potrzebnej sylaby.
   Wyswietla raport.
   */
+
     List<String> listaSylab = null;
     try {
       listaSylab = Arrays.asList(getResources().getAssets().list("nagrania/sylaby"));
@@ -599,9 +604,54 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
       e.printStackTrace();
     }
 
-    String wynik = "";
 
-    String[] listaWyrazow = MainActivity.listaObrazkowAssets;
+
+    String[] listaStringSlow = null;
+    AssetManager mgr = getAssets();
+    try {
+      listaStringSlow = mgr.list("nagrania/slowa");  //laduje wszystkie obrazki z Assets
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+
+
+    //Tworzenie listySlow (na wszelki wypadek), bo
+    //listaSlow bedzie przegladana, gdy nie znajdziemy sylaby na liscie sylab:
+    ArrayList<String> listaSlow = new ArrayList<String>();
+    for (String s : listaStringSlow) {
+      s = getRemovedExtensionName(s);
+      listaSlow.add(s);
+    }
+
+
+    //Przegladanie listy obrazkow i sprawdzanie, czy aplikacje zawiera potrzebne sylaby:
+    String wynik = "";
+    for (String el : MainActivity.listaObrazkowAssets) {
+      Sylaby sylTmp = new Sylaby(el);
+      for (int i=0; i<sylTmp.getlSylab(); i++) {
+        String sylStr = sylTmp.getSylabaAt(i);
+        if (listaSylab.contains(sylStr)) {
+          continue;
+        }
+        else {  //dodatkowo zagladam do listaSlow, bo moze tam cos jest (przybadek jednosylabowcow, ktore nie musza buc na listaSylab: chleb, kot
+            if (!listaSlow.contains(sylStr)) {
+              wynik = wynik + " | " + sylStr;
+            }
+        }
+      }
+    }
+
+/*
+    //List<String> lWyrazow = new ArrayList<>(kkjkjkjkj);
+
+    //lWyrazow = Arrays.asList(listaWyrazow);
+    for (String s : listaWyrazow) {
+      s = getRemovedExtensionName(s);
+      s = MainActivity.usunLastDigitIfAny(s);
+      lWyrazow.add(s);
+    }
+
     Sylaby sylaby;
     String pliczek;
     for (int i = 0; i < listaWyrazow.length; i++) {
@@ -615,10 +665,6 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
         if (!listaSylab.contains(pliczek)) {
 
           //jesli nie ma w sylabach, to moze w wyrazach (np. jednosylabowce - chleb):
-          List<String> lWyrazow = null;
-          lWyrazow = Arrays.asList(listaWyrazow);
-
-
           if (!lWyrazow.contains(pliczek)) {
             wynik = wynik + " | " + pliczek;
           }
@@ -626,7 +672,9 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
 
       }
 
-    }
+    }*/
+
+    //Raport:
     toast(wynik);
   }
 }

@@ -648,7 +648,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     String rdzenNazwy = usunLastDigitIfAny(getRemovedExtensionName(nazwaObrazka));
     if (!mGlob.ZRODLEM_JEST_KATALOG) {
       //odeggranie z Assets (tam TYLKO ogg):
-      String sciezka_do_pliku_dzwiekowego = "nagrania/wyrazy/" + rdzenNazwy + ".ogg";
+      String sciezka_do_pliku_dzwiekowego = "nagrania/slowa/" + rdzenNazwy + ".ogg";
       odegrajZAssets(sciezka_do_pliku_dzwiekowego, opozniacz);
     } else {  //pobranie nagrania z directory
       //odegranie z SD (na razie nie zajmujemy sie rozszerzeniem=typ pliku dzwiekowego jest
@@ -718,17 +718,17 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private void grajSylabeZAssets(String sylaba) {
     /**
      * Odegranie Sylaby; nie używam odegrajZAssets() w sposob bezposredni,
-     * bo mogą się zdarzyć wyrazy 1-dno sylabowe, a przy takich (często) nie ma
-     * sylaby w /nagrania/sylaby/... , ale jest caly wyraz w nagrania/wyrazy...
-     * Wtedy warto sprawdzić /nagrania/wyrazy - wieksze p-stwo, ze odegramy dzwiek
+     * bo mogą się zdarzyć slowa 1-dno sylabowe, a przy takich (często) nie ma
+     * sylaby w /nagrania/sylaby/... , ale jest caly wyraz w nagrania/slowa...
+     * Wtedy warto sprawdzić /nagrania/slowa - wieksze p-stwo, ze odegramy dzwiek
      */
 
     String pliczek = sylaba + ".ogg";
     try {
       if ( Arrays.asList(getResources().getAssets().list("nagrania/sylaby")).contains(pliczek) )
           odegrajZAssets("nagrania/sylaby/"+pliczek,0);
-      else //jak nie ma w kat. /sylaby , to sprawdzam w kat. /wyrazy - moze tam jest....
-          odegrajZAssets("nagrania/wyrazy/"+pliczek,0);
+      else //jak nie ma w kat. /sylaby , to sprawdzam w kat. /slowa - moze tam jest....
+          odegrajZAssets("nagrania/slowa/" +pliczek,0);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -906,7 +906,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord     = "a-a-a-a-a-a";
     //currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
     //currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
-    currWord = "pies1";
+    //currWord = "pies1";
 
 
 
@@ -1850,7 +1850,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 //        @Override
 //        public void onClick(final View view) {
 //          Toast.makeText(getApplicationContext(), "Kliknieto sylabe...2", Toast.LENGTH_SHORT).show();
-//          odegrajZAssets("nagrania/wyrazy/chleb.ogg",0);
+//          odegrajZAssets("nagrania/slowa/chleb.ogg",0);
 //        }
 //      });
     }

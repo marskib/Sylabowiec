@@ -50,7 +50,7 @@ public class ZmienneGlobalne extends Application {
   public boolean ROZNICUJ_OBRAZKI;     //Czy za każdym razem pokazywany inny obrazek
   public boolean BEZ_OBRAZKOW;         //nie pokazywac obrazkow
   public boolean BEZ_DZWIEKU;          //nie odgrywać słów
-  public int POZIOM;                   //poziom trudnosci: 0-wszystkie wyrazy; 1 - wyrazy o max. 4 literach; 2 - wyrazy od 5 do 7 liter; 3 - od 8 do 12 liter
+  public int POZIOM;                   //poziom trudnosci: 0-wszystkie slowa; 1 - slowa o max. 4 literach; 2 - slowa od 5 do 7 liter; 3 - od 8 do 12 liter
   //Formy nagradzania:
   public boolean GLOS_OKLASKI;        //pochwala glosem a nastepnie oklaski
   public boolean TYLKO_GLOS;          //patrz wyżej
