@@ -14,7 +14,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -27,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -649,7 +654,7 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
 
     //Glowny algorytm:
     //Przegladanie listy obrazkow i sprawdzanie, czy aplikacje zawiera potrzebne sylaby:
-    String wynik = "";
+    String wynik = ""; //do latwiejszego sledzenia przez toast()
     ArrayList<String> listaBrakow = new ArrayList<String>(); //lista brakujacych sylab
     for (String el : MainActivity.listaObrazkowAssets) {
       Sylaby sylTmp = new Sylaby(el);
@@ -659,19 +664,59 @@ public class UstawieniaActivity extends Activity implements View.OnClickListener
         if (listaSylab.contains(sylStr)) {
           continue;
         }
-        //jesli nie znajde sylaby na listaSylab dodatkowo zagladam do listaSlow,
-        // bo moze tam cos jest (przybadek jednosylabowcow, ktore nie musza buc na listaSylab: chleb, kot:
+        //jesli nie znajde sylaby na listaSylab, to dodatkowo zagladam do listaSlow,
+        //bo moze tam cos jest (przypadek jednosylabowcow, ktore nie musza byc na listaSylab: chleb, kot:
         else {
             if (! listaSlow.contains(sylStr)) {
               if (! listaBrakow.contains(sylStr)) {  //zeby nie duplikowac sylab na liscie brakow
-                  wynik = wynik + " | " + sylStr;
+                  wynik = wynik + " | " + sylStr; //do sledzenia - wyrzucic
                   listaBrakow.add(sylStr);
               }
             }
         }
-      }
-    }
+      } //for
+    }  //for
     //Raport:
-    toast(wynik);
-  }
+    wyswietlRaport(listaBrakow);
+    //toast(wynik);
+  } //koniec Metody()
+
+  private void wyswietlRaport(ArrayList<String> lista) {
+    /**
+     Liste sylab pakujemy do stringa s0; sylaby odzielamy spacją;
+     nastepnie wyswietlamy na ekranie
+    */
+
+    //Kompletowanie listy sylab z jednoczesnym poformatowaniem:
+    Collections.sort(lista);
+    String s0 = " ";
+    String slb = "";
+    int n = 4;  //po ilu sylabach lamac linie
+    int dlug = 0;
+    for (int i = 0; i < lista.size(); i++) {  //formatowanie -> n wierszy x 3 kolumny :
+      slb = lista.get(i);
+      s0  = s0 + slb;
+      if ((i+1)%n != 0) { //dopelniam spacjami (ale nie stawiam spacji na koncach linii)
+        dlug = slb.length();
+        for (int j = dlug; j < 8; j++) { s0 = s0 + " ";	}
+      }
+      if ((i+1)%n == 0) {s0 = s0 + (char)10 + (char)13; } //zlamanie linii po n sylabach
+    }
+    s0 = s0 + (char)10 + (char)13 + (char)10 + (char)13;
+    s0 = s0 + "Uzupełnij zasoby aplikacji nagrywając brakująca sylaby"+(char)10 + (char)13+"i umieść je w katalogu z nagraniami.";
+    //Wyswietlenie listy:
+    SpannableString wykazSylab = new SpannableString(s0); //inicjujemy "tlustego" stringa wartoscia sylab z s0
+    wykazSylab.setSpan(new RelativeSizeSpan(2.5f), 0, wykazSylab.length(), 0);
+    wykazSylab.setSpan(new StyleSpan(Typeface.BOLD), 0, wykazSylab.length(), 0);
+
+    //Toast.makeText(MainSylaby.this, wykazSylab, Toast.LENGTH_LONG).show();
+    String message = s0;
+    AlertDialog.Builder okienkoDialog = new AlertDialog.Builder(this);
+    okienkoDialog.setTitle("Wykaz brakujących sylab");
+    okienkoDialog.setMessage(message);
+    okienkoDialog.setPositiveButton("OK", null);
+    okienkoDialog.show();
+
+  }  //koniec Metody()
+
 }
