@@ -103,7 +103,21 @@
       android:layout_toStartOf="@+id/bPomin"
       android:visibility="invisible"
       android:textStyle="bold"
-      android:text="?"/>
+      android:text="\?"/>
+
+    <!-- s z e r o k i   klawisz na Animacje/Podzial na sylaby ulozonego wyrazu; zawsze widoczny: -->
+    <Button
+        android:id="@+id/bAnim"
+        android:onClick="bAnimOnClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/bShiftLeft"
+        android:layout_toStartOf="@+id/bHint"
+        android:visibility="visible"
+        android:enabled="false"
+        android:textStyle="bold"
+        android:text="Anim"/>
 
 
     <!--bDajGestosc: daje gestosc ekranu + inne uslugi-->

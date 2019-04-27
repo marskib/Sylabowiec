@@ -187,6 +187,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   // starych wersjach byl...)
   private Button bHint;         //klawisz podpowiedzi
 
+  private Button bAnim;         //klawisz animacji/podzialu na sylaby
+
   private Button bAgain;        //wymieszanie liter; klawisz pod Obszarem
 
   private Button bAgain1;       //wymieszanie liter; klawisz podbDalej
@@ -215,6 +217,33 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private float tvWyrazSize;  //rozmiar wyrazu pod obrazkiem
 
   private double screenInches;
+
+  public void bAnimOnClick(View view) {
+  //2-10.04.26 - proby dodawania buttonow dp lObszar.
+  //Button bSyl01 = new Button(this);
+  //lObszar.addView(bSyl01);
+
+    Sylaby sylTmp = new Sylaby(currWord);
+    for (int i = 0; i < sylTmp.getlSylab() ; i++) {
+      Button bSyl = new Button(this);
+      bSyl.setText(sylTmp.getSylabaAt(i));
+
+      //int lsize = (int) getResources().getDimension(R.dimen.litera_size);
+      //bSyl.setTextSize(pxToSp(lsize));
+
+//      float lsize = tvShownWord.getTextSize();
+//      int iSize = (int) lsize;
+//      lsize = pxToDp(iSize);
+//      bSyl.setTextSize(iSize);
+
+        ((TextView)bSyl).setTextSize(lbs[1].getTextSize());
+
+      //android:textStyle="bold"
+      lObszar.addView(bSyl);
+    }
+
+    /* koniec pron 2019.04.26 */
+  }
 
   private static String[] listaOgraniczonaDoPoziomuTrudnosci(String[] lista, int poziom) {
     /*************************************************************************************/
@@ -472,6 +501,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     tvShownWord = (TextView) findViewById(R.id.tvShownWord);
     bUpperLower = (Button) findViewById(R.id.bUpperLower);
     bHint = (Button) findViewById(R.id.bHint);
+    bAnim = (Button) findViewById(R.id.bAnim);
 
     //kontrolki do sledzenia:
     tvInfo = (TextView) findViewById(R.id.tvInfo);
@@ -1004,8 +1034,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     } else {
       setCurrentImage();                  //wyswietla currImage i odgrywa słowo okreslone
       // przez currImage
-      rozrzucWyraz();                     //rozrzuca litery wyrazu okreslonego
-      // pr888888888888888888888zez currWord
+      rozrzucWyraz();                     //rozrzuca litery wyrazu okreslonegoprzez currWord
     }
 
     tvShownWord.setVisibility(INVISIBLE);
@@ -1094,7 +1123,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     bAgain.setText(""); //czyszcze, bo cos moze zostac po animacji.... (patrz opi MakeMeBlink()
 
     bHint.setEnabled(false);
-    //setEnabled(false);
+    bAnim.setEnabled(false);
   }
 
   public void bPominOnClick(View v) {
@@ -1535,18 +1564,13 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }
 
   private void uporzadkujObszar() {
-    /*
-     * ******************************************************************************************* */
+    /******************************************************************************************** */
     /* Po Zwyciestwie:
-     *  */
-        /* Gasimy wszysko (litery w obszarze); wyswietlamy zwycieski wyraz, przywracamy klawisz
-        bDalej ś*/
-        /* Jesli trzeba - robimy korekcje miejsca wyswietlania (zeby wyraz sie miescil w
-        Obszarze)     */
-    /* Gasimy niektore klawisze pod Obszarem.
-     *  */
-    /*
-     * ******************************************************************************************* */
+    /* Gasimy wszysko (litery w obszarze); wyswietlamy zwycieski wyraz,
+    przywracamy klawisz  bDalej i umozliwiamy bAnim (animacje)
+    Jesli trzeba - robimy korekcje miejsca wyswietlania (zeby wyraz sie miescil w Obszarze)
+    Gasimy niektore klawisze pod Obszarem.
+    /******************************************************************************************** */
 
     //Wyswietlenie wyrazu rozpoczynam od miejsca, gdzie user umiescil 1-sza litere (z
     // ewentualnymi poprawkami):
@@ -1575,26 +1599,28 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     tvShownWord.setLayoutParams(lPar);
 
-    pokazWyraz();                     //w Obszarze pokazany zostaje ulozony wyraz
-    // (umieszczaam w tvSHownWord; + ewentualna korekcja polozenia)
+    pokazWyraz(); //w Obszarze pokazany zostaje ulozony wyraz (umieszczaam w tvSHownWord; + ewentualna korekcja polozenia)
 
     //Gasimy wszystkie etykiety:
     for (MojTV lb : lbs) {
       lb.setVisibility(INVISIBLE);
     }
 
-    //Przywrocenie/pokazanie klawisza bDalej i bAgain1 oraz niektorych dodatkowych (z lekkim opoznieniem):
+    //Przywrocenie/pokazanie klawisza bDalej i bAgain1, bAnim oraz niektorych dodatkowych (z lekkim opoznieniem):
     Handler mHandl = new Handler();
+    long opoz = 100;
+    if (mGlob.IMG_TURN_EF) opoz = 2000;
     mHandl.postDelayed(new Runnable() {
       @Override
       public void run() {
         bDalej.setVisibility(VISIBLE);
         bAgain1.setVisibility(VISIBLE);
+        bAnim.setEnabled(true); //bo wyraz zostal uzolony i mozna go 'animowac'
         if (mGlob.BUPLOW_ALL) {
           bUpperLower.setEnabled(true);
         }
       }
-    }, 2000); //zeby dziecko mialo czas na 'podziwianie' ;)
+    }, opoz); //zeby dziecko mialo czas na 'podziwianie' ;)
 
     //Animacja w 'nagrode':
     if (!mGlob.BEZ_OBRAZKOW) {
@@ -2175,7 +2201,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
   private void ustawWymiaryKlawiszy() {
-    //Wymiarowuje klawisze bDalej, bPomin, bAgain, bHint, bUpperLOwer
+    //Wymiarowuje klawisze bDalej, bPomin, bAgain, bHint, bUpperLower
     //bDalej zajmuje przestrzen od gory do gornej krawedzi Obszaru, ale zostawia 2/3 swojej
     // wysokosci miejsce na bAgain1:
 
@@ -2207,6 +2233,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     bHint.getLayoutParams().width = (int) (1.5 * bAgain.getWidth());
     bHint.requestLayout();
 
+    bAnim.getLayoutParams().height = sizeH - yLd;
+    bAnim.getLayoutParams().width = (int) (1.5 * bAgain.getWidth());
+    bAnim.requestLayout();
 
   } //koniec metody()
 
@@ -2239,16 +2268,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       bHint.setVisibility(INVISIBLE);
     }
 
-
-    /*if (mGlob.BPOMIN_ALL)*/
     bPomin.setEnabled(true);
-    /*if (mGlob.BUPLOW_ALL)*/
     bUpperLower.setEnabled(true);
-    /*if (mGlob.BAGAIN_ALL)*/
     bAgain.setEnabled(true);
-    /*ifbShiftLeft. (mGlob.BHINT_ALL) */
     bHint.setEnabled(true);
-    //setEnabled(true);
   }
 
 
