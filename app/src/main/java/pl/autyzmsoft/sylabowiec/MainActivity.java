@@ -231,7 +231,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   //Button bSyl01 = new Button(this);
   //lObszar.addView(bSyl01);
 
-    if (!(bKratki == null)) { //jest juz pokratkowane->likwidujemy, przywracamy stary widok, wychodzimy:
+    if (!(bKratki == null)) { //jest juz pokratkowanie->likwidujemy, przywracamy stary widok, wychodzimy:
         likwidujBKratki();
         tvShownWord.setVisibility(VISIBLE);
         return;
@@ -239,13 +239,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     tvShownWord.setVisibility(View.GONE);
 
-    //"Oczyszczenie przedpola":
-    //Jezeli tablica juz jest, to ja bezwzglednie niszczymy;
-    //Jak niema - tworzymy, zeby miec na czym dzialac:
-    likwidujBKratki();
+    //Jak nie ma pokratkowania - tworzymy tablice, zeby miec na czym dzialac:
     bKratki = new Button[MAXS];
 
-    Sylaby sylTmp = new Sylaby(currWord);
+    Sylaby sylTmp = new Sylaby(currWord); //kazda sylabe dodajemy do kolejnej kratki
     for (int i = 0; i < sylTmp.getlSylab() ; i++) {
       final Button bSyl = new Button(this);
       lObszar.addView(bSyl);
@@ -266,7 +263,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 //        });
 //      }
 
-      //1-sza kratka tam, gdzie zaczynal sie tvShownWord; reszta follows:
+      //1-sza kratka zaczyna sie tam, gdzie zaczynal sie tvShownWord; reszta follows:
       if (i==0) {
          usunGrawitacje();
          lObszar.setGravity(Gravity.CENTER_VERTICAL);
@@ -277,7 +274,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       bSyl.setLayoutParams(lPar);
 
       //Poprzez minimalne zmniejszenie liter, zapewniam, ze 'obwoluta' sylaby bedzie
-      // nieco mniejsza od wysokoscli lObszar  (doświadczalnie):
+      //nieco mniejsza od wysokoscli lObszar  (doświadczalnie):
       float wys = tvShownWord.getTextSize()-10;
       wys = pxToSp((int) wys);
       bSyl.setTextSize(TypedValue.COMPLEX_UNIT_SP, wys );
