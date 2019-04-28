@@ -231,6 +231,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   //Button bSyl01 = new Button(this);
   //lObszar.addView(bSyl01);
 
+    if (!(bKratki == null)) { //jest juz pokratkowane->likwidujemy, przywracamy stary widok, wychodzimy:
+        likwidujBKratki();
+        tvShownWord.setVisibility(VISIBLE);
+        return;
+    }
+
     tvShownWord.setVisibility(View.GONE);
 
     //"Oczyszczenie przedpola":
@@ -245,6 +251,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       lObszar.addView(bSyl);
 
       final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      lPar.rightMargin = -5; //zeby kratki prawie zachodzilay na siebie - kosmetyka
 
 
 //To jest ok, ale mrugniecie:
@@ -259,6 +266,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 //        });
 //      }
 
+      //1-sza kratka tam, gdzie zaczynal sie tvShownWord; reszta follows:
       if (i==0) {
          usunGrawitacje();
          lObszar.setGravity(Gravity.CENTER_VERTICAL);
@@ -1241,6 +1249,18 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         podniesLabels();
       } else {
         restoreOriginalLabels();
+      }
+    }
+
+    //Jak jest posylabowanie, to tam tez zmieniamy:
+    if (!(bKratki==null)) {
+      String bTxt;
+      for (int i = 0; i < sylaby.getlSylab(); i++) {
+        bTxt = bKratki[i].getText().toString();
+        if (inUp)
+          bKratki[i].setText(bTxt.toUpperCase(Locale.getDefault()));
+        else
+          bKratki[i].setText(bTxt.toLowerCase(Locale.getDefault()));
       }
     }
 
