@@ -1,5 +1,6 @@
 package pl.autyzmsoft.sylabowiec;
 
+import static android.graphics.Color.BLACK;
 import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -29,6 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.media.ExifInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -44,9 +46,11 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewAnimationUtils;
@@ -59,6 +63,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -218,32 +223,106 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private double screenInches;
 
+
+
+  public Button[] bKratki = null;// = new Button[MAXS]; //tablica na 'pokratkowane' sylaby
   public void bAnimOnClick(View view) {
   //2-10.04.26 - proby dodawania buttonow dp lObszar.
   //Button bSyl01 = new Button(this);
   //lObszar.addView(bSyl01);
 
+    tvShownWord.setVisibility(View.GONE);
+
+    //"Oczyszczenie przedpola":
+    //Jezeli tablica juz jest, to ja bezwzglednie niszczymy;
+    //Jak niema - tworzymy, zeby miec na czym dzialac:
+    likwidujBKratki();
+    bKratki = new Button[MAXS];
+
     Sylaby sylTmp = new Sylaby(currWord);
     for (int i = 0; i < sylTmp.getlSylab() ; i++) {
-      Button bSyl = new Button(this);
-      bSyl.setText(sylTmp.getSylabaAt(i));
-
-      //int lsize = (int) getResources().getDimension(R.dimen.litera_size);
-      //bSyl.setTextSize(pxToSp(lsize));
-
-//      float lsize = tvShownWord.getTextSize();
-//      int iSize = (int) lsize;
-//      lsize = pxToDp(iSize);
-//      bSyl.setTextSize(iSize);
-
-        ((TextView)bSyl).setTextSize(lbs[1].getTextSize());
-
-      //android:textStyle="bold"
+      final Button bSyl = new Button(this);
       lObszar.addView(bSyl);
-    }
 
-    /* koniec pron 2019.04.26 */
+      final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+//To jest ok, ale mrugniecie:
+//      if (i==0) {
+//        bSyl.post(new Runnable() {
+//          @Override
+//          public void run() {
+//            usunGrawitacje();
+//            lObszar.setGravity(Gravity.CENTER_VERTICAL);
+//            lPar.leftMargin = 200;
+//          }
+//        });
+//      }
+
+      if (i==0) {
+         usunGrawitacje();
+         lObszar.setGravity(Gravity.CENTER_VERTICAL);
+         lPar.leftMargin = tvShownWord.getLeft();
+      }
+
+
+      bSyl.setLayoutParams(lPar);
+
+      //Poprzez minimalne zmniejszenie liter, zapewniam, ze 'obwoluta' sylaby bedzie
+      // nieco mniejsza od wysokoscli lObszar  (doświadczalnie):
+      float wys = tvShownWord.getTextSize()-10;
+      wys = pxToSp((int) wys);
+      bSyl.setTextSize(TypedValue.COMPLEX_UNIT_SP, wys );
+
+
+      //Umieszczenie tekstu na sylabie-kwadraciku:
+      String txtSyl = sylTmp.getSylabaAt(i);
+      if (inUp) txtSyl = txtSyl.toUpperCase(Locale.getDefault());
+      bSyl.setText(txtSyl);
+
+      //Wytluszczenie:
+      bSyl.setTypeface(Typeface.DEFAULT_BOLD);
+
+      //Zapeniam, ze 'obwoluta' sylaby będzie wycentrowana w pionie (bo inaczej lezy na dolnej linii lObszar'u):
+      lObszar.setGravity(Gravity.CENTER_VERTICAL);
+
+      //Minimalnie podciagam tekst w gore - kosmetyka doswiadczalna:
+      bSyl.setPadding(bSyl.getPaddingLeft(),-7,bSyl.getPaddingRight(), bSyl.getPaddingBottom());
+
+
+      //Podpiecie listenera (odegranie+chwilowa zmiana koloru):
+      bSyl.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(final View v) {
+          bSyl.setTextColor(RED);
+          String coGrac = (String) bSyl.getText();
+          coGrac = coGrac.toLowerCase(Locale.getDefault());
+          grajSylabeZAssets(coGrac);
+          Handler mHandl = new Handler();
+          mHandl.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              bSyl.setTextColor(BLACK);
+            }
+          }, 800);
+        }
+      });
+      bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo
+    } //for
+
+  } //koniec Metody()
+
+  private void likwidujBKratki() {
+    /***
+    Zeby miec 'czyste' przedpole po bDalej, bAgain, bPomin, bAnim
+    */
+    if (bKratki==null)
+      return;
+    for (final Button button : bKratki)
+      lObszar.removeView(button);
+    bKratki = null;
   }
+
 
   private static String[] listaOgraniczonaDoPoziomuTrudnosci(String[] lista, int poziom) {
     /*************************************************************************************/
@@ -937,7 +1016,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord     = "chleb-chleb-chleb-chleb-chleb-chleb";
     //currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
     //currWord = "pies1";
-
+    //currWord = "ryż";
 
 
     //Pobieramy wyraz do rozrzucenia:
@@ -1008,6 +1087,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //sledzenie:
     //bUpperLower.setText(sizeW+"x"+sizeH);
 
+    likwidujBKratki(); //if any..
+
     //Trzeba bDalej==v zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
     unieczynnijNaChwile((Button)v,500);
 
@@ -1048,7 +1129,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       bAgain1.setVisibility(INVISIBLE);
     }
 
-  } //koniecMetody()
+  } //koniec Metody()
 
 
   private void unieczynnijNaChwile(final Button klawisz, int chwila) {
@@ -1069,6 +1150,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   public void bAgainOnClick(View v) {
     //bAgain -  kl. pod Obszarem
     //bAgain1 - kl. pod bDalej
+
+    likwidujBKratki(); //if any..
 
     //trzeba zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
     if (v==bAgain1) unieczynnijNaChwile(bAgain1,500);
@@ -2678,8 +2761,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             layoutParams.topMargin = yLtrim - (int) (h / 2.0);  //odejmowanie zeby srodek etykiety wypadl na lTrim
             view.setLayoutParams(layoutParams);
 
-            //Bylo 'trimowanie' a wiec na pewno jestesmy w Obszarze- dajemy znac i
-            // badanie ewentualnego ZWYCIESTWA :
+            //Bylo 'trimowanie' a wiec na pewno jestesmy w Obszarze- dajemy znac i badanie ewentualnego ZWYCIESTWA :
             ((MojTV) view).setInArea(true);
 
             if (ileWObszarze() == sylaby.getlSylab()) {  //wszystkie sylaby wyrazu znalazly sie w Obszarze
