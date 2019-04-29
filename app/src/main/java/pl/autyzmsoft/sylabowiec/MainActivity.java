@@ -1516,26 +1516,24 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }  //koniec Metody()
 
   private void przesunBKratkiNaLeft() {
-//
-//    LinearLayout.LayoutParams lPar;
-//    for (int i = 0; i < sylaby.getlSylab(); i++) {
-//      lPar = (LayoutParams) bKratki[i].getLayoutParams();
-//      int left = bKratki[i].getLeft();
-//      left = left - 50;
-//      lPar.leftMargin = left;
-//      bKratki[i].setLayoutParams(lPar);
-//    }
+  /***
+   Cale 'posylabowanie' wędruje w lewo.
+   Wystarczy przeunac 0-wą kratkę - pozostale 'pójdą' za nią.
+  */
     LinearLayout.LayoutParams lPar;
-    lPar = (LayoutParams) bKratki[1].getLayoutParams();
-    int left = bKratki[1].getLeft();
-    left = left - 200;
-    lPar.leftMargin = left;
-    bKratki[1].setLayoutParams(lPar);
+    lPar = (LayoutParams) bKratki[0].getLayoutParams();
+
+    int x = bKratki[0].getLeft();
+    x = x / 2; //zeby przy kolejnych klikaniach nie 'wylezc' poza lObszar
+
+    lPar.leftMargin -= x;
+
+    bKratki[0].setLayoutParams(lPar);
   }
 
   private boolean likwidujBiggestGap() {
     /***********************************************************************************/
-    /* Zmiejsza odcinek zajmowany przez litery w Obszarze.                             */
+    /* Zmiejsza odcinek zajmowany przez sylaby (lbs) w Obszarze.                       */
     /* Zasada: wyszukuje najwieksza dziurę i likwiduja ją.                             */
     /* Likwidacja dziury poprzez przesuniecie etykiet z prawej w lewo o jej szerokosc. */
     /* Jezeli nie znajdzie dziury>0 , zwraca false. Uwaga - padding brany pod uwage.   */
