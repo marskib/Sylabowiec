@@ -98,7 +98,13 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private static final String OKLASKI_SND = "nagrania/komentarze/efekty/oklaski.ogg";  //dzwiek poprawnie ulozonego wyrazu
 
-  public static MojTV[] lbs;
+  public static MojTV[] lbs;  //Podstawowa tablica, zawiera uchwyty do etykiet, ktore przesuwamy po ekranie
+
+  //tablica robocza, do dzialań (m.in. latwego wykrycia prawidlowego porzadku ulozenia etykiet
+  // w Obszarze); podzbior tab. lbs
+  private static MojTV[] lbsRob;
+
+  public Button[] bKratki; //tablica na 'pokratkowane' sylaby (na zobrazowanie podzialu na sylaby)
 
   public static File katalogSD;                 //katalog z obrazkami na SD (internal i external)
 
@@ -119,9 +125,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   //tablica zawierajaca (oryginalne) litery wyrazu; onomastyka: lbs = 'labels'
   static MediaPlayer mp = null;
 
-  //tablica robocza, do dzialań (m.in. latwego wykrycia prawidlowego porzadku ulozenia etykiet
-  // w Obszarze); podzbior tab. lbs
-  private static MojTV[] lbsRob;
 
   /*Ponizej, do konca metody onRequestPermissionResult() kod zapewniajacy dostep do kart SD: */
   final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -130,7 +133,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   public String currWord = "*";
 
-  Intent intModalDialog;  //Na okienko dialogu 'modalnego' orzy starcie aplikacji
+  Intent intModalDialog;  //Na okienko dialogu 'modalnego' przy starcie aplikacji
 
   Intent intUstawienia;   //Na przywolanie ekranu z ustawieniami
 
@@ -225,51 +228,40 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
 
-  public Button[] bKratki = null;// = new Button[MAXS]; //tablica na 'pokratkowane' sylaby
-  public void bAnimOnClick(View view) {
-  //2-10.04.26 - proby dodawania buttonow dp lObszar.
-  //Button bSyl01 = new Button(this);
-  //lObszar.addView(bSyl01);
 
-    if (!(bKratki == null)) { //jest juz pokratkowanie->likwidujemy, przywracamy stary widok, wychodzimy:
+  public void bAnimOnClick(View view) {
+    /**
+    Pokazanie podziału na sylaby ułożonego wyrtazu tvShownWord
+    Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
+    Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
+    */
+
+    if (!(bKratki == null)) { //jest juz pokratkowanie->likwidujemy i przywracamy stary widok, wychodzimy:
         likwidujBKratki();
         tvShownWord.setVisibility(VISIBLE);
         return;
     }
 
-    tvShownWord.setVisibility(View.GONE);
-
     //Jak nie ma pokratkowania - tworzymy tablice, zeby miec na czym dzialac:
     bKratki = new Button[MAXS];
 
-    Sylaby sylTmp = new Sylaby(currWord); //kazda sylabe dodajemy do kolejnej kratki
-    for (int i = 0; i < sylTmp.getlSylab() ; i++) {
+    tvShownWord.setVisibility(View.GONE); //chowamy ulozony wyraz
+
+    //usunGrawitacje();
+    //lObszar.setGravity(Gravity.CENTER_VERTICAL);
+
+    //Glowna pętla; każda sylaba ląduje w osobno powołąnej kratce; kratki lądują w bKratki[]:
+    for (int i = 0; i < sylaby.getlSylab() ; i++) {
       final Button bSyl = new Button(this);
       lObszar.addView(bSyl);
 
       final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
       lPar.rightMargin = -5; //zeby kratki prawie zachodzilay na siebie - kosmetyka
 
-
-//To jest ok, ale mrugniecie:
-//      if (i==0) {
-//        bSyl.post(new Runnable() {
-//          @Override
-//          public void run() {
-//            usunGrawitacje();
-//            lObszar.setGravity(Gravity.CENTER_VERTICAL);
-//            lPar.leftMargin = 200;
-//          }
-//        });
-//      }
-
-      //1-sza kratka zaczyna sie tam, gdzie zaczynal sie tvShownWord; reszta follows:
+      //1-sza kratka zaczyna sie tam, gdzie zaczynal sie tvShownWord; reszta will follow her:
       if (i==0) {
-         usunGrawitacje();
-         lObszar.setGravity(Gravity.CENTER_VERTICAL);
          lPar.leftMargin = tvShownWord.getLeft();
       }
-
 
       bSyl.setLayoutParams(lPar);
 
@@ -279,14 +271,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       wys = pxToSp((int) wys);
       bSyl.setTextSize(TypedValue.COMPLEX_UNIT_SP, wys );
 
-
       //Umieszczenie tekstu na sylabie-kwadraciku:
-      String txtSyl = sylTmp.getSylabaAt(i);
+      String txtSyl = sylaby.getSylabaAt(i);
       if (inUp) txtSyl = txtSyl.toUpperCase(Locale.getDefault());
       bSyl.setText(txtSyl);
-
-      //Wytluszczenie:
-      bSyl.setTypeface(Typeface.DEFAULT_BOLD);
+      bSyl.setTypeface(Typeface.DEFAULT_BOLD);  //Wytluszczenie:
 
       //Zapeniam, ze 'obwoluta' sylaby będzie wycentrowana w pionie (bo inaczej lezy na dolnej linii lObszar'u):
       lObszar.setGravity(Gravity.CENTER_VERTICAL);
@@ -294,32 +283,39 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       //Minimalnie podciagam tekst w gore - kosmetyka doswiadczalna:
       bSyl.setPadding(bSyl.getPaddingLeft(),-7,bSyl.getPaddingRight(), bSyl.getPaddingBottom());
 
+      podepnijListenerDoKratki(bSyl);
 
-      //Podpiecie listenera (odegranie+chwilowa zmiana koloru):
-      bSyl.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(final View v) {
-          bSyl.setTextColor(RED);
-          String coGrac = (String) bSyl.getText();
-          coGrac = coGrac.toLowerCase(Locale.getDefault());
-          grajSylabeZAssets(coGrac);
-          Handler mHandl = new Handler();
-          mHandl.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              bSyl.setTextColor(BLACK);
-            }
-          }, 800);
-        }
-      });
       bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo
     } //for
 
   } //koniec Metody()
 
+  private void podepnijListenerDoKratki(final Button bSyl) {
+  /** Dd obskugi klikniecia na bKratki[i];
+  Podpiecie listenera (odegranie+chwilowa zmiana koloru)
+  */
+    bSyl.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(final View v) {
+        bSyl.setTextColor(RED);
+        String coGrac = (String) bSyl.getText();
+        coGrac = coGrac.toLowerCase(Locale.getDefault());
+        grajSylabeZAssets(coGrac);
+        //Zmiana koloru na krotka chwile:
+        Handler mHandl = new Handler();
+        mHandl.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            bSyl.setTextColor(BLACK);
+          }
+        }, 800);
+      }
+    });
+  }  //koniec Metody()
+
   private void likwidujBKratki() {
     /***
-    Zeby miec 'czyste' przedpole po bDalej, bAgain, bPomin, bAnim
+    Zeby miec 'czyste' przedpole po bDalej, bAgain, bAnim
     */
     if (bKratki==null)
       return;
@@ -1257,7 +1253,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         if (inUp)
           bKratki[i].setText(bTxt.toUpperCase(Locale.getDefault()));
         else
-          bKratki[i].setText(bTxt.toLowerCase(Locale.getDefault()));
+          bKratki[i].setText(sylaby.getSylabaAt(i)); //MIKOŁAJ->Mikołaj, dlatego tekst biore z sylaby (gdzie sa oryginaly)
       }
     }
 
@@ -1510,7 +1506,32 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         przesunWLewo(x);
       }
     }
+
+    //jezeli jest (tylko) 'pokratkowanie'=sylabizacja, to tez przesuwam w lewo:
+    if (! (bKratki==null) ) {
+      przesunBKratkiNaLeft();
+    }
+
+
   }  //koniec Metody()
+
+  private void przesunBKratkiNaLeft() {
+//
+//    LinearLayout.LayoutParams lPar;
+//    for (int i = 0; i < sylaby.getlSylab(); i++) {
+//      lPar = (LayoutParams) bKratki[i].getLayoutParams();
+//      int left = bKratki[i].getLeft();
+//      left = left - 50;
+//      lPar.leftMargin = left;
+//      bKratki[i].setLayoutParams(lPar);
+//    }
+    LinearLayout.LayoutParams lPar;
+    lPar = (LayoutParams) bKratki[1].getLayoutParams();
+    int left = bKratki[1].getLeft();
+    left = left - 200;
+    lPar.leftMargin = left;
+    bKratki[1].setLayoutParams(lPar);
+  }
 
   private boolean likwidujBiggestGap() {
     /***********************************************************************************/
