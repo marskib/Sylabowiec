@@ -16,6 +16,8 @@ import static pl.autyzmsoft.sylabowiec.ZmienneGlobalne.WSZYSTKIE;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -237,9 +239,16 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     */
 
     if (!(bKratki == null)) { //jest juz pokratkowanie->likwidujemy i przywracamy stary widok, wychodzimy:
-        likwidujBKratki();
-        tvShownWord.setVisibility(VISIBLE);
-        return;
+      //Zeby stary widok pokazywal sie tam, gdzie aktualnie byly bKratki (bo mogly byc przesuniete; kosmetyka):
+      LinearLayout.LayoutParams tvSWPar;
+      tvSWPar = (LayoutParams) tvShownWord.getLayoutParams();
+      tvSWPar.leftMargin   = bKratki[0].getLeft();
+      //tvSWPar.bottomMargin = bKratki[0].getBottom();
+      tvShownWord.setLayoutParams(tvSWPar);
+      tvShownWord.setVisibility(VISIBLE);
+      /**/
+      likwidujBKratki();
+      return;
     }
 
     //Jak nie ma pokratkowania - tworzymy tablice, zeby miec na czym dzialac:
@@ -247,45 +256,35 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     tvShownWord.setVisibility(View.GONE); //chowamy ulozony wyraz
 
-    //usunGrawitacje();
-    //lObszar.setGravity(Gravity.CENTER_VERTICAL);
+    //Główna pętla; każda sylaba ląduje w osobno powołanej bKratce; kratki lądują w bKratki[]:
+    lObszar.setGravity(Gravity.CENTER_VERTICAL);
 
-    //Glowna pętla; każda sylaba ląduje w osobno powołąnej kratce; kratki lądują w bKratki[]:
     for (int i = 0; i < sylaby.getlSylab() ; i++) {
       final Button bSyl = new Button(this);
-      lObszar.addView(bSyl);
-
+      //layout dla bKratki:
       final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
       lPar.rightMargin = -5; //zeby kratki prawie zachodzilay na siebie - kosmetyka
-
+      lObszar.addView(bSyl);
       //1-sza kratka zaczyna sie tam, gdzie zaczynal sie tvShownWord; reszta will follow her:
-      if (i==0) {
-         lPar.leftMargin = tvShownWord.getLeft();
-      }
-
+      if (i==0) lPar.leftMargin = tvShownWord.getLeft();
       bSyl.setLayoutParams(lPar);
 
       //Poprzez minimalne zmniejszenie liter, zapewniam, ze 'obwoluta' sylaby bedzie
       //nieco mniejsza od wysokoscli lObszar  (doświadczalnie):
-      float wys = tvShownWord.getTextSize()-10;
+      float wys = tvShownWord.getTextSize()-5;
       wys = pxToSp((int) wys);
       bSyl.setTextSize(TypedValue.COMPLEX_UNIT_SP, wys );
-
       //Umieszczenie tekstu na sylabie-kwadraciku:
       String txtSyl = sylaby.getSylabaAt(i);
       if (inUp) txtSyl = txtSyl.toUpperCase(Locale.getDefault());
       bSyl.setText(txtSyl);
       bSyl.setTypeface(Typeface.DEFAULT_BOLD);  //Wytluszczenie:
 
-      //Zapeniam, ze 'obwoluta' sylaby będzie wycentrowana w pionie (bo inaczej lezy na dolnej linii lObszar'u):
-      lObszar.setGravity(Gravity.CENTER_VERTICAL);
-
       //Minimalnie podciagam tekst w gore - kosmetyka doswiadczalna:
-      bSyl.setPadding(bSyl.getPaddingLeft(),-7,bSyl.getPaddingRight(), bSyl.getPaddingBottom());
+      bSyl.setPadding(bSyl.getPaddingLeft(),-5,bSyl.getPaddingRight(), bSyl.getPaddingBottom());
 
       podepnijListenerDoKratki(bSyl);
-
-      bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo
+      bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
     } //for
 
   } //koniec Metody()
@@ -1018,6 +1017,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz-chrząszcz";
     //currWord = "pies1";
     //currWord = "ryż";
+    //currWord = "ża-rów-ka";
+
 
 
     //Pobieramy wyraz do rozrzucenia:
@@ -1215,8 +1216,49 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }
 
   public void bUpperLowerOnClick(View v) {
-    //Zmiana male/duze litery (w obie strony)
+    /**
+     Zmiana male/duze litery (w obie strony)
+    */
 
+//      int dx=5;
+//      LinearLayout.LayoutParams lPar;
+//      for (int i = 0; i < sylaby.getlSylab()-1 ; i++) {
+//          lPar = (LayoutParams) bKratki[i].getLayoutParams();
+//          lPar.rightMargin += dx;
+//          bKratki[i].setLayoutParams(lPar);
+//      }
+//
+
+
+    if (bUpperLower.getText() !="*") {
+
+      rozsunKratki(1, 1,100, 1000);
+
+      //badziew na czas developmentu, wywalic...
+      Handler mH = new Handler();
+        mH.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            bUpperLower.setText("*");
+          }
+        },1500);
+
+    } else {
+      rozsunKratki(-1, 1, 100, 1000);
+
+      //badziew na czas developmentu, wywalic...
+      Handler mH = new Handler();
+      mH.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          bUpperLower.setText("ble");
+        }
+      },1500);
+    }
+
+
+
+    /* UWAGA - 'KOD BOJOWY', chwilowo zasapiony tym co na gorze - 2019.05.06
     inUp = !inUp;
 
     odegrajZAssets(PLUSK_SND, 0);
@@ -1256,8 +1298,41 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           bKratki[i].setText(sylaby.getSylabaAt(i)); //MIKOŁAJ->Mikołaj, dlatego tekst biore z sylaby (gdzie sa oryginaly)
       }
     }
+    koniec 'kodu bojowego' */
+  } //koniec Metody()
+
+  private void rozsunKratki(int dx, int valueMin, int valueMax, int czas) {
+    /**
+     * Zobrazowanie/animacja podzialu na sylaby poprzez Rozsuniecie/Zsuniecie kratkek
+     * dx - 'skok' w pixelach; jesli wart. ujemna - zsuwanie
+     * pozostale - potrzebne dla obiektu ValueAnimator
+    */
+
+    ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
+    anim.setDuration(czas);
+
+    final int dxfinal = dx;
+
+    anim.addUpdateListener(new AnimatorUpdateListener() {
+    @Override
+    public void onAnimationUpdate(final ValueAnimator animation) {
+      //sledzenie - na klawiszu:
+      int wartosc = (int) animation.getAnimatedValue();
+      bUpperLower.setText(Integer.toString(wartosc));
+
+      for (int i = 0; i<sylaby.getlSylab()-1 ; i++) {
+        final LayoutParams lPar;
+        lPar = (LayoutParams) bKratki[i].getLayoutParams();
+        lPar.rightMargin += dxfinal;
+        bKratki[i].setLayoutParams(lPar);
+      }
+    }
+    });
+
+    anim.start();
 
   } //koniec Metody()
+
 
   private void podniesLabels() {
     //Etykiety podnoszone są do Wielkich liter
@@ -1491,7 +1566,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       x = tvShownWord.getLeft();
       x = x / 2;                  //Przesuwamy o polowe dystansu do lewego brzegu Obszaru
       //tvShownWord.setLeft(x);  //ta instrukcja nie 'commituje', tylko na oglad
-      // 'tymczasowy', ponizej OK
+      // 'tymczasowy', kod ponizej OK
       LinearLayout.LayoutParams lPar = (LinearLayout.LayoutParams) tvShownWord.getLayoutParams();
       lPar.leftMargin = x;
       tvShownWord.setLayoutParams(lPar);       //"commit" na View, view bedzie siedzial 'twardo'
@@ -1509,13 +1584,15 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     //jezeli jest (tylko) 'pokratkowanie'=sylabizacja, to tez przesuwam w lewo:
     if (! (bKratki==null) ) {
-      przesunBKratkiNaLeft();
+      int dx = bKratki[0].getLeft();
+      dx = dx / 2; //zeby przy kolejnych klikaniach nie 'wylezc' poza lObszar
+      przesunBKratkiNaLeft(dx);
     }
 
 
   }  //koniec Metody()
 
-  private void przesunBKratkiNaLeft() {
+  private void przesunBKratkiNaLeft(int dx) {
   /***
    Cale 'posylabowanie' wędruje w lewo.
    Wystarczy przeunac 0-wą kratkę - pozostale 'pójdą' za nią.
@@ -1523,10 +1600,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     LinearLayout.LayoutParams lPar;
     lPar = (LayoutParams) bKratki[0].getLayoutParams();
 
-    int x = bKratki[0].getLeft();
-    x = x / 2; //zeby przy kolejnych klikaniach nie 'wylezc' poza lObszar
-
-    lPar.leftMargin -= x;
+    lPar.leftMargin -= dx;
 
     bKratki[0].setLayoutParams(lPar);
   }
@@ -2396,7 +2470,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   public void bHintOnClick(View view) {
     /**
-    Podpowiada kolejna sylabe do ulozenia
+    Podpowiada kolejną sylabe do ulozenia
     Idea algorytmu - iteruje po obiekcie 'sylaby i wskazuje 1-sza sylabe nie na swoim miejscu w Obszarze
     Wziete z Sylabowanki (Lazarus):
     Idea algorytmu : przegladam wyraz sylaba po sylabie (od lewej) i jezeli przegladana
