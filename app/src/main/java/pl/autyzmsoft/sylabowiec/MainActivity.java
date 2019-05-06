@@ -46,6 +46,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -233,7 +234,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   public void bAnimOnClick(View view) {
     /**
-    Pokazanie podziału na sylaby ułożonego wyrtazu tvShownWord
+    Pokazanie podziału na sylaby ułożonego wyrazu tvShownWord
     Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
     Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
     */
@@ -258,15 +259,16 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     //Główna pętla; każda sylaba ląduje w osobno powołanej bKratce; kratki lądują w bKratki[]:
     lObszar.setGravity(Gravity.CENTER_VERTICAL);
-
     for (int i = 0; i < sylaby.getlSylab() ; i++) {
       final Button bSyl = new Button(this);
+      bSyl.setMaxLines(1);
       //layout dla bKratki:
       final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
       lPar.rightMargin = -5; //zeby kratki prawie zachodzilay na siebie - kosmetyka
       lObszar.addView(bSyl);
       //1-sza kratka zaczyna sie tam, gdzie zaczynal sie tvShownWord; reszta will follow her:
-      if (i==0) lPar.leftMargin = tvShownWord.getLeft();
+      if (i==0)
+        lPar.leftMargin = tvShownWord.getLeft();
       bSyl.setLayoutParams(lPar);
 
       //Poprzez minimalne zmniejszenie liter, zapewniam, ze 'obwoluta' sylaby bedzie
@@ -1218,47 +1220,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   public void bUpperLowerOnClick(View v) {
     /**
      Zmiana male/duze litery (w obie strony)
-    */
+     */
 
-//      int dx=5;
-//      LinearLayout.LayoutParams lPar;
-//      for (int i = 0; i < sylaby.getlSylab()-1 ; i++) {
-//          lPar = (LayoutParams) bKratki[i].getLayoutParams();
-//          lPar.rightMargin += dx;
-//          bKratki[i].setLayoutParams(lPar);
-//      }
-//
-
-
-    if (bUpperLower.getText() !="*") {
-
-      rozsunKratki(1, 1,100, 1000);
-
-      //badziew na czas developmentu, wywalic...
-      Handler mH = new Handler();
-        mH.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            bUpperLower.setText("*");
-          }
-        },1500);
-
-    } else {
-      rozsunKratki(-1, 1, 100, 1000);
-
-      //badziew na czas developmentu, wywalic...
-      Handler mH = new Handler();
-      mH.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          bUpperLower.setText("ble");
-        }
-      },1500);
-    }
-
-
-
-    /* UWAGA - 'KOD BOJOWY', chwilowo zasapiony tym co na gorze - 2019.05.06
+    /* UWAGA - 'KOD BOJOWY', chwilowo zasapiony tym co na dole - 2019.05.06
     inUp = !inUp;
 
     odegrajZAssets(PLUSK_SND, 0);
@@ -1299,6 +1263,29 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       }
     }
     koniec 'kodu bojowego' */
+
+
+    //      int dx=5;
+//      LinearLayout.LayoutParams lPar;
+//      for (int i = 0; i < sylaby.getlSylab()-1 ; i++) {
+//          lPar = (LayoutParams) bKratki[i].getLayoutParams();
+//          lPar.rightMargin += dx;
+//          bKratki[i].setLayoutParams(lPar);
+//      }
+//
+
+
+    //lObszar.setGravity(Gravity.CENTER);
+    rozsunKratki(2, 1, 100, 1000);
+
+    Handler hand = new Handler();
+    hand.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        rozsunKratki(-2, 1, 100, 1000);
+      }
+    },1500);
+
   } //koniec Metody()
 
   private void rozsunKratki(int dx, int valueMin, int valueMax, int czas) {
@@ -2092,7 +2079,23 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       }
     });
 
+    //Listener na click na tvShownWord (dzilenie na sylaby(pokratkowanie) i po chwilirozsuniecie):
+    tvShownWord.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        bAnimOnClick(view);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            rozsunKratki(2,1,100,1000);
+          }
+        },800);
+      }
+    });
+
   } //koniec Metody()
+
 
   private void Kompresuj() {
     /****************************************************************/
