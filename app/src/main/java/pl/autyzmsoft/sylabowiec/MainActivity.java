@@ -233,11 +233,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   public void bAnimOnClick(View view) {
-    /**
-    Pokazanie podziału na sylaby ułożonego wyrazu tvShownWord
-    Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
-    Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
-    */
 
     if (!(bKratki == null)) { //jest juz pokratkowanie->likwidujemy i przywracamy stary widok, wychodzimy:
       //Zeby stary widok pokazywal sie tam, gdzie aktualnie byly bKratki (bo mogly byc przesuniete; kosmetyka):
@@ -251,11 +246,21 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       likwidujBKratki();
       return;
     }
+    //Jak nie ma pokratkowania - kratkujemy:
+    pokratkuj(tvShownWord);
+  } //koniec Metody()
 
-    //Jak nie ma pokratkowania - tworzymy tablice, zeby miec na czym dzialac:
+  private void pokratkuj(TextView wyraz) {
+  /**
+   Pokazanie podziału na sylaby ułożonego wyrazu (wyraz = de facto tvShownWord)
+   Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
+   Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
+   */
+
+    //tworzymy tablice, zeby miec na czym dzialac:
     bKratki = new Button[MAXS];
 
-    tvShownWord.setVisibility(View.GONE); //chowamy ulozony wyraz
+    wyraz.setVisibility(View.GONE); //chowamy ulozony wyraz
 
     //Główna pętla; każda sylaba ląduje w osobno powołanej bKratce; kratki lądują w bKratki[]:
     lObszar.setGravity(Gravity.CENTER_VERTICAL);
@@ -268,12 +273,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       lObszar.addView(bSyl);
       //1-sza kratka zaczyna sie tam, gdzie zaczynal sie tvShownWord; reszta will follow her:
       if (i==0)
-        lPar.leftMargin = tvShownWord.getLeft();
+        lPar.leftMargin = wyraz.getLeft();
       bSyl.setLayoutParams(lPar);
 
       //Poprzez minimalne zmniejszenie liter, zapewniam, ze 'obwoluta' sylaby bedzie
       //nieco mniejsza od wysokoscli lObszar  (doświadczalnie):
-      float wys = tvShownWord.getTextSize()-5;
+      float wys = wyraz.getTextSize()-5;
       wys = pxToSp((int) wys);
       bSyl.setTextSize(TypedValue.COMPLEX_UNIT_SP, wys );
       //Umieszczenie tekstu na sylabie-kwadraciku:
@@ -288,8 +293,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       podepnijListenerDoKratki(bSyl);
       bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
     } //for
-
-  } //koniec Metody()
+  }
 
   private void podepnijListenerDoKratki(final Button bSyl) {
   /** Dd obskugi klikniecia na bKratki[i];
@@ -465,7 +469,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       baseName = name.substring(0, index);
     }
     return baseName;
-  }  //koniec metody()
+   }  //koniec metody()
 
   public static String usunLastDigitIfAny(String name) {
     /**
@@ -475,10 +479,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
      */
     int koniec = name.length() - 1;
     if (Character.isDigit(name.charAt(koniec))) {
-
       return name.substring(0, koniec);
     } else {
-
       return name;
     }
   } //koniec Metody()
@@ -2079,7 +2081,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       }
     });
 
-    //Listener na click na tvShownWord (dzilenie na sylaby(pokratkowanie) i po chwilirozsuniecie):
+    //Listener na click na tvShownWord (dzielenie na sylaby(pokratkowanie) i po chwili rozsuniecie):
     tvShownWord.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -2090,7 +2092,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           public void run() {
             rozsunKratki(2,1,100,1000);
           }
-        },800);
+        },700);
       }
     });
 
