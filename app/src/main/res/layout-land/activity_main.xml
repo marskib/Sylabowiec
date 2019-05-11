@@ -117,7 +117,8 @@
         android:visibility="visible"
         android:enabled="false"
         android:textStyle="bold"
-        android:text="Anim"/>
+        android:text="&gt;-----&lt;"
+        android:letterSpacing="-0.15"/>
 
 
     <!--bDajGestosc: daje gestosc ekranu + inne uslugi-->

@@ -46,7 +46,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -220,9 +219,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   //obiekt do przechowywania sylab bieżacego wyrazu:
   public Sylaby sylaby;
 
-
-
-  /* eksperymenty ze status barem - 2018.08.11 - KONIEC*/
   private Pamietacz mPamietacz;
 
   private float tvWyrazSize;  //rozmiar wyrazu pod obrazkiem
@@ -230,16 +226,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private double screenInches;
 
 
-
-
   public void bAnimOnClick(View view) {
-
     if (!(bKratki == null)) { //jest juz pokratkowanie->likwidujemy i przywracamy stary widok, wychodzimy:
       //Zeby stary widok pokazywal sie tam, gdzie aktualnie byly bKratki (bo mogly byc przesuniete; kosmetyka):
       LinearLayout.LayoutParams tvSWPar;
       tvSWPar = (LayoutParams) tvShownWord.getLayoutParams();
       tvSWPar.leftMargin   = bKratki[0].getLeft();
-      //tvSWPar.bottomMargin = bKratki[0].getBottom();
       tvShownWord.setLayoutParams(tvSWPar);
       tvShownWord.setVisibility(VISIBLE);
       /**/
@@ -248,11 +240,46 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
     //Jak nie ma pokratkowania - kratkujemy:
     pokratkuj(tvShownWord);
+    //Animacja rozsuniecia kratek:
+    animujRozsuniecieKratek();
+    //
+    unieczynnijNaChwile(bAnim, 3000); //zeby nie MArcin nie klikal w trakcie animacji
   } //koniec Metody()
+
+  private void animujRozsuniecieKratek() {
+    /**
+     *Kratki sie rozjeżdżają i zjeżdżają
+    **/
+    int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
+    int dx = 2;          //krok i kierunek roz(s)uwania
+    int valueMin =    1; //na potrzeby funkcji animujacej
+    int valueMax =  100; //j.w.
+    int duration = 1000; //czas trwania roz(s)uwania
+    /**/
+    //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
+    rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration);
+    //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
+    rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration);
+  }  //koniec Metody()
+
+  private void rozsunKratkiPoCzasie(int delay, final int dx, final int valueMin, final int valueMax, final int duration) {
+    /**
+     * Po czasie 'delay' rozpoczynamy roz(s)uwanie
+    */
+    Handler hand1 = new Handler();
+    hand1.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        rozsunKratki(dx, valueMin, valueMax, duration);
+      }
+    },delay);
+  }
+
 
   private void pokratkuj(TextView wyraz) {
   /**
    Pokazanie podziału na sylaby ułożonego wyrazu (wyraz = de facto tvShownWord)
+   (uwaga - nie ma ruchu-animcji, tylko pokratkowanie)
    Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
    Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
    */
@@ -1142,6 +1169,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /**
      * Na chwile unieczynnnia podany klawisz
      * Uzywana w bAgainO.Ckick()i bDalejOnClick(), zeby zapobiec problemom gdy 2 szybkie kliki na klawiszu in question
+     * Uzywana rowniez na bAnim
      */
       klawisz.setEnabled(false);
       Handler mHandl = new Handler();
@@ -1222,9 +1250,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   public void bUpperLowerOnClick(View v) {
     /**
      Zmiana male/duze litery (w obie strony)
-     */
+   */
 
-    /* UWAGA - 'KOD BOJOWY', chwilowo zasapiony tym co na dole - 2019.05.06
     inUp = !inUp;
 
     odegrajZAssets(PLUSK_SND, 0);
@@ -1252,7 +1279,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         restoreOriginalLabels();
       }
     }
-
     //Jak jest posylabowanie, to tam tez zmieniamy:
     if (!(bKratki==null)) {
       String bTxt;
@@ -1264,62 +1290,34 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           bKratki[i].setText(sylaby.getSylabaAt(i)); //MIKOŁAJ->Mikołaj, dlatego tekst biore z sylaby (gdzie sa oryginaly)
       }
     }
-    koniec 'kodu bojowego' */
-
-
-    //      int dx=5;
-//      LinearLayout.LayoutParams lPar;
-//      for (int i = 0; i < sylaby.getlSylab()-1 ; i++) {
-//          lPar = (LayoutParams) bKratki[i].getLayoutParams();
-//          lPar.rightMargin += dx;
-//          bKratki[i].setLayoutParams(lPar);
-//      }
-//
-
-
-    //lObszar.setGravity(Gravity.CENTER);
-    rozsunKratki(2, 1, 100, 1000);
-
-    Handler hand = new Handler();
-    hand.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        rozsunKratki(-2, 1, 100, 1000);
-      }
-    },1500);
-
   } //koniec Metody()
 
-  private void rozsunKratki(int dx, int valueMin, int valueMax, int czas) {
+  private void rozsunKratki(final int dx, final int valueMin, final int valueMax, int czas) {
     /**
+     * Roz(s)uwanie "właściwe":
      * Zobrazowanie/animacja podzialu na sylaby poprzez Rozsuniecie/Zsuniecie kratkek
      * dx - 'skok' w pixelach; jesli wart. ujemna - zsuwanie
      * pozostale - potrzebne dla obiektu ValueAnimator
     */
-
     ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
     anim.setDuration(czas);
-
-    final int dxfinal = dx;
 
     anim.addUpdateListener(new AnimatorUpdateListener() {
     @Override
     public void onAnimationUpdate(final ValueAnimator animation) {
       //sledzenie - na klawiszu:
-      int wartosc = (int) animation.getAnimatedValue();
-      bUpperLower.setText(Integer.toString(wartosc));
-
+      //int wartosc = (int) animation.getAnimatedValue();
+      //bUpperLower.setText(Integer.toString(wartosc));
+      //koniec sledzenia
       for (int i = 0; i<sylaby.getlSylab()-1 ; i++) {
         final LayoutParams lPar;
         lPar = (LayoutParams) bKratki[i].getLayoutParams();
-        lPar.rightMargin += dxfinal;
+        lPar.rightMargin += dx;
         bKratki[i].setLayoutParams(lPar);
       }
     }
     });
-
-    anim.start();
-
+    anim.start(); //startujemy animację
   } //koniec Metody()
 
 
