@@ -117,8 +117,11 @@
         android:visibility="visible"
         android:enabled="false"
         android:textStyle="bold"
-        android:text="&gt;-----&lt;"
-        android:letterSpacing="-0.15"/>
+        android:textSize="@dimen/bOK_size"
+        android:text="|||"
+        android:letterSpacing="+0.20"/>
+
+    <!--android:text="&gt;-&#45;&#45;&#45;&#45;&lt;"-->
 
 
     <!--bDajGestosc: daje gestosc ekranu + inne uslugi-->

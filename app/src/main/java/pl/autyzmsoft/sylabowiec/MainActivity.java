@@ -243,7 +243,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Animacja rozsuniecia kratek:
     animujRozsuniecieKratek();
     //
-    unieczynnijNaChwile(bAnim, 3000); //zeby nie MArcin nie klikal w trakcie animacji
+    int chwila = 3000;
+    unieczynnijNaChwile(bAnim, chwila); //zeby nie MArcin nie klikal w trakcie animacji
+    unieczynnijNaChwile(bUpperLower, chwila);
+    unieczynnijNaChwile(bDalej, chwila);
+    unieczynnijNaChwile(bAgain, chwila);
+    unieczynnijNaChwile(bAgain1, chwila);
   } //koniec Metody()
 
   private void animujRozsuniecieKratek() {
@@ -1167,16 +1172,18 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private void unieczynnijNaChwile(final Button klawisz, int chwila) {
     /**
-     * Na chwile unieczynnnia podany klawisz
+     * Na chwile unieczynnnia podany klawisz.
+     * Jeżeli był nieczynny, to nic sie nie zmieni.
      * Uzywana w bAgainO.Ckick()i bDalejOnClick(), zeby zapobiec problemom gdy 2 szybkie kliki na klawiszu in question
      * Uzywana rowniez na bAnim
      */
+      final boolean stanSaved = klawisz.isEnabled();
       klawisz.setEnabled(false);
       Handler mHandl = new Handler();
       mHandl.postDelayed(new Runnable() {
           @Override
           public void run() {
-              klawisz.setEnabled(true);
+              klawisz.setEnabled(stanSaved);
           }
       }, chwila);
   }
@@ -1294,10 +1301,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private void rozsunKratki(final int dx, final int valueMin, final int valueMax, int czas) {
     /**
-     * Roz(s)uwanie "właściwe":
-     * Zobrazowanie/animacja podzialu na sylaby poprzez Rozsuniecie/Zsuniecie kratkek
-     * dx - 'skok' w pixelach; jesli wart. ujemna - zsuwanie
-     * pozostale - potrzebne dla obiektu ValueAnimator
+     * [Rozsu/Zsu]wanie "właściwe":
+     * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
+     * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
+     * pozostale paramsy - potrzebne dla obiektu ValueAnimator
     */
     ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
     anim.setDuration(czas);
@@ -1309,12 +1316,19 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       //int wartosc = (int) animation.getAnimatedValue();
       //bUpperLower.setText(Integer.toString(wartosc));
       //koniec sledzenia
-      for (int i = 0; i<sylaby.getlSylab()-1 ; i++) {
+      int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć
+      for (int i = 0; i<liter; i++) {
         final LayoutParams lPar;
         lPar = (LayoutParams) bKratki[i].getLayoutParams();
         lPar.rightMargin += dx;
         bKratki[i].setLayoutParams(lPar);
       }
+
+      //odsuniecie, jesli wyszlo za Obszar (na razie eksperymentalne):
+      if (bKratki[liter].getRight()>lObszar.getRight()) {
+        bShiftLeft.callOnClick();
+      }
+
     }
     });
     anim.start(); //startujemy animację
