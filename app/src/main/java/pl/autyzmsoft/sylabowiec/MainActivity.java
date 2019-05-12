@@ -227,6 +227,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   public void bAnimOnClick(View view) {
+    /**
+     * Pokratkowanie/Odkraktkowanie i (ewentualna) animacja
+     */
     if (!(bKratki == null)) { //jest juz pokratkowanie->likwidujemy i przywracamy stary widok, wychodzimy:
       //Zeby stary widok pokazywal sie tam, gdzie aktualnie byly bKratki (bo mogly byc przesuniete; kosmetyka):
       LinearLayout.LayoutParams tvSWPar;
@@ -243,17 +246,18 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Animacja rozsuniecia kratek:
     animujRozsuniecieKratek();
     //
-    int chwila = 3000;
-    unieczynnijNaChwile(bAnim, chwila); //zeby nie MArcin nie klikal w trakcie animacji
+    //Zeby Marcin nie klikal w trakcie animacji:
+    int chwila = 3000; //na razie doswiadczalnie...
+    unieczynnijNaChwile(bAnim, chwila);
     unieczynnijNaChwile(bUpperLower, chwila);
-    unieczynnijNaChwile(bDalej, chwila);
+    unieczynnijNaChwile(bDalej, chwila); //bDalej jak sie kliknie w trakcie animacji, to sie zawali...
     unieczynnijNaChwile(bAgain, chwila);
     unieczynnijNaChwile(bAgain1, chwila);
   } //koniec Metody()
 
   private void animujRozsuniecieKratek() {
     /**
-     *Kratki sie rozjeżdżają i zjeżdżają
+    * Kratki sie rozjeżdżają i zjeżdżają
     **/
     int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
     int dx = 2;          //krok i kierunek roz(s)uwania
@@ -265,11 +269,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration);
     //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
     rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration);
-  }  //koniec Metody()
+  } //koniec Metody()
 
   private void rozsunKratkiPoCzasie(int delay, final int dx, final int valueMin, final int valueMax, final int duration) {
     /**
-     * Po czasie 'delay' rozpoczynamy roz(s)uwanie
+    * Po czasie 'delay' rozpoczynamy [roz|zsu]uwanie
     */
     Handler hand1 = new Handler();
     hand1.postDelayed(new Runnable() {
@@ -1316,13 +1320,21 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       //int wartosc = (int) animation.getAnimatedValue();
       //bUpperLower.setText(Integer.toString(wartosc));
       //koniec sledzenia
-      int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć
+      int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
       for (int i = 0; i<liter; i++) {
         final LayoutParams lPar;
         lPar = (LayoutParams) bKratki[i].getLayoutParams();
         lPar.rightMargin += dx;
         bKratki[i].setLayoutParams(lPar);
       }
+
+      //proby...
+//      for (int i = liter; i>-1; i--) {
+//        final LayoutParams lPar;
+//        lPar = (LayoutParams) bKratki[i].getLayoutParams();
+//        lPar.leftMargin += dx;
+//        bKratki[i].setLayoutParams(lPar);
+//      }
 
       //odsuniecie, jesli wyszlo za Obszar (na razie eksperymentalne):
       if (bKratki[liter].getRight()>lObszar.getRight()) {
