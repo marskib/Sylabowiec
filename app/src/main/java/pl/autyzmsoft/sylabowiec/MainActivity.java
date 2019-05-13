@@ -1322,24 +1322,23 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       //koniec sledzenia
       int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
       for (int i = 0; i<liter; i++) {
-        final LayoutParams lPar;
+        LayoutParams lPar;
         lPar = (LayoutParams) bKratki[i].getLayoutParams();
+
+        //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
+        //if (i==0) {
+        //  lPar.leftMargin -= dx;
+        //}
+
         lPar.rightMargin += dx;
         bKratki[i].setLayoutParams(lPar);
       }
 
-      //proby...
-//      for (int i = liter; i>-1; i--) {
-//        final LayoutParams lPar;
-//        lPar = (LayoutParams) bKratki[i].getLayoutParams();
-//        lPar.leftMargin += dx;
-//        bKratki[i].setLayoutParams(lPar);
-//      }
 
       //odsuniecie, jesli wyszlo za Obszar (na razie eksperymentalne):
-      if (bKratki[liter].getRight()>lObszar.getRight()) {
-        bShiftLeft.callOnClick();
-      }
+//      if (bKratki[liter].getRight()>lObszar.getRight()) {
+//        bShiftLeft.callOnClick();
+//      }
 
     }
     });
