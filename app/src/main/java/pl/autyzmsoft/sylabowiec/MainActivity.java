@@ -259,17 +259,42 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /**
     * Kratki sie rozjeżdżają i zjeżdżają
     **/
-    int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
-    int dx = 2;          //krok i kierunek roz(s)uwania
-    int valueMin =    1; //na potrzeby funkcji animujacej
-    int valueMax =  100; //j.w.
-    int duration = 1000; //czas trwania roz(s)uwania
+    final int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
+    final int dx = 2;          //krok i kierunek roz(s)uwania
+    final int valueMin =    1; //na potrzeby funkcji animujacej
+    final int[] valueMax = {100}; //j.w.
+    final int duration = 1000; //czas trwania roz(s)uwania
     /**/
-    //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
-    rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration);
-    //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
-    rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration);
+
+    //Oceniam, czy rozsuniecie nie spowodowaloby wyjscia poza Obszar; jezeli tak - zmniejszam (na razie o polowe):
+    int lKrokow = valueMax[0] -valueMin+1;
+    int lDziur = sylaby.getlSylab()-1;
+    final int rozsTotal = lDziur*(lKrokow*dx);  //rozsuniecie total
+
+    final int lidx = sylaby.getlSylab()-1; //index ostatniego (last) elementu w bKratki
+
+    final int lObR    = lObszar.getRight();
+
+
+    bKratki[lidx].post(new Runnable() {
+      @Override
+      public void run() {
+        int lastRight = bKratki[lidx].getRight();
+        int potPolR = lastRight + rozsTotal;  //potencjalne max Polozenie Right
+        if (potPolR>lObR) {
+          valueMax[0] = valueMax[0] / 2 ;
+        }
+
+        //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
+        rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax[0], duration);
+        //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
+        //rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax[0], duration);
+
+      }
+    });
+
   } //koniec Metody()
+
 
   private void rozsunKratkiPoCzasie(int delay, final int dx, final int valueMin, final int valueMax, final int duration) {
     /**
