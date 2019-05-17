@@ -250,7 +250,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     int chwila = 3000; //na razie doswiadczalnie...
     unieczynnijNaChwile(bAnim, chwila);
     unieczynnijNaChwile(bUpperLower, chwila);
-    unieczynnijNaChwile(bDalej, chwila); //bDalej jak sie kliknie w trakcie animacji, to sie zawali...
+    unieczynnijNaChwile(bDalej, chwila); //uwaga -bDalej jak sie kliknie w trakcie animacji, to sie zawali...
     unieczynnijNaChwile(bAgain, chwila);
     unieczynnijNaChwile(bAgain1, chwila);
   } //koniec Metody()
@@ -259,40 +259,15 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /**
     * Kratki sie rozjeżdżają i zjeżdżają
     **/
-    final int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
-    final int dx = 2;          //krok i kierunek roz(s)uwania
-    final int valueMin =    1; //na potrzeby funkcji animujacej
-    final int[] valueMax = {100}; //j.w.
-    final int duration = 1000; //czas trwania roz(s)uwania
-    /**/
-
-    //Oceniam, czy rozsuniecie nie spowodowaloby wyjscia poza Obszar; jezeli tak - zmniejszam (na razie o polowe):
-    int lKrokow = valueMax[0] -valueMin+1;
-    int lDziur = sylaby.getlSylab()-1;
-    final int rozsTotal = lDziur*(lKrokow*dx);  //rozsuniecie total
-
-    final int lidx = sylaby.getlSylab()-1; //index ostatniego (last) elementu w bKratki
-
-    final int lObR    = lObszar.getRight();
-
-
-    bKratki[lidx].post(new Runnable() {
-      @Override
-      public void run() {
-        int lastRight = bKratki[lidx].getRight();
-        int potPolR = lastRight + rozsTotal;  //potencjalne max Polozenie Right
-        if (potPolR>lObR) {
-          valueMax[0] = valueMax[0] / 2 ;
-        }
-
-        //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
-        rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax[0], duration);
-        //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
-        //rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax[0], duration);
-
-      }
-    });
-
+    int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
+    int dx = 2;          //krok i kierunek roz(s)uwania
+    int valueMin =    1; //na potrzeby funkcji animujacej
+    int valueMax = 100;  //j.w.
+    int duration = 1000; //czas trwania [roz|zsu]uwania
+    //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
+    //rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration);
+    //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
+    //rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration);
   } //koniec Metody()
 
 
@@ -354,7 +329,28 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       podepnijListenerDoKratki(bSyl);
       bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
     } //for
-  }
+    //Jesli ostatnia kratka wystaje zz bandę, to cofamy:
+    cofnijKratkiJesliWystaja();
+  } //koniec Metody()
+
+  private void cofnijKratkiJesliWystaja() {
+  /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo */
+    final int lidx = sylaby.getlSylab()-1;  //li - last index - dla uproszczenia
+    bKratki[lidx].post(new Runnable() {
+      @Override
+      public void run() {
+        if (bKratki[lidx].getRight()>lObszar.getRight()) {
+//          LayoutParams lparKr;
+//          lparKr = (LayoutParams) bKratki[0].getLayoutParams();
+//          lparKr.leftMargin = 20;
+//          bKratki[0].setLayoutParams(lparKr);
+
+          przesunBKratkiNaLeft(400);
+
+        }
+      }
+    });
+  }  //koniec Metody()
 
   private void podepnijListenerDoKratki(final Button bSyl) {
   /** Dd obskugi klikniecia na bKratki[i];
@@ -1619,7 +1615,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       }
     }
 
-    //jezeli jest (tylko) 'pokratkowanie'=sylabizacja, to tez przesuwam w lewo:
+    //Jezeli jest (tylko) 'pokratkowanie'=sylabizacja, to tez przesuwam w lewo:
     if (! (bKratki==null) ) {
       int dx = bKratki[0].getLeft();
       dx = dx / 2; //zeby przy kolejnych klikaniach nie 'wylezc' poza lObszar
