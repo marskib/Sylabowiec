@@ -335,46 +335,45 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         rozsunKratki(dx, valueMin, valueMax, duration);
       }
     },delay);
-  }
-
-
+  } //koniec Metody()
 
 
   Timer timer;
   private void cofnijKratkiJesliWystaja() {
   /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo */
 
-  /* Kod ponizej jest Ok (2019-05-19, ale eksperymentuje..)
-    final int lidx = sylaby.getlSylab()-1;  //li - last index - dla uproszczenia
+/*
+    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
+    final int lidx = sylaby.getlSylab()-1;  //lidx - last index - dla uproszczenia
     bKratki[lidx].post(new Runnable() {
       @Override
       public void run() {
-        if (bKratki[lidx].getRight()>lObszar.getRight()) {
-          przesunBKratkiNaLeft(400);
+        int wystaje = bKratki[lidx].getRight()-lObszar.getRight();
+        if (wystaje>0) {
+          przesunBKratkiNaLeft(800);
         }
       }
     });
-  */
+*/
 
-  timer = new Timer();
-  final Handler handler = new Handler();
-  //start the timer:
-
-  TimerTask task = new TimerTask() {
-    @Override
-    public void run() {
-        handler.post(new Runnable() {
-          @Override
-          public void run() {
-            odsunPokratkowanieWlewo(5);
-          }
-        });
-    }
-  };
-
-  timer.schedule(task, 0, 10);
-
+    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
+    final Handler handler = new Handler();
+    //start the timer:
+    TimerTask task = new TimerTask() {
+      @Override
+      public void run() {
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              odsunPokratkowanieWlewo(5);
+            }
+          });
+      }
+    };
+    timer = new Timer();
+    timer.schedule(task, 0, 10);
   }  //koniec Metody()
+
 
   private void odsunPokratkowanieWlewo(int dx) {
 
@@ -382,16 +381,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       timer.cancel();
       return;
     }
-
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     params.leftMargin = bKratki[0].getLeft() - dx;
     bKratki[0].setLayoutParams(params);
-  }
+  }  //koniec Metody()
 
 
   private void podepnijListenerDoKratki(final Button bSyl) {
-  /** Dd obskugi klikniecia na bKratki[i];
-  Podpiecie listenera (odegranie+chwilowa zmiana koloru)
+  /** Dd obskugi klikniecia na bKratki[i]; Podpiecie listenera (odegranie+chwilowa zmiana koloru)
   */
     bSyl.setOnClickListener(new OnClickListener() {
       @Override
@@ -1669,9 +1666,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   */
     LinearLayout.LayoutParams lPar;
     lPar = (LayoutParams) bKratki[0].getLayoutParams();
-
     lPar.leftMargin -= dx;
-
     bKratki[0].setLayoutParams(lPar);
   }
 
