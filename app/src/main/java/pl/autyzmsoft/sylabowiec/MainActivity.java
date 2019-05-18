@@ -76,6 +76,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 //import android.util.Log;
 
@@ -255,43 +257,15 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     unieczynnijNaChwile(bAgain1, chwila);
   } //koniec Metody()
 
-  private void animujRozsuniecieKratek() {
-    /**
-    * Kratki sie rozjeżdżają i zjeżdżają
-    **/
-    int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
-    int dx = 2;          //krok i kierunek roz(s)uwania
-    int valueMin =    1; //na potrzeby funkcji animujacej
-    int valueMax = 100;  //j.w.
-    int duration = 1000; //czas trwania [roz|zsu]uwania
-    //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
-    //rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration);
-    //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
-    //rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration);
-  } //koniec Metody()
-
-
-  private void rozsunKratkiPoCzasie(int delay, final int dx, final int valueMin, final int valueMax, final int duration) {
-    /**
-    * Po czasie 'delay' rozpoczynamy [roz|zsu]uwanie
-    */
-    Handler hand1 = new Handler();
-    hand1.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        rozsunKratki(dx, valueMin, valueMax, duration);
-      }
-    },delay);
-  }
 
 
   private void pokratkuj(TextView wyraz) {
-  /**
-   Pokazanie podziału na sylaby ułożonego wyrazu (wyraz = de facto tvShownWord)
-   (uwaga - nie ma ruchu-animcji, tylko pokratkowanie)
-   Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
-   Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
-   */
+    /**
+     Pokazanie podziału na sylaby ułożonego wyrazu (wyraz = de facto tvShownWord)
+     (uwaga - nie ma ruchu-animcji, tylko pokratkowanie)
+     Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
+     Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
+     */
 
     //tworzymy tablice, zeby miec na czym dzialac:
     bKratki = new Button[MAXS];
@@ -333,24 +307,87 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     cofnijKratkiJesliWystaja();
   } //koniec Metody()
 
+
+  private void animujRozsuniecieKratek() {
+    /**
+    * Kratki sie rozjeżdżają i zjeżdżają
+    **/
+    int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
+    int dx = 2;          //krok i kierunek roz(s)uwania
+    int valueMin =    1; //na potrzeby funkcji animujacej
+    int valueMax = 100;  //j.w.
+    int duration = 1000; //czas trwania [roz|zsu]uwania
+    //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
+    rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration);
+    //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
+    //rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration);
+  } //koniec Metody()
+
+
+  private void rozsunKratkiPoCzasie(int delay, final int dx, final int valueMin, final int valueMax, final int duration) {
+    /**
+    * Po czasie 'delay' rozpoczynamy [roz|zsu]uwanie
+    */
+    Handler hand1 = new Handler();
+    hand1.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        rozsunKratki(dx, valueMin, valueMax, duration);
+      }
+    },delay);
+  }
+
+
+
+
+  Timer timer;
   private void cofnijKratkiJesliWystaja() {
   /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo */
+
+  /* Kod ponizej jest Ok (2019-05-19, ale eksperymentuje..)
     final int lidx = sylaby.getlSylab()-1;  //li - last index - dla uproszczenia
     bKratki[lidx].post(new Runnable() {
       @Override
       public void run() {
         if (bKratki[lidx].getRight()>lObszar.getRight()) {
-//          LayoutParams lparKr;
-//          lparKr = (LayoutParams) bKratki[0].getLayoutParams();
-//          lparKr.leftMargin = 20;
-//          bKratki[0].setLayoutParams(lparKr);
-
           przesunBKratkiNaLeft(400);
-
         }
       }
     });
+  */
+
+  timer = new Timer();
+  final Handler handler = new Handler();
+  //start the timer:
+
+  TimerTask task = new TimerTask() {
+    @Override
+    public void run() {
+        handler.post(new Runnable() {
+          @Override
+          public void run() {
+            odsunPokratkowanieWlewo(5);
+          }
+        });
+    }
+  };
+
+  timer.schedule(task, 0, 10);
+
   }  //koniec Metody()
+
+  private void odsunPokratkowanieWlewo(int dx) {
+
+    if ( bKratki[sylaby.getlSylab()-1].getRight()<lObszar.getRight()-20 ) {
+      timer.cancel();
+      return;
+    }
+
+    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    params.leftMargin = bKratki[0].getLeft() - dx;
+    bKratki[0].setLayoutParams(params);
+  }
+
 
   private void podepnijListenerDoKratki(final Button bSyl) {
   /** Dd obskugi klikniecia na bKratki[i];
