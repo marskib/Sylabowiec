@@ -1,6 +1,7 @@
 package pl.autyzmsoft.sylabowiec;
 
 import static android.graphics.Color.BLACK;
+import static android.graphics.Color.GREEN;
 import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -108,7 +109,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   // w Obszarze); podzbior tab. lbs
   private static MojTV[] lbsRob;
 
-  public Button[] bKratki; //tablica na 'pokratkowane' sylaby (na zobrazowanie podzialu na sylaby)
+  public static Button[] bKratki; //tablica na 'pokratkowane' sylaby (na zobrazowanie podzialu na sylaby)
 
   public static File katalogSD;                 //katalog z obrazkami na SD (internal i external)
 
@@ -1621,6 +1622,26 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /* jezeli nie ulozony - sciesniam/przesuwam etykiety                         */
     /* ***************************************************************************/
 
+
+
+    MojTimer mTimer = new MojTimer(40,100);
+
+    Runnable procedurka = new Runnable() {
+      @Override
+      public void run() {
+        if (bKratki[0].getCurrentTextColor()==GREEN)  bKratki[0].setTextColor(RED);
+        else bKratki[0].setTextColor(GREEN);
+
+      }
+    };
+
+    mTimer.setOnTimer(procedurka);
+    mTimer.start();
+
+
+
+/*  2019.05.27 - ponizej originalny kod metody - szukanie niewlasciwej sylaby:
+
     if (ileWObszarze() == 0 && (tvShownWord.getVisibility() != VISIBLE)) {
       return; //kiedy nic nie ma w Obszarze - nie robie nic
     }
@@ -1656,6 +1677,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       przesunBKratkiNaLeft(dx);
     }
 
+*/
 
   }  //koniec Metody()
 
@@ -2550,6 +2572,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   public void bHintOnClick(View view) {
+
     /**
     Podpowiada kolejną sylabe do ulozenia
     Idea algorytmu - iteruje po obiekcie 'sylaby i wskazuje 1-sza sylabe nie na swoim miejscu w Obszarze
