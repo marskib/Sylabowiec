@@ -109,7 +109,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   // w Obszarze); podzbior tab. lbs
   private static MojTV[] lbsRob;
 
-  public static Button[] bKratki; //tablica na 'pokratkowane' sylaby (na zobrazowanie podzialu na sylaby)
+  public Button[] bKratki; //tablica na 'pokratkowane' sylaby (na zobrazowanie podzialu na sylaby)
 
   public static File katalogSD;                 //katalog z obrazkami na SD (internal i external)
 
@@ -340,8 +340,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   Timer timer;
-  private void cofnijKratkiJesliWystaja() {
-  /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo */
+  private int cofnijKratkiJesliWystaja() {
+  /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
+   * na zewnatrz przekazywany jest czas trwania operacji; 0 - nie wykonalo sie nic
+   * Czas jest potrzebny do zaplanowania wlasciwego momentu rozpoczecia kolejnej operacji (rozsuwania)
+   */
+
 
 /*
     //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
@@ -356,7 +360,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       }
     });
 */
-
+    int czasTrwania = 0;
     //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
     final Handler handler = new Handler();
     //start the timer:
@@ -1624,23 +1628,54 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
 
-    MojTimer mTimer = new MojTimer(40,100);
+    MojTimer mTimer = new MojTimer(20,60);
 
+//    Runnable procedurka = new Runnable() {
+//      @Override
+//      public void run() {
+//        if (bKratki[0].getCurrentTextColor()==GREEN)  bKratki[0].setTextColor(RED);
+//        else bKratki[0].setTextColor(GREEN);
+//
+//      }
+//    };
+
+
+    pokratkuj(tvShownWord);
+
+    //procedurka rozsuwajaca -> do przekazania do mTimera:
     Runnable procedurka = new Runnable() {
       @Override
       public void run() {
-        if (bKratki[0].getCurrentTextColor()==GREEN)  bKratki[0].setTextColor(RED);
-        else bKratki[0].setTextColor(GREEN);
+        //rozsuniecia kratek:
+
+        int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
+        for (int i = 0; i<liter; i++) {
+          LayoutParams lPar;
+          lPar = (LayoutParams) bKratki[i].getLayoutParams();
+
+          //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
+          //if (i==0) {
+          //  lPar.leftMargin -= dx;
+          //}
+
+          lPar.rightMargin += 2;//dx;
+          bKratki[i].setLayoutParams(lPar);
+        }
 
       }
     };
+
+    //Animacja rozsuniecia kratek:
+    //animujRozsuniecieKratek();
 
     mTimer.setOnTimer(procedurka);
     mTimer.start();
 
 
+/**
+ * ****************************************************************************************
+ *  2019.05.27 - ponizej originalny kod metody bShiftLeftOnClick() - przywrocic!!!! :
 
-/*  2019.05.27 - ponizej originalny kod metody - szukanie niewlasciwej sylaby:
 
     if (ileWObszarze() == 0 && (tvShownWord.getVisibility() != VISIBLE)) {
       return; //kiedy nic nie ma w Obszarze - nie robie nic
