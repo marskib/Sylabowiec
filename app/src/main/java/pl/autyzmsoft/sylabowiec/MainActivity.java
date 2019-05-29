@@ -1,7 +1,6 @@
 package pl.autyzmsoft.sylabowiec;
 
 import static android.graphics.Color.BLACK;
-import static android.graphics.Color.GREEN;
 import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -40,6 +39,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -247,6 +247,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Jak nie ma pokratkowania - kratkujemy:
     pokratkuj(tvShownWord);
     //Animacja rozsuniecia kratek:
+    try {
+      wait(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     animujRozsuniecieKratek();
     //
     //Zeby Marcin nie klikal w trakcie animacji:
@@ -340,11 +345,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   Timer timer;
-  private int cofnijKratkiJesliWystaja() {
+  //Na zewnatrz przekazywany jest czas trwania operacji; (prawie) 0 - nie wykonalo sie nic
+  //Czas jest potrzebny do zaplanowania wlasciwego momentu rozpoczecia kolejnej operacji (rozsuwania)
+  private long startCofaniaKratekTime;        //kiedy (czas) rozpoczelismy cofanie kratek (if any)
+  private long czasCofaniaKratekDeltaTime;    //jak dlugo trwalo cofanie (if any)
+
+  private void cofnijKratkiJesliWystaja() {
   /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
-   * na zewnatrz przekazywany jest czas trwania operacji; 0 - nie wykonalo sie nic
-   * Czas jest potrzebny do zaplanowania wlasciwego momentu rozpoczecia kolejnej operacji (rozsuwania)
-   */
+  */
 
 
 /*
@@ -360,7 +368,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       }
     });
 */
-    int czasTrwania = 0;
+
     //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
     final Handler handler = new Handler();
     //start the timer:
@@ -377,13 +385,19 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     };
     timer = new Timer();
     timer.schedule(task, 0, 10);
+    startCofaniaKratekTime = SystemClock.elapsedRealtime() + 10; //rejestrujemy czas rozpoczecia operacji cofania kratek
   }  //koniec Metody()
 
 
   private void odsunPokratkowanieWlewo(int dx) {
+  /**
+     Gdyby po pokratkowaniu kratki wylazily na prawo poza Obszar - cofamy je w lewo, az ostatnia wskoczy do Obszaru
+  */
 
+    //Jezeli najbardziej skrajna prawa kratka jest [juz] w Obszarze, to [nie trzeba|konczymy] odsuwanie w Lewo:
     if ( bKratki[sylaby.getlSylab()-1].getRight()<lObszar.getRight()-20 ) {
       timer.cancel();
+      czasCofaniaKratekDeltaTime = SystemClock.elapsedRealtime() - startCofaniaKratekTime;
       return;
     }
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
