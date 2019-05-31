@@ -130,7 +130,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   //tablica zawierajaca (oryginalne) litery wyrazu; onomastyka: lbs = 'labels'
   static MediaPlayer mp = null;
 
-
   /*Ponizej, do konca metody onRequestPermissionResult() kod zapewniajacy dostep do kart SD: */
   final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
@@ -165,7 +164,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   ZmienneGlobalne mGlob;
 
   //na przesuwanie w Lewo etykiet z Obszaru (zeby zrobic miejsce z prawej na dalsze ukladanie);
-  // przesuniecie w lewo calego Wyrazu; zakladam,ze klawisz czly czas obecny na ekranie
+  // przesuniecie w lewo calego Wyrazu; zakladam,ze klawisz caly czas obecny na ekranie
   KombinacjaOpcji currOptions, newOptions;
 
   Animation animShakeShort, animShakeLong;
@@ -252,7 +251,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    animujRozsuniecieKratek();
+    animujRozsuniecieKratekWPrawo();
     //
     //Zeby Marcin nie klikal w trakcie animacji:
     int chwila = 3000; //na razie doswiadczalnie...
@@ -310,27 +309,52 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
     } //for
     //Jesli ostatnia kratka wystaje zz bandę, to cofamy:
-    cofnijKratkiJesliWystaja();
+    cofnijKratkiJesliWystajom();
   } //koniec Metody()
 
 
-  private void animujRozsuniecieKratek() {
+  //kierunki ROZsuwania kratek (startowe!):
+  final static int W_PRAWO = 0;
+  final static int W_LEWO  = 1;
+
+  private void animujRozsuniecieKratekWPrawo() {
     /**
-    * Kratki sie rozjeżdżają i zjeżdżają
+    * Kratki sie rozjeżdżają w Prawo i zjeżdżają
     **/
     int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
     int dx = 2;          //krok i kierunek roz(s)uwania
     int valueMin =    1; //na potrzeby funkcji animujacej
     int valueMax = 100;  //j.w.
     int duration = 1000; //czas trwania [roz|zsu]uwania
+
     //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
-    rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration);
+    rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration, W_PRAWO);
     //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
-    //rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration);
+    rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration, W_PRAWO);
   } //koniec Metody()
 
 
-  private void rozsunKratkiPoCzasie(int delay, final int dx, final int valueMin, final int valueMax, final int duration) {
+
+  private void animujRozsuniecieKratekWLewo() {
+    /**
+     * Kratki sie rozjeżdżają w Prawo i zjeżdżają
+     **/
+    int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
+    int dx = 2;          //krok i kierunek roz(s)uwania
+    int valueMin =    1; //na potrzeby funkcji animujacej
+    int valueMax = 100;  //j.w.
+    int duration = 1000; //czas trwania [roz|zsu]uwania
+
+    //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
+    rozsunKratkiPoCzasie(delay, dx, valueMin, valueMax, duration, W_LEWO);
+    //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
+    rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration, W_LEWO);
+  } //koniec Metody()
+
+
+
+
+  private void rozsunKratkiPoCzasie(int delay, final int dx, final int valueMin, final int valueMax, final int duration, final int kierunek) {
     /**
     * Po czasie 'delay' rozpoczynamy [roz|zsu]uwanie
     */
@@ -338,7 +362,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     hand1.postDelayed(new Runnable() {
       @Override
       public void run() {
-        rozsunKratki(dx, valueMin, valueMax, duration);
+        if (kierunek==W_PRAWO)
+          rozsunKratkiRight(dx, valueMin, valueMax, duration);
+        else
+          rozsunKratkiLeft(dx, valueMin, valueMax, duration);
       }
     },delay);
   } //koniec Metody()
@@ -350,8 +377,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private long startCofaniaKratekTime;        //kiedy (czas) rozpoczelismy cofanie kratek (if any)
   private long czasCofaniaKratekDeltaTime;    //jak dlugo trwalo cofanie (if any)
 
-  private void cofnijKratkiJesliWystaja() {
+  private void cofnijKratkiJesliWystajom() {
   /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
+   * Wykona sie nawet, jesli nic nie wystaje - dzieki temu mozliwa reakcja czy po cofnieciu (if any)
+   * dalej rozsuwac w lewo czy prawo
   */
 
 
@@ -400,45 +429,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       timer.cancel();
       czasCofaniaKratekDeltaTime = SystemClock.elapsedRealtime() - startCofaniaKratekTime;
 
-      if (bKratki[lidx].getRight()<lObszar.getRight()-200) {
+      if (bKratki[lidx].getRight()<lObszar.getRight()-300) {
         //ida w prawo:
-        animujRozsuniecieKratek();
+        animujRozsuniecieKratekWPrawo();
       }
-      //ida w lewo
+      //ida w lewo:
       else {
-        ValueAnimator anim = ValueAnimator.ofInt(1,3000);
-        anim.setDuration(2000);
-
-        anim.addUpdateListener(new AnimatorUpdateListener() {
-          @Override
-          public void onAnimationUpdate(final ValueAnimator animation) {
-            //sledzenie - na klawiszu:
-            //int wartosc = (int) animation.getAnimatedValue();
-            //bUpperLower.setText(Integer.toString(wartosc));
-            //koniec sledzenia
-
-            int dx = 1;
-
-            int liter = sylaby.getlSylab() - 1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
-            for (int i = liter; i > -1; i--) {
-              LayoutParams lPar;
-              lPar = (LayoutParams) bKratki[i].getLayoutParams();
-
-
-              //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
-              //if (i==0) {
-              //  lPar.leftMargin -= dx;
-              //}
-
-
-              //lPar.rightMargin -= dx;//+= dx;
-              lPar.rightMargin -= dx;//+= dx;
-              bKratki[i].setLayoutParams(lPar);
-            }
-          }
-        });
-        anim.start();
-      };
+        animujRozsuniecieKratekWLewo();
+      }
       return;
     };
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -1418,45 +1416,107 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
   } //koniec Metody()
 
-  private void rozsunKratki(final int dx, final int valueMin, final int valueMax, int czas) {
+  private void rozsunKratkiRight(final int dx, final int valueMin, final int valueMax, int czas) {
     /**
      * [Rozsu/Zsu]wanie "właściwe":
      * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
      * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
-     * pozostale paramsy - potrzebne dla obiektu ValueAnimator
-    */
+     * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
+     **/
     ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
     anim.setDuration(czas);
 
     anim.addUpdateListener(new AnimatorUpdateListener() {
-    @Override
-    public void onAnimationUpdate(final ValueAnimator animation) {
-      //sledzenie - na klawiszu:
-      //int wartosc = (int) animation.getAnimatedValue();
-      //bUpperLower.setText(Integer.toString(wartosc));
-      //koniec sledzenia
-      int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
-      for (int i = 0; i<liter; i++) {
-        LayoutParams lPar;
-        lPar = (LayoutParams) bKratki[i].getLayoutParams();
+      @Override
+      public void onAnimationUpdate(final ValueAnimator animation) {
+        int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
+        for (int i = 0; i<liter; i++) {
+          LayoutParams lPar;
+          lPar = (LayoutParams) bKratki[i].getLayoutParams();
 
-        //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
-        //if (i==0) {
-        //  lPar.leftMargin -= dx;
-        //}
+          //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
+          //if (i==0) {
+          //  lPar.leftMargin -= dx;
+          //}
 
-        lPar.rightMargin += dx;
-        bKratki[i].setLayoutParams(lPar);
+          lPar.rightMargin += dx;
+          bKratki[i].setLayoutParams(lPar);
+        }
       }
+    });
+    anim.start(); //startujemy animację
+  } //koniec Metody()
 
 
-      //odsuniecie, jesli wyszlo za Obszar (na razie eksperymentalne):
-//      if (bKratki[liter].getRight()>lObszar.getRight()) {
-//        bShiftLeft.callOnClick();
-//      }
+
+  private void rozsunKratkiLeft(final int dx, final int valueMin, final int valueMax, int czas) {
+  /**
+   * [Rozsu/Zsu]wanie "właściwe":
+   * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
+   * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
+   * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
+   **/
+    ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
+    anim.setDuration(czas);
+
+    anim.addUpdateListener(new AnimatorUpdateListener() {
+      @Override
+      public void onAnimationUpdate(final ValueAnimator animation) {
+
+        int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
+/*          for (int i = 0; i<liter+1; i++) {
+              LayoutParams lPar;
+              lPar = (LayoutParams) bKratki[i].getLayoutParams();
+
+              //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
+//              if (i==2) {
+//                lPar.leftMargin -= dx;
+//              }
+
+              lPar.leftMargin -= dx;
+              bKratki[i].setLayoutParams(lPar);
+          }*/
+          LayoutParams lPar;
+          lPar = (LayoutParams) bKratki[1].getLayoutParams();
+          lPar.leftMargin -= dx;
+          bKratki[1].setLayoutParams(lPar);
+
+          bKratki[1].post(new Runnable() {
+            @Override
+            public void run() {
+              LayoutParams lParWew;
+              lParWew = (LayoutParams) bKratki[1].getLayoutParams();
+              lParWew.rightMargin += 1*dx;
+              bKratki[1].setLayoutParams(lParWew);
+            }
+          });
+
+
+
+        bKratki[0].post(new Runnable() {
+          @Override
+          public void run() {
+            LayoutParams lParWew;
+            lParWew = (LayoutParams) bKratki[0].getLayoutParams();
+            lParWew.leftMargin -= 2*dx;
+            bKratki[0].setLayoutParams(lParWew);
+          }
+        });
+
+        bKratki[0].post(new Runnable() {
+          @Override
+          public void run() {
+            LayoutParams lParWew;
+            lParWew = (LayoutParams) bKratki[0].getLayoutParams();
+            lParWew.rightMargin += 2*dx;
+            bKratki[0].setLayoutParams(lParWew);
+          }
+        });
+
 
     }
     });
+
     anim.start(); //startujemy animację
   } //koniec Metody()
 
@@ -2279,7 +2339,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         handler.postDelayed(new Runnable() {
           @Override
           public void run() {
-            rozsunKratki(2,1,100,1000);
+            rozsunKratkiRight(2,1,100,1000);
           }
         },700);
       }
