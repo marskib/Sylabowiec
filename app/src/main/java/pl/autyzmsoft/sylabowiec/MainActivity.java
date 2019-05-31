@@ -395,11 +395,52 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   */
 
     //Jezeli najbardziej skrajna prawa kratka jest [juz] w Obszarze, to [nie trzeba|konczymy] odsuwanie w Lewo:
-    if ( bKratki[sylaby.getlSylab()-1].getRight()<lObszar.getRight()-20 ) {
+    int lidx = sylaby.getlSylab()-1; //last index - pomocnicza
+    if ( bKratki[lidx].getRight()<lObszar.getRight()-20 ) {
       timer.cancel();
       czasCofaniaKratekDeltaTime = SystemClock.elapsedRealtime() - startCofaniaKratekTime;
+
+      if (bKratki[lidx].getRight()<lObszar.getRight()-200) {
+        //ida w prawo:
+        animujRozsuniecieKratek();
+      }
+      //ida w lewo
+      else {
+        ValueAnimator anim = ValueAnimator.ofInt(1,3000);
+        anim.setDuration(2000);
+
+        anim.addUpdateListener(new AnimatorUpdateListener() {
+          @Override
+          public void onAnimationUpdate(final ValueAnimator animation) {
+            //sledzenie - na klawiszu:
+            //int wartosc = (int) animation.getAnimatedValue();
+            //bUpperLower.setText(Integer.toString(wartosc));
+            //koniec sledzenia
+
+            int dx = 1;
+
+            int liter = sylaby.getlSylab() - 1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
+            for (int i = liter; i > -1; i--) {
+              LayoutParams lPar;
+              lPar = (LayoutParams) bKratki[i].getLayoutParams();
+
+
+              //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
+              //if (i==0) {
+              //  lPar.leftMargin -= dx;
+              //}
+
+
+              //lPar.rightMargin -= dx;//+= dx;
+              lPar.rightMargin -= dx;//+= dx;
+              bKratki[i].setLayoutParams(lPar);
+            }
+          }
+        });
+        anim.start();
+      };
       return;
-    }
+    };
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     params.leftMargin = bKratki[0].getLeft() - dx;
     bKratki[0].setLayoutParams(params);
@@ -1682,9 +1723,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Animacja rozsuniecia kratek:
     //animujRozsuniecieKratek();
 
+  /* rozsuwanie WLASNYM timerem:
     mTimer.setOnTimer(procedurka);
     mTimer.start();
-
+  */
 
 /**
  * ****************************************************************************************
