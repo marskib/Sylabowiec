@@ -39,7 +39,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -372,10 +371,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   Timer timer;
-  //Na zewnatrz przekazywany jest czas trwania operacji; (prawie) 0 - nie wykonalo sie nic
-  //Czas jest potrzebny do zaplanowania wlasciwego momentu rozpoczecia kolejnej operacji (rozsuwania)
-  private long startCofaniaKratekTime;        //kiedy (czas) rozpoczelismy cofanie kratek (if any)
-  private long czasCofaniaKratekDeltaTime;    //jak dlugo trwalo cofanie (if any)
 
   private void cofnijKratkiJesliWystajom() {
   /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
@@ -414,7 +409,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     };
     timer = new Timer();
     timer.schedule(task, 0, 10);
-    startCofaniaKratekTime = SystemClock.elapsedRealtime() + 10; //rejestrujemy czas rozpoczecia operacji cofania kratek
   }  //koniec Metody()
 
 
@@ -427,18 +421,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     int lidx = sylaby.getlSylab()-1; //last index - pomocnicza
     if ( bKratki[lidx].getRight()<lObszar.getRight()-20 ) {
       timer.cancel();
-      czasCofaniaKratekDeltaTime = SystemClock.elapsedRealtime() - startCofaniaKratekTime;
-
-      if (bKratki[lidx].getRight()<lObszar.getRight()-300) {
-        //ida w prawo:
+      //Teraz w zalezbosci od tego, gdzie jest miejsce, rozsuwamy pokratkowanie:
+      if (bKratki[lidx].getRight()<lObszar.getRight()-300)
         animujRozsuniecieKratekWPrawo();
-      }
-      //ida w lewo:
-      else {
+      else
         animujRozsuniecieKratekWLewo();
-      }
       return;
-    };
+    }
+    //przesuwanie (wlasciwe) pokratkowania w lewo
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     params.leftMargin = bKratki[0].getLeft() - dx;
     bKratki[0].setLayoutParams(params);
@@ -1476,6 +1466,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
               lPar.leftMargin -= dx;
               bKratki[i].setLayoutParams(lPar);
           }*/
+
+
+
+          /* 2-019-06-01 - to jest OK - wzorzec dla petli for:
+
           LayoutParams lPar;
           lPar = (LayoutParams) bKratki[1].getLayoutParams();
           lPar.leftMargin -= dx;
@@ -1490,7 +1485,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
               bKratki[1].setLayoutParams(lParWew);
             }
           });
-
 
 
         bKratki[0].post(new Runnable() {
@@ -1512,6 +1506,61 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             bKratki[0].setLayoutParams(lParWew);
           }
         });
+        koniec wzorca dla petli for */
+
+          final int przOst = sylaby.getlSylab()-2; //indeks przedOstatniej kratki
+          int przebieg=0; //ktory przebieg petli
+
+          for (int i=przOst; i>-1; i--) {
+            przebieg += 1;
+
+            final int r=i;
+            final int fp=przebieg;
+            bKratki[i].post(new Runnable() {
+              @Override
+              public void run() {
+                LayoutParams lPar;
+                lPar = (LayoutParams) bKratki[r].getLayoutParams();
+                lPar.leftMargin -= fp*dx;
+                bKratki[r].setLayoutParams(lPar);
+              }
+            });
+
+
+              final int m=i;
+              bKratki[m].post(new Runnable() {
+                  @Override
+                  public void run() {
+                      LayoutParams lParWew;
+                      lParWew = (LayoutParams) bKratki[m].getLayoutParams();
+                      lParWew.rightMargin += fp*dx;
+                      bKratki[m].setLayoutParams(lParWew);
+                  }
+              });
+
+//              if (i>1) {
+//                final int k=i-1;
+//                bKratki[k].post(new Runnable() {
+//                  @Override
+//                  public void run() {
+//                    LayoutParams lParWew;
+//                    lParWew = (LayoutParams) bKratki[k].getLayoutParams();
+//                    lParWew.leftMargin -= 2*dx;
+//                    bKratki[k].setLayoutParams(lParWew);
+//                  }
+//                });
+//
+//                bKratki[k].post(new Runnable() {
+//                  @Override
+//                  public void run() {
+//                    LayoutParams lParWew;
+//                    lParWew = (LayoutParams) bKratki[k].getLayoutParams();
+//                    lParWew.rightMargin += 2*dx;
+//                    bKratki[k].setLayoutParams(lParWew);
+//                  }
+//                });
+//              } //if
+          } //for
 
 
     }
