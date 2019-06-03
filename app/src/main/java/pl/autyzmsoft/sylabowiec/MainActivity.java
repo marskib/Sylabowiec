@@ -309,8 +309,88 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
     } //for
     //Jesli ostatnia kratka wystaje zz bandę, to cofamy:
-    cofnijKratkiJesliWystajom();
+    final int lidx = sylaby.getlSylab()-1;     //last index - pomocnicza
+    bKratki[lidx].post(new Runnable() {
+      @Override
+      public void run() {
+        int pkK  = bKratki[lidx].getRight(); //prawy kraniec Kratki - pomocnicza
+        int pkO  = lObszar.getRight();       //prawy kraniec Obszaru - pomocnicza
+        if (pkK > pkO)
+          odsunPokratkowanieWlewoWlasyTimer(pkK-pkO, 5);
+      }
+    });
+
+
+
+
+    //cofnijKratkiJesliWystajom();
   } //koniec Metody()
+
+
+
+  private void odsunPokratkowanieWlewoWlasyTimer(int oIle, final int dx) {
+
+    int ileIter = oIle % dx;
+
+    MojTimer mTimer = new MojTimer(20,ileIter);
+    //procedurka rozsuwajaca -> do przekazania do mTimera:
+
+    Runnable procedurka = new Runnable() {
+      @Override
+      public void run() {
+        //przesuwanie kratek w lewo:
+
+          LayoutParams lPar;
+          lPar = (LayoutParams) bKratki[0].getLayoutParams();
+          lPar.leftMargin += -dx;
+          bKratki[0].setLayoutParams(lPar);
+        }
+    };
+
+    //rozsuwanie WLASNYM timerem:
+    mTimer.setOnTimer(procedurka);
+    mTimer.start();
+  } //koniec Metody()
+
+
+  private void cofnijKratkiJesliWystajom() {
+    /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
+     * Wykona sie nawet, jesli nic nie wystaje - dzieki temu mozliwa reakcja czy po cofnieciu (if any)
+     * dalej rozsuwac w lewo czy prawo
+     */
+
+
+/*
+    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
+    final int lidx = sylaby.getlSylab()-1;  //lidx - last index - dla uproszczenia
+    bKratki[lidx].post(new Runnable() {
+      @Override
+      public void run() {
+        int wystaje = bKratki[lidx].getRight()-lObszar.getRight();
+        if (wystaje>0) {
+          przesunBKratkiNaLeft(800);
+        }
+      }
+    });
+*/
+
+    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
+    final Handler handler = new Handler();
+    //start the timer:
+    TimerTask task = new TimerTask() {
+      @Override
+      public void run() {
+        handler.post(new Runnable() {
+          @Override
+          public void run() {
+            odsunPokratkowanieWlewo(5);
+          }
+        });
+      }
+    };
+    timer = new Timer();
+    timer.schedule(task, 0, 10);
+  }  //koniec Metody()
 
 
   //kierunki ROZsuwania kratek (startowe!):
@@ -375,44 +455,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   Timer timer;
 
-  private void cofnijKratkiJesliWystajom() {
-  /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
-   * Wykona sie nawet, jesli nic nie wystaje - dzieki temu mozliwa reakcja czy po cofnieciu (if any)
-   * dalej rozsuwac w lewo czy prawo
-  */
 
-
-/*
-    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
-    final int lidx = sylaby.getlSylab()-1;  //lidx - last index - dla uproszczenia
-    bKratki[lidx].post(new Runnable() {
-      @Override
-      public void run() {
-        int wystaje = bKratki[lidx].getRight()-lObszar.getRight();
-        if (wystaje>0) {
-          przesunBKratkiNaLeft(800);
-        }
-      }
-    });
-*/
-
-    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
-    final Handler handler = new Handler();
-    //start the timer:
-    TimerTask task = new TimerTask() {
-      @Override
-      public void run() {
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              odsunPokratkowanieWlewo(5);
-            }
-          });
-      }
-    };
-    timer = new Timer();
-    timer.schedule(task, 0, 10);
-  }  //koniec Metody()
 
 
   private void odsunPokratkowanieWlewo(int dx) {
@@ -2448,14 +2491,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     tvShownWord.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        bAnimOnClick(view);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            rozsunKratkiRight(2,1,100,1000);
-          }
-        },700);
+        pokratkuj(tvShownWord);
       }
     });
 
