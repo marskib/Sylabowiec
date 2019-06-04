@@ -48,4 +48,6 @@ public class MojTimer  {
     }  //koniec Metody()
 
 
+
+
 }

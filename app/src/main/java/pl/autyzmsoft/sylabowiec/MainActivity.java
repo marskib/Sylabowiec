@@ -315,12 +315,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       public void run() {
         int pkK  = bKratki[lidx].getRight(); //prawy kraniec Kratki - pomocnicza
         int pkO  = lObszar.getRight();       //prawy kraniec Obszaru - pomocnicza
-        if (pkK > pkO)
-          odsunPokratkowanieWlewoWlasyTimer(pkK-pkO, 5);
+        if (pkK > pkO) {
+          int szer=bKratki[lidx-1].getWidth();
+          odsunPokratkowanieWlewoWlasyTimer(szer,5);
+        }
       }
     });
-
-
 
 
     //cofnijKratkiJesliWystajom();
@@ -328,24 +328,23 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
 
-  private void odsunPokratkowanieWlewoWlasyTimer(int oIle, final int dx) {
+  private void odsunPokratkowanieWlewoWlasyTimer(int oIle, final int skok) {
 
-    int ileIter = oIle % dx;
+    final int lIter = (oIle/skok)+1; //lixczba Iteracji do wykonania
 
-    MojTimer mTimer = new MojTimer(20,ileIter);
-    //procedurka rozsuwajaca -> do przekazania do mTimera:
+    final MojTimer mTimer = new MojTimer(20, lIter);
 
+    //Procedurka rozsuwajaca -> do przekazania do mTimera:
     Runnable procedurka = new Runnable() {
       @Override
       public void run() {
-        //przesuwanie kratek w lewo:
-
+      //przesuwanie kratek w lewo:
           LayoutParams lPar;
           lPar = (LayoutParams) bKratki[0].getLayoutParams();
-          lPar.leftMargin += -dx;
+          lPar.leftMargin += -skok;
           bKratki[0].setLayoutParams(lPar);
         }
-    };
+      }; //koniec Runnable
 
     //rozsuwanie WLASNYM timerem:
     mTimer.setOnTimer(procedurka);
@@ -354,7 +353,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   private void cofnijKratkiJesliWystajom() {
-    /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
+    /** Jesli po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
      * Wykona sie nawet, jesli nic nie wystaje - dzieki temu mozliwa reakcja czy po cofnieciu (if any)
      * dalej rozsuwac w lewo czy prawo
      */
@@ -1201,7 +1200,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "0123456789AB";
     //currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
     //currWord   = "1hrząszcz-2hrząszcz-3hrząszcz-4hrząszcz-5hrząszcz-6hrząszcz";
-    //currWord   = "nie-za-po-mi-naj-ki";
     //currWord     = "Mi-ko-łaj";
     //currWord     = "chrząszcz";
     //currWord     = "a-a-a-a-a-a";
@@ -1210,6 +1208,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord = "pies1";
     //currWord = "ryż";
     //currWord = "ża-rów-ka";
+    //currWord = "po-ma-rań-czo-wy";
+    currWord   = "nie-za-po-mi-naj-ki";
 
 
 
