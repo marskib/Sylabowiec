@@ -246,12 +246,13 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Jak nie ma pokratkowania - kratkujemy:
     pokratkuj(tvShownWord);
     //Animacja rozsuniecia kratek:
-    try {
-      wait(1000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    animujRozsuniecieKratekWPrawo();
+    //wylaczam 2019-06-08
+/*    new Handler().postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        animujRozsuniecieKratekWPrawo();
+      }
+    },1000);
     //
     //Zeby Marcin nie klikal w trakcie animacji:
     int chwila = 3000; //na razie doswiadczalnie...
@@ -260,6 +261,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     unieczynnijNaChwile(bDalej, chwila); //uwaga -bDalej jak sie kliknie w trakcie animacji, to sie zawali...
     unieczynnijNaChwile(bAgain, chwila);
     unieczynnijNaChwile(bAgain1, chwila);
+    */
   } //koniec Metody()
 
 
@@ -311,6 +313,75 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //Jesli ostatnia kratka wystaje zz bandę, to cofamy:
     cofnijKratkiJesliWystajom();
   } //koniec Metody()
+
+
+
+  private Timer timer;
+  private void cofnijKratkiJesliWystajom() {
+    /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
+     * Wykona sie nawet, jesli nic nie wystaje - dzieki temu mozliwa reakcja czy po cofnieciu (if any)
+     * dalej rozsuwac w lewo czy prawo
+     */
+
+
+/*
+    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
+    final int lidx = sylaby.getlSylab()-1;  //lidx - last index - dla uproszczenia
+    bKratki[lidx].post(new Runnable() {
+      @Override
+      public void run() {
+        int wystaje = bKratki[lidx].getRight()-lObszar.getRight();
+        if (wystaje>0) {
+          przesunBKratkiNaLeft(800);
+        }
+      }
+    });
+*/
+
+    //To ponizej też jest ok 2019-05-19, alternatywa dla kodu na gorze...
+    final Handler handler = new Handler();
+    //start the timer:
+    TimerTask task = new TimerTask() {
+      @Override
+      public void run() {
+        handler.post(new Runnable() {
+          @Override
+          public void run() {
+            odsunPokratkowanieWlewo(5);
+          }
+        });
+      }
+    };
+    timer = new Timer();
+    timer.schedule(task, 0, 10);
+  }  //koniec Metody()
+
+
+  private void odsunPokratkowanieWlewo(int dx) {
+    /**
+     Gdyby po pokratkowaniu kratki wylazily na prawo poza Obszar - cofamy je w lewo, az ostatnia wskoczy do Obszaru
+     */
+    //Jezeli najbardziej skrajna prawa kratka jest [juz] w Obszarze, to [nie trzeba|konczymy] odsuwanie w Lewo:
+    int lidx = sylaby.getlSylab()-1;     //last index - pomocnicza
+    int pkK  = bKratki[lidx].getRight(); //prawy kraniec Kratki - pomocnicza
+    int pkO  = lObszar.getRight();       //prawy kraniec Obszaru - pomocnicza
+    if (pkK < pkO-20) {
+      //konczymy odsuwanie:
+      timer.cancel();
+      //
+      //Teraz w zalezbosci od tego, gdzie jest miejsce, rozsuwamy pokratkowanie:
+      //chwilowo wylaczam 2019-06-09:
+//      if (pkK < (pkO - 300))
+//        animujRozsuniecieKratekWPrawo();
+//      else
+//        animujRozsuniecieKratekWLewo();
+      return;
+    }
+    //odsuwanie wlasciwe pokratkowania w lewo:
+    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    params.leftMargin = bKratki[0].getLeft() - dx;
+    bKratki[0].setLayoutParams(params);
+  }  //koniec Metody()
 
 
   //kierunki ROZsuwania kratek (startowe!):
@@ -373,72 +444,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
 
-  Timer timer;
-
-  private void cofnijKratkiJesliWystajom() {
-  /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
-   * Wykona sie nawet, jesli nic nie wystaje - dzieki temu mozliwa reakcja czy po cofnieciu (if any)
-   * dalej rozsuwac w lewo czy prawo
-  */
 
 
-/*
-    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
-    final int lidx = sylaby.getlSylab()-1;  //lidx - last index - dla uproszczenia
-    bKratki[lidx].post(new Runnable() {
-      @Override
-      public void run() {
-        int wystaje = bKratki[lidx].getRight()-lObszar.getRight();
-        if (wystaje>0) {
-          przesunBKratkiNaLeft(800);
-        }
-      }
-    });
-*/
-
-    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
-    final Handler handler = new Handler();
-    //start the timer:
-    TimerTask task = new TimerTask() {
-      @Override
-      public void run() {
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              odsunPokratkowanieWlewo(5);
-            }
-          });
-      }
-    };
-    timer = new Timer();
-    timer.schedule(task, 0, 10);
-  }  //koniec Metody()
 
 
-  private void odsunPokratkowanieWlewo(int dx) {
-  /**
-     Gdyby po pokratkowaniu kratki wylazily na prawo poza Obszar - cofamy je w lewo, az ostatnia wskoczy do Obszaru
-  */
-    //Jezeli najbardziej skrajna prawa kratka jest [juz] w Obszarze, to [nie trzeba|konczymy] odsuwanie w Lewo:
-    int lidx = sylaby.getlSylab()-1;     //last index - pomocnicza
-    int pkK  = bKratki[lidx].getRight(); //prawy kraniec Kratki - pomocnicza
-    int pkO  = lObszar.getRight();       //prawy kraniec Obszaru - pomocnicza
-    if (pkK < pkO-20) {
-      //konczymy odsuwanie:
-      timer.cancel();
-      //
-      //Teraz w zalezbosci od tego, gdzie jest miejsce, rozsuwamy pokratkowanie:
-      if (pkK < pkO-300)
-        animujRozsuniecieKratekWPrawo();
-      else
-        animujRozsuniecieKratekWLewo();
-      return;
-    }
-    //odsuwanie wlasciwe pokratkowania w lewo:
-    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    params.leftMargin = bKratki[0].getLeft() - dx;
-    bKratki[0].setLayoutParams(params);
-  }  //koniec Metody()
 
 
   private void podepnijListenerDoKratki(final Button bSyl) {
@@ -2445,6 +2454,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     });
 
     //Listener na click na tvShownWord (dzielenie na sylaby(pokratkowanie) i po chwili rozsuniecie):
+/* wylaczam na razie -2019.06.08
     tvShownWord.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -2458,6 +2468,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         },700);
       }
     });
+*/
 
   } //koniec Metody()
 
