@@ -268,10 +268,21 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }
 
   public void bAnimOnClick(View view) {
-    /**
-     * Pokratkowanie/Odkraktkowanie i (ewentualna) animacja
-     */
-    StanBAnim stanKratek = bAnimPobierzStan_i_UstalNowy();
+  /**
+   * Pokratkowanie/Odkraktkowanie i (ewentualna) animacja
+  **/
+
+    //Parametry dla animacji:
+    final int delay = 200;     //kiedy (po wywolaniu procedury) rozpoczynamy [rozsu/zsu]wamie
+    final int dx    = 2;       //krok i kierunek roz(s)uwania
+    final int valueMin = 1;    //na potrzeby funkcji animujacej
+    final int valueMax = 100;  //j.w.
+    final int duration = 1000; //czas trwania [roz|zsu]uwania
+
+
+    //Jaki jest akt. stan pokratkowania/bAnim - na tej podstawie odp. akcja:
+    StanBAnim stanKratek;
+    stanKratek = bAnimPobierzStan_i_UstalNowy();
 
     if (stanKratek == StanBAnim.ZSUNIETE) {
       usunPokratkowanie();
@@ -280,6 +291,28 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     if (stanKratek == StanBAnim.BEZ_KRATEK) {
       pokratkuj(tvShownWord);
+      return;
+    }
+
+    if (stanKratek == StanBAnim.POKRATKOWANE) {
+      //Animacja rozsuniecia kratek:
+      new Handler().postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        rozsunKratki(+dx, valueMin, valueMax, duration, W_PRAWO);
+      }
+      },delay);
+      return;
+    }
+
+    if (stanKratek == StanBAnim.ROZSUNIETE) {
+      //Animacja rozsuniecia kratek:
+      new Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          rozsunKratki(-dx, valueMin, valueMax, duration, W_LEWO); //UWAGA na -dx (minus dx)!!!
+        }
+      },delay/2);
       return;
     }
 
@@ -428,62 +461,21 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   final static int W_PRAWO = 0;
   final static int W_LEWO  = 1;
 
-  private void animujRozsuniecieKratekWPrawo() {
-    /**
-    * Kratki sie rozjeżdżają w Prawo i zjeżdżają
-    **/
-    int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
-    int dx = 2;          //krok i kierunek roz(s)uwania
-    int valueMin =    1; //na potrzeby funkcji animujacej
-    int valueMax = 100;  //j.w.
-    int duration = 1000; //czas trwania [roz|zsu]uwania
-
-    //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
-    rozsunKratkiPoCzasie(delay, +dx, valueMin, valueMax, duration, W_PRAWO);
-    //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
-    rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration, W_PRAWO);
-  } //koniec Metody()
-
-
-
-  private void animujRozsuniecieKratekWLewo() {
-    /**
-     * Kratki sie rozjeżdżają w Prawo i zjeżdżają
-     **/
-    int delay = 400;     //kiedy (po wywolaniu procedury) rozpoczynamy ROZSUWANIE (nie zsuwanie)
-    int dx = 2;          //krok i kierunek roz(s)uwania
-    int valueMin =    1; //na potrzeby funkcji animujacej
-    int valueMax = 100;  //j.w.
-    int duration = 1000; //czas trwania [roz|zsu]uwania
-
-    //Najpierw rozsuwamy (+dx); startujemy po czasie delay:
-    rozsunKratkiPoCzasie(delay, dx, valueMin, valueMax, duration, W_LEWO);
-    //Po rozsunieciu i chwilowym zatrzymaniu w 'najwyzszym' polozeniu, zsuwamy w 'dół' (-dx):
-    rozsunKratkiPoCzasie(delay+duration+350, -dx, valueMin, valueMax, duration, W_LEWO);
-  } //koniec Metody()
-
-
-
-
-  private void rozsunKratkiPoCzasie(int delay, final int dx, final int valueMin, final int valueMax, final int duration, final int kierunek) {
+  private void rozsunKratki(final int dx, final int valueMin, final int valueMax, final int duration, final int kierunek) {
     /**
     * Po czasie 'delay' rozpoczynamy [roz|zsu]uwanie
     */
     Handler hand1 = new Handler();
-    hand1.postDelayed(new Runnable() {
+    hand1.post(new Runnable() {
       @Override
       public void run() {
         if (kierunek==W_PRAWO)
-//          rozsunKratkiRight(dx, valueMin, valueMax, duration);
           rozsunKratkiRightv2(dx, valueMin, valueMax, duration);
         else
-//          rozsunKratkiLeft(dx, valueMin, valueMax, duration);
-            rozsunKratkiRightv2(dx, valueMin, valueMax, duration);
+          rozsunKratkiRightv2(dx, valueMin, valueMax, duration);
       }
-    },delay);
+    });
   } //koniec Metody()
-
-
 
 
 
