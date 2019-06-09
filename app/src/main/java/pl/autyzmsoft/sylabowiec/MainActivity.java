@@ -227,12 +227,35 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private double screenInches;
 
+  private enum StanBAnim {
+      BEZ_KRATEK, POKRATKOWANE, ROZSUNIETE, ZSUNIETE
+  }
 
-  public void bAnimOnClick(View view) {
+
+  private StanBAnim bAnimPobierzStan() {
+      return (StanBAnim) bAnim.getTag();
+  }
+
+
+  private StanBAnim bAnimPobierzStan_i_UstalNowy() {
+  /**
+   * Pobiera stan pokratkowania (stan buttona bAnim) i jesnoczesnie na jego podstawie ustawia nowy stan
+  */
+      StanBAnim stanZastany = (StanBAnim) bAnim.getTag(); //co widzimi na poczatku
+      /**/
+      switch (stanZastany) {
+        case BEZ_KRATEK  : bAnim.setTag(StanBAnim.POKRATKOWANE); break;
+        case POKRATKOWANE: bAnim.setTag(StanBAnim.ROZSUNIETE); break;
+        case ROZSUNIETE  : bAnim.setTag(StanBAnim.ZSUNIETE); break;
+        case ZSUNIETE    : bAnim.setTag(StanBAnim.BEZ_KRATEK);
+      }
+      return stanZastany;
+  }
+
+  private void usunPokratkowanie() {
     /**
-     * Pokratkowanie/Odkraktkowanie i (ewentualna) animacja
-     */
-    if (!(bKratki == null)) { //jest juz pokratkowanie->likwidujemy i przywracamy stary widok, wychodzimy:
+     Jest juz pokratkowanie->likwidujemy i przywracamy stary widok, wychodzimy:
+    */
       //Zeby stary widok pokazywal sie tam, gdzie aktualnie byly bKratki (bo mogly byc przesuniete; kosmetyka):
       LinearLayout.LayoutParams tvSWPar;
       tvSWPar = (LayoutParams) tvShownWord.getLayoutParams();
@@ -242,9 +265,26 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       /**/
       likwidujBKratki();
       return;
+  }
+
+  public void bAnimOnClick(View view) {
+    /**
+     * Pokratkowanie/Odkraktkowanie i (ewentualna) animacja
+     */
+    StanBAnim stanKratek = bAnimPobierzStan_i_UstalNowy();
+
+    if (stanKratek == StanBAnim.ZSUNIETE) {
+      usunPokratkowanie();
+      return;
     }
+
+    if (stanKratek == StanBAnim.BEZ_KRATEK) {
+      pokratkuj(tvShownWord);
+      return;
+    }
+
     //Jak nie ma pokratkowania - kratkujemy:
-    pokratkuj(tvShownWord);
+    //pokratkuj(tvShownWord);
     //Animacja rozsuniecia kratek:
     //wylaczam 2019-06-08
 /*    new Handler().postDelayed(new Runnable() {
@@ -802,6 +842,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     mPamietacz = new Pamietacz(listaOper); //do pamietania przydzielonych obrazkow
+
+    bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - ze niepokratkowane tvShownWord
 
     //Zapamietanie ustawien:
     currOptions = new KombinacjaOpcji();
