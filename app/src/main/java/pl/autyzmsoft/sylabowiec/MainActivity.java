@@ -280,7 +280,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     final int duration = 1000; //czas trwania [roz|zsu]uwania
 
 
-    //Jaki jest akt. stan pokratkowania/czyli bAnim - na tej podstawie odp. akcja:
+    //Jaki jest aktualny stan pokratkowania (czyli stan bAnim) - na tej podstawie odp. akcja:
     StanBAnim stanKratek;
     stanKratek = bAnim_PobierzStan_i_UstalNowy();
 
@@ -296,8 +296,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     if (stanKratek == StanBAnim.POKRATKOWANE) {
       //Animacja rozsuniecia kratek:
+      unieczynnijNaChwile(delay+duration+200, bAnim, bUpperLower, bDalej, bAgain, bAgain1, bShiftLeft); //Zeby Marcin nie klikal w trakcie animacji
       new Handler().postDelayed(new Runnable() {
-      @Override
       public void run() {
         rozsunKratkiRight(+dx, valueMin, valueMax, duration); //(zaczynamy) rozsuwac w prawo
       }
@@ -307,25 +307,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     if (stanKratek == StanBAnim.ROZSUNIETE) {
       //Animacja zsuwania kratek:
+      unieczynnijNaChwile((delay/2)+duration+200, bAnim, bUpperLower, bDalej, bAgain, bAgain1, bShiftLeft); //Zeby Marcin nie klikal w trakcie animacji
       new Handler().postDelayed(new Runnable() {
-        @Override
         public void run() {
           rozsunKratkiRight(-dx, valueMin, valueMax, duration); //UWAGA na -dx (minus dx)!!! - daje to kierunek w lewo
         }
       },delay/2);
       return;
     }
-
-
-    //Zeby Marcin nie klikal w trakcie animacji:
-    /*
-    int chwila = 3000; //na razie doswiadczalnie...
-    unieczynnijNaChwile(bAnim, chwila);
-    unieczynnijNaChwile(bUpperLower, chwila);
-    unieczynnijNaChwile(bDalej, chwila); //uwaga -bDalej jak sie kliknie w trakcie animacji, to sie zawali...
-    unieczynnijNaChwile(bAgain, chwila);
-    unieczynnijNaChwile(bAgain1, chwila);
-    */
   } //koniec Metody()
 
 
@@ -436,6 +425,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
      * [Rozsu/Zsu]wanie "właściwe":
      * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
      * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
+     * Lewa skrajna kratka - nie porusza sie
      * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
      * Jesli podczas rozsuwania napotka "bandę" z prawej strony - reakcja - stop i rozsuwanie w lewo
      **/
@@ -460,7 +450,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           LayoutParams lPar;
           lPar = (LayoutParams) bKratki[i].getLayoutParams();
 
-          //Wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
+          //Wrażenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
           //if (i==0) lPar.leftMargin -= dx;
 
           lPar.rightMargin += dx;
@@ -486,10 +476,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private void rozsunKratkiLeft(final int dx, final int valueMin, final int valueMax, int czas) {
     /**
      * Zsuwanie kratek (czyli ruch w lewo)
+     * Uwaga - wywolywana tylko wyjatkowo, jesli podczas animacji w prawo nastapi stukniecie w prawa bande(!!!!)
+     * Prawa skrajna kratka - nie porusza sie
      * dx - 'skok' 'atomowego' ruchu w pixelach;
      * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
      **/
-    ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
+    final ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
     anim.setDuration(czas);
 
     anim.addUpdateListener(new AnimatorUpdateListener() {
@@ -497,7 +489,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       public void onAnimationUpdate(final ValueAnimator animation) {
 
         final int przOst = sylaby.getlSylab()-2; //indeks przedOstatniej kratki
-        int przebieg=0; //ktory przebieg petli
+        int przebieg=0; //ktory przebieg petli; wykorzyst. dalej jako mnożnik
 
         for (int i=przOst; i>-1; i--) {
           przebieg += 1;
@@ -524,6 +516,17 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
               bKratki[m].setLayoutParams(lParWew);
             }
           });
+
+          //badanie polozenia 0-wej kratki:
+          bKratki[0].post(new Runnable() {
+            @Override
+            public void run() {
+              if (bKratki[0].getLeft()<lObszar.getLeft()+20) //'stuknelismy' w lewą bandę...
+                anim.cancel(); //dalej nie idziemy, koniec animacji
+                return;
+            }
+          });
+
         } //for
       }
     });
@@ -886,7 +889,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     mPamietacz = new Pamietacz(listaOper); //do pamietania przydzielonych obrazkow
 
-    bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - ze niepokratkowane tvShownWord
+    bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - mówi, że niepokratkowane tvShownWord
 
     //Zapamietanie ustawien:
     currOptions = new KombinacjaOpcji();
@@ -1335,7 +1338,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     likwidujBKratki(); //if any..
 
     //Trzeba bDalej==v zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
-    unieczynnijNaChwile((Button)v,500);
+    unieczynnijNaChwile(500, (Button)v);
 
     //Usuniecie Grawitacji z lObszar, bo mogla byc ustawiona w korygujJesliWystaje() ):
     usunGrawitacje();
@@ -1377,22 +1380,26 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
 
-  private void unieczynnijNaChwile(final Button klawisz, int chwila) {
+  private void unieczynnijNaChwile(int chwila, final Button... klawisze) {
     /**
-     * Na chwile unieczynnnia podany klawisz.
-     * Jeżeli był nieczynny, to nic sie nie zmieni.
+     * Na chwile unieczynnnia podane klawisze.
+     * Jeżeli były nieczynne, to nic sie nie zmieni.
      * Uzywana w bAgainO.Ckick()i bDalejOnClick(), zeby zapobiec problemom gdy 2 szybkie kliki na klawiszu in question
      * Uzywana rowniez na bAnim
      */
-      final boolean stanSaved = klawisz.isEnabled();
-      klawisz.setEnabled(false);
-      Handler mHandl = new Handler();
-      mHandl.postDelayed(new Runnable() {
+
+      for (int i=0; i<klawisze.length; i++) {
+        final boolean stanSaved = klawisze[i].isEnabled();
+        klawisze[i].setEnabled(false);
+        Handler mHandl = new Handler();
+        final int i_final = i;
+        mHandl.postDelayed(new Runnable() {
           @Override
           public void run() {
-              klawisz.setEnabled(stanSaved);
+            klawisze[i_final].setEnabled(stanSaved);
           }
-      }, chwila);
+        }, chwila);
+      }
   }
 
   public void bAgainOnClick(View v) {
@@ -1400,9 +1407,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //bAgain1 - kl. pod bDalej
 
     likwidujBKratki(); //if any..
+    bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - mówi, że niepokratkowane tvShownWord
 
     //trzeba zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
-    if (v==bAgain1) unieczynnijNaChwile(bAgain1,500);
+    if (v==bAgain1) unieczynnijNaChwile(500, bAgain1);
 
     //Usuniecie Grawitacji z lObszar, bo mogla byc ustawiona w korygujJesliWystaje() ):
     usunGrawitacje();
@@ -1458,6 +1466,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }
 
   public void bPominOnClick(View v) {
+    bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - mówi, że niepokratkowane tvShownWord
     bDalej.callOnClick();
   }
 
@@ -1728,58 +1737,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /* jezeli nie ulozony - sciesniam/przesuwam etykiety                         */
     /* ***************************************************************************/
 
-
-
-    MojTimer mTimer = new MojTimer(20,60);
-
-//    Runnable procedurka = new Runnable() {
-//      @Override
-//      public void run() {
-//        if (bKratki[0].getCurrentTextColor()==GREEN)  bKratki[0].setTextColor(RED);
-//        else bKratki[0].setTextColor(GREEN);
-//
-//      }
-//    };
-
-
-    pokratkuj(tvShownWord);
-
-    //procedurka rozsuwajaca -> do przekazania do mTimera:
-    Runnable procedurka = new Runnable() {
-      @Override
-      public void run() {
-        //rozsuniecia kratek:
-
-        int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
-        for (int i = 0; i<liter; i++) {
-          LayoutParams lPar;
-          lPar = (LayoutParams) bKratki[i].getLayoutParams();
-
-          //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
-          //if (i==0) {
-          //  lPar.leftMargin -= dx;
-          //}
-
-          lPar.rightMargin += 2;//dx;
-          bKratki[i].setLayoutParams(lPar);
-        }
-
-      }
-    };
-
-    //Animacja rozsuniecia kratek:
-    //animujRozsuniecieKratek();
-
-  /* rozsuwanie WLASNYM timerem:
-    mTimer.setOnTimer(procedurka);
-    mTimer.start();
-  */
-
-/**
- * ****************************************************************************************
- *  2019.05.27 - ponizej originalny kod metody bShiftLeftOnClick() - przywrocic!!!! :
-
-
     if (ileWObszarze() == 0 && (tvShownWord.getVisibility() != VISIBLE)) {
       return; //kiedy nic nie ma w Obszarze - nie robie nic
     }
@@ -1787,8 +1744,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     int x;
     //ewentualne przesuniecie calego wyrazu:
     if (tvShownWord.getVisibility() == VISIBLE) {
-      usunGrawitacje();           //usuniecie Grawitacji z lObszar, bo mogla byc ustawiona
-      // w korygujJesliWystaje() i przeszkodzilaby w przesunieciu tvShownWord
+      usunGrawitacje(); //usuniecie Grawitacji z lObszar, bo mogla byc ustawionaw korygujJesliWystaje() i przeszkodzilaby w przesunieciu tvShownWord
       x = tvShownWord.getLeft();
       x = x / 2;                  //Przesuwamy o polowe dystansu do lewego brzegu Obszaru
       //tvShownWord.setLeft(x);  //ta instrukcja nie 'commituje', tylko na oglad
@@ -1814,8 +1770,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       dx = dx / 2; //zeby przy kolejnych klikaniach nie 'wylezc' poza lObszar
       przesunBKratkiNaLeft(dx);
     }
-
-*/
 
   }  //koniec Metody()
 
