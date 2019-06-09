@@ -237,9 +237,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }
 
 
-  private StanBAnim bAnimPobierzStan_i_UstalNowy() {
+  private StanBAnim bAnim_PobierzStan_i_UstalNowy() {
   /**
-   * Pobiera stan pokratkowania (stan buttona bAnim) i jesnoczesnie na jego podstawie ustawia nowy stan
+   * Pobiera stan pokratkowania (stan buttona bAnim) i jednoczesnie na jego podstawie ustawia nowy stan
   */
       StanBAnim stanZastany = (StanBAnim) bAnim.getTag(); //co widzimi na poczatku
       /**/
@@ -273,16 +273,16 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   **/
 
     //Parametry dla animacji:
-    final int delay = 200;     //kiedy (po wywolaniu procedury) rozpoczynamy [rozsu/zsu]wamie
+    final int delay = 200;     //kiedy po nacisnieciu bAnim rozpoczynamy [rozsu/zsu]wamie
     final int dx    = 2;       //krok i kierunek roz(s)uwania
     final int valueMin = 1;    //na potrzeby funkcji animujacej
     final int valueMax = 100;  //j.w.
     final int duration = 1000; //czas trwania [roz|zsu]uwania
 
 
-    //Jaki jest akt. stan pokratkowania/bAnim - na tej podstawie odp. akcja:
+    //Jaki jest akt. stan pokratkowania/czyli bAnim - na tej podstawie odp. akcja:
     StanBAnim stanKratek;
-    stanKratek = bAnimPobierzStan_i_UstalNowy();
+    stanKratek = bAnim_PobierzStan_i_UstalNowy();
 
     if (stanKratek == StanBAnim.ZSUNIETE) {
       usunPokratkowanie();
@@ -299,35 +299,26 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
-        rozsunKratki(+dx, valueMin, valueMax, duration, W_PRAWO);
+        rozsunKratkiRight(+dx, valueMin, valueMax, duration); //(zaczynamy) rozsuwac w prawo
       }
       },delay);
       return;
     }
 
     if (stanKratek == StanBAnim.ROZSUNIETE) {
-      //Animacja rozsuniecia kratek:
+      //Animacja zsuwania kratek:
       new Handler().postDelayed(new Runnable() {
         @Override
         public void run() {
-          rozsunKratki(-dx, valueMin, valueMax, duration, W_LEWO); //UWAGA na -dx (minus dx)!!!
+          rozsunKratkiRight(-dx, valueMin, valueMax, duration); //UWAGA na -dx (minus dx)!!! - daje to kierunek w lewo
         }
       },delay/2);
       return;
     }
 
-    //Jak nie ma pokratkowania - kratkujemy:
-    //pokratkuj(tvShownWord);
-    //Animacja rozsuniecia kratek:
-    //wylaczam 2019-06-08
-/*    new Handler().postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        animujRozsuniecieKratekWPrawo();
-      }
-    },1000);
-    //
+
     //Zeby Marcin nie klikal w trakcie animacji:
+    /*
     int chwila = 3000; //na razie doswiadczalnie...
     unieczynnijNaChwile(bAnim, chwila);
     unieczynnijNaChwile(bUpperLower, chwila);
@@ -391,29 +382,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private Timer timer;
   private void cofnijKratkiJesliWystajom() {
-    /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo
-     * Wykona sie nawet, jesli nic nie wystaje - dzieki temu mozliwa reakcja czy po cofnieciu (if any)
-     * dalej rozsuwac w lewo czy prawo
-     */
+    /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo */
 
-
-/*
-    //To ponizej jest ok 2019-05-19, ale wracam do pierwotnego kodu na gorze...
-    final int lidx = sylaby.getlSylab()-1;  //lidx - last index - dla uproszczenia
-    bKratki[lidx].post(new Runnable() {
-      @Override
-      public void run() {
-        int wystaje = bKratki[lidx].getRight()-lObszar.getRight();
-        if (wystaje>0) {
-          przesunBKratkiNaLeft(800);
-        }
-      }
-    });
-*/
-
-    //To ponizej też jest ok 2019-05-19, alternatywa dla kodu na gorze...
     final Handler handler = new Handler();
-    //start the timer:
+    //Starting the timer:
+    //a)przygotowujemy zadanie dla timer'a:
     TimerTask task = new TimerTask() {
       @Override
       public void run() {
@@ -425,9 +398,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         });
       }
     };
+    //b)startowanie wlasciwe:
     timer = new Timer();
     timer.schedule(task, 0, 10);
-  }  //koniec Metody()
+  } //koniec Metody()
 
 
   private void odsunPokratkowanieWlewo(int dx) {
@@ -442,43 +416,120 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       //konczymy odsuwanie:
       timer.cancel();
       //
-      //Teraz w zalezbosci od tego, gdzie jest miejsce, rozsuwamy pokratkowanie:
-      //chwilowo wylaczam 2019-06-09:
-//      if (pkK < (pkO - 300))
-//        animujRozsuniecieKratekWPrawo();
-//      else
-//        animujRozsuniecieKratekWLewo();
       return;
     }
-    //odsuwanie wlasciwe pokratkowania w lewo:
+    //Odsuwanie wlasciwe pokratkowania w lewo:
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     params.leftMargin = bKratki[0].getLeft() - dx;
     bKratki[0].setLayoutParams(params);
   }  //koniec Metody()
 
 
-  //kierunki ROZsuwania kratek (startowe!):
-  final static int W_PRAWO = 0;
-  final static int W_LEWO  = 1;
 
-  private void rozsunKratki(final int dx, final int valueMin, final int valueMax, final int duration, final int kierunek) {
+  private boolean stopuj = false; //czy zatrzymano rozsuw. w prawo z powodu mozliwosci wyjscia poza lObszar
+  //Do zarejestrowania rzeczywistego czasu rozsuwania (potrzebne jesli była zatrzymana(!)):
+  private long animStartTime;
+  private long animStopTime;
+
+  private void rozsunKratkiRight(final int dx, final int valueMin, final int valueMax, final int czas) {
     /**
-    * Po czasie 'delay' rozpoczynamy [roz|zsu]uwanie
-    */
-    Handler hand1 = new Handler();
-    hand1.post(new Runnable() {
+     * [Rozsu/Zsu]wanie "właściwe":
+     * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
+     * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
+     * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
+     * Jesli podczas rozsuwania napotka "bandę" z prawej strony - reakcja - stop i rozsuwanie w lewo
+     **/
+    stopuj = false;
+    final ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
+    anim.setDuration(czas);
+
+    anim.addUpdateListener(new AnimatorUpdateListener() {
       @Override
-      public void run() {
-        if (kierunek==W_PRAWO)
-          rozsunKratkiRightv2(dx, valueMin, valueMax, duration);
-        else
-          rozsunKratkiRightv2(dx, valueMin, valueMax, duration);
+      public void onAnimationUpdate(final ValueAnimator animation) {
+        final int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
+        for (int i = 0; i<liter; i++) {
+
+          if (stopuj) {
+            anim.cancel();
+            animStopTime = SystemClock.elapsedRealtime(); //rejestrujemy czas zakonczenia animacji
+            //Po zatrzymanym wysuwaniu w prawo, kontynuujemy wysuwanie w lewo (ALE ODPOWIEDNIO KROCEJ, zeby potem zsuwanie sie 'zlozylo'):
+            rozsunKratkiLeft(dx, valueMin, valueMax, (int) (czas - (animStopTime-animStartTime)));
+            return;
+          }
+
+          LayoutParams lPar;
+          lPar = (LayoutParams) bKratki[i].getLayoutParams();
+
+          //Wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
+          //if (i==0) lPar.leftMargin -= dx;
+
+          lPar.rightMargin += dx;
+          bKratki[i].setLayoutParams(lPar);
+
+          //badanie polozenia ostatniej kratki:
+          bKratki[liter].post(new Runnable() {
+            @Override
+            public void run() {
+              if (bKratki[liter].getRight()>lObszar.getRight()-20) //'stuknelismy' w prawa bandę...
+                stopuj = true; //dajemy znac zeby zatrzymac wysuwanie na prawo poza lObszar i rozpocząć w lewo
+            }
+          });
+        }
       }
     });
+    anim.start(); //startujemy animację
+    animStartTime = SystemClock.elapsedRealtime(); //rejestrujemy czas startu animacji (potrzebny bedzie przy jej 'nienaturalnym' zatrzymaniu)
   } //koniec Metody()
 
 
 
+  private void rozsunKratkiLeft(final int dx, final int valueMin, final int valueMax, int czas) {
+    /**
+     * Zsuwanie kratek (czyli ruch w lewo)
+     * dx - 'skok' 'atomowego' ruchu w pixelach;
+     * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
+     **/
+    ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
+    anim.setDuration(czas);
+
+    anim.addUpdateListener(new AnimatorUpdateListener() {
+      @Override
+      public void onAnimationUpdate(final ValueAnimator animation) {
+
+        final int przOst = sylaby.getlSylab()-2; //indeks przedOstatniej kratki
+        int przebieg=0; //ktory przebieg petli
+
+        for (int i=przOst; i>-1; i--) {
+          przebieg += 1;
+
+          final int r=i;
+          final int fp=przebieg;
+          bKratki[i].post(new Runnable() {
+            @Override
+            public void run() {
+              LayoutParams lPar;
+              lPar = (LayoutParams) bKratki[r].getLayoutParams();
+              lPar.leftMargin -= fp*dx;
+              bKratki[r].setLayoutParams(lPar);
+            }
+          });
+
+          final int m=i;
+          bKratki[m].post(new Runnable() {
+            @Override
+            public void run() {
+              LayoutParams lParWew;
+              lParWew = (LayoutParams) bKratki[m].getLayoutParams();
+              lParWew.rightMargin += fp*dx;
+              bKratki[m].setLayoutParams(lParWew);
+            }
+          });
+        } //for
+      }
+    });
+    /**/
+    anim.start(); //startujemy animację
+  } //koniec Metody()
 
 
 
@@ -1455,227 +1506,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
   } //koniec Metody()
 
-
-    private void rozsunKratkiRight(final int dx, final int valueMin, final int valueMax, int czas) {
-        /**
-         * [Rozsu/Zsu]wanie "właściwe":
-         * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
-         * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
-         * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
-         **/
-        ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
-        anim.setDuration(czas);
-
-        anim.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(final ValueAnimator animation) {
-                int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
-                for (int i = 0; i<liter; i++) {
-                    LayoutParams lPar;
-                    lPar = (LayoutParams) bKratki[i].getLayoutParams();
-
-                    //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
-                    //if (i==0) {
-                    //  lPar.leftMargin -= dx;
-                    //}
-
-                    lPar.rightMargin += dx;
-                    bKratki[i].setLayoutParams(lPar);
-                }
-            }
-        });
-        anim.start(); //startujemy animację
-    } //koniec Metody()
-
-
-
-    private boolean stopuj = false; //czy zatrzymano rozsuw. w prawo z powodu mozliwosci wyjscia poza lObszar
-    //do zarejestrowania rzeczywistego czasu rozsuwania (jesli byla zatrzymana(!))
-    private long animStartTime;
-    private long animStopTime;
-
-    private void rozsunKratkiRightv2(final int dx, final int valueMin, final int valueMax, final int czas) {
-        /**
-         * [Rozsu/Zsu]wanie "właściwe":
-         * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
-         * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
-         * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
-         **/
-        stopuj = false;
-        final ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
-        anim.setDuration(czas);
-
-        anim.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(final ValueAnimator animation) {
-                final int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
-                for (int i = 0; i<liter; i++) {
-
-                    if (stopuj) {
-                        anim.cancel();
-                        animStopTime = SystemClock.elapsedRealtime(); //rejestrujemy czas zakonczenia animacji
-                        //Po zatrzymanym wysuwaniu w prawo, kontynuujemy wysuwanie w lewo (ALE ODPOWIEDNIO KROCEJ):
-                        rozsunKratkiLeft(dx, valueMin, valueMax, (int) (czas - (animStopTime-animStartTime)));
-                        return;
-                    }
-
-                    LayoutParams lPar;
-                    lPar = (LayoutParams) bKratki[i].getLayoutParams();
-
-                    //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
-                    //if (i==0) {
-                    //  lPar.leftMargin -= dx;
-                    //}
-
-                    lPar.rightMargin += dx;
-                    bKratki[i].setLayoutParams(lPar);
-
-                    //badanie polozenia ostatniej kratki:
-                    bKratki[liter].post(new Runnable() {
-                      @Override
-                      public void run() {
-                        if (bKratki[liter].getRight()>lObszar.getRight()-20)
-                          stopuj = true; //zeby zatrzymac wysuwanie na prawo poza lObszar
-                      }
-                    });
-                }
-            }
-        });
-        anim.start(); //startujemy animację
-        animStartTime = SystemClock.elapsedRealtime(); //rejestrujemy czas startu animacji (potrzebny bedzie przy jej 'nienaturalnym' zatrzymaniu)
-    } //koniec Metody()
-
-
-
-  private void rozsunKratkiLeft(final int dx, final int valueMin, final int valueMax, int czas) {
-  /**
-   * [Rozsu/Zsu]wanie "właściwe":
-   * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
-   * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
-   * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
-   **/
-    ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
-    anim.setDuration(czas);
-
-    anim.addUpdateListener(new AnimatorUpdateListener() {
-      @Override
-      public void onAnimationUpdate(final ValueAnimator animation) {
-
-        int liter = sylaby.getlSylab()-1; //tyle kratek trzeba przelecieć (onomastyka: 'liczba iteracji')
-/*          for (int i = 0; i<liter+1; i++) {
-              LayoutParams lPar;
-              lPar = (LayoutParams) bKratki[i].getLayoutParams();
-
-              //wrazenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
-//              if (i==2) {
-//                lPar.leftMargin -= dx;
-//              }
-
-              lPar.leftMargin -= dx;
-              bKratki[i].setLayoutParams(lPar);
-          }*/
-
-
-
-          /* 2-019-06-01 - to jest OK - wzorzec dla petli for:
-
-          LayoutParams lPar;
-          lPar = (LayoutParams) bKratki[1].getLayoutParams();
-          lPar.leftMargin -= dx;
-          bKratki[1].setLayoutParams(lPar);
-
-          bKratki[1].post(new Runnable() {
-            @Override
-            public void run() {
-              LayoutParams lParWew;
-              lParWew = (LayoutParams) bKratki[1].getLayoutParams();
-              lParWew.rightMargin += 1*dx;
-              bKratki[1].setLayoutParams(lParWew);
-            }
-          });
-
-
-        bKratki[0].post(new Runnable() {
-          @Override
-          public void run() {
-            LayoutParams lParWew;
-            lParWew = (LayoutParams) bKratki[0].getLayoutParams();
-            lParWew.leftMargin -= 2*dx;
-            bKratki[0].setLayoutParams(lParWew);
-          }
-        });
-
-        bKratki[0].post(new Runnable() {
-          @Override
-          public void run() {
-            LayoutParams lParWew;
-            lParWew = (LayoutParams) bKratki[0].getLayoutParams();
-            lParWew.rightMargin += 2*dx;
-            bKratki[0].setLayoutParams(lParWew);
-          }
-        });
-        koniec wzorca dla petli for */
-
-          final int przOst = sylaby.getlSylab()-2; //indeks przedOstatniej kratki
-          int przebieg=0; //ktory przebieg petli
-
-          for (int i=przOst; i>-1; i--) {
-            przebieg += 1;
-
-            final int r=i;
-            final int fp=przebieg;
-            bKratki[i].post(new Runnable() {
-              @Override
-              public void run() {
-                LayoutParams lPar;
-                lPar = (LayoutParams) bKratki[r].getLayoutParams();
-                lPar.leftMargin -= fp*dx;
-                bKratki[r].setLayoutParams(lPar);
-              }
-            });
-
-
-              final int m=i;
-              bKratki[m].post(new Runnable() {
-                  @Override
-                  public void run() {
-                      LayoutParams lParWew;
-                      lParWew = (LayoutParams) bKratki[m].getLayoutParams();
-                      lParWew.rightMargin += fp*dx;
-                      bKratki[m].setLayoutParams(lParWew);
-                  }
-              });
-
-//              if (i>1) {
-//                final int k=i-1;
-//                bKratki[k].post(new Runnable() {
-//                  @Override
-//                  public void run() {
-//                    LayoutParams lParWew;
-//                    lParWew = (LayoutParams) bKratki[k].getLayoutParams();
-//                    lParWew.leftMargin -= 2*dx;
-//                    bKratki[k].setLayoutParams(lParWew);
-//                  }
-//                });
-//
-//                bKratki[k].post(new Runnable() {
-//                  @Override
-//                  public void run() {
-//                    LayoutParams lParWew;
-//                    lParWew = (LayoutParams) bKratki[k].getLayoutParams();
-//                    lParWew.rightMargin += 2*dx;
-//                    bKratki[k].setLayoutParams(lParWew);
-//                  }
-//                });
-//              } //if
-          } //for
-
-
-    }
-    });
-
-    anim.start(); //startujemy animację
-  } //koniec Metody()
 
 
   private void podniesLabels() {
