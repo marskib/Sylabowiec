@@ -285,7 +285,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     if (stanKratek == StanBAnim.BEZ_KRATEK) {
-      unieczynnijNaChwile(500, bAnim); //zakladam, ze tyle to mniej wiecej potrwa (jesli bedzie odsuwanie w prawo, inaczej trwa ~0 sek)
+      unieczynnijNaChwile(500, bAnim); //zakladam, ze tyle to mniej wiecej potrwa (jesli bedzie odsuwanie w prawo, inaczej trwa ok. 0 sek)
       pokratkuj(tvShownWord);
       return;
     }
@@ -368,7 +368,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private Timer timer;
   private void cofnijKratkiJesliWystajom() {
     /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo */
-    /** Blad ortograficzny w nazwie - zamierzony, zeby lepiej ddac liczbe mnogą                  */
+    /** Blad ortograficzny w nazwie - zamierzony, zeby lepiej oddac liczbe mnogą                 */
 
     final Handler handler = new Handler();
     //Starting the timer:
@@ -419,7 +419,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private void rozsunKratkiRight(final int dx, final int valueMin, final int valueMax, final int czas) {
     /**
-     * [Rozsu/Zsu]wanie "właściwe":
+     * [Rozsu/Zsu]wanie "właściwe" ('roz-zsu' zalezy od znaku parametru dx):
      * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
      * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
      * Lewa skrajna kratka - nie porusza sie
@@ -1261,7 +1261,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord = "pies1";
     //currWord = "ryż";
     //currWord = "ża-rów-ka";
-    currWord   = "nie-za-po-mi-naj-ki";
+    //currWord   = "nie-za-po-mi-naj-ki";
 
 
 
