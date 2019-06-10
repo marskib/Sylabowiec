@@ -232,11 +232,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   }
 
 
-  private StanBAnim bAnimPobierzStan() {
-      return (StanBAnim) bAnim.getTag();
-  }
-
-
   private StanBAnim bAnim_PobierzStan_i_UstalNowy() {
   /**
    * Pobiera stan pokratkowania (stan buttona bAnim) i jednoczesnie na jego podstawie ustawia nowy stan
@@ -290,6 +285,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     if (stanKratek == StanBAnim.BEZ_KRATEK) {
+      unieczynnijNaChwile(500, bAnim); //zakladam, ze tyle to mniej wiecej potrwa (jesli bedzie odsuwanie w prawo, inaczej trwa ~0 sek)
       pokratkuj(tvShownWord);
       return;
     }
@@ -355,7 +351,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       String txtSyl = sylaby.getSylabaAt(i);
       if (inUp) txtSyl = txtSyl.toUpperCase(Locale.getDefault());
       bSyl.setText(txtSyl);
-      bSyl.setTypeface(Typeface.DEFAULT_BOLD);  //Wytluszczenie:
+      bSyl.setTypeface(Typeface.DEFAULT_BOLD);  //Wytluszczenie
 
       //Minimalnie podciagam tekst w gore - kosmetyka doswiadczalna:
       bSyl.setPadding(bSyl.getPaddingLeft(),-5,bSyl.getPaddingRight(), bSyl.getPaddingBottom());
@@ -372,6 +368,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private Timer timer;
   private void cofnijKratkiJesliWystajom() {
     /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo */
+    /** Blad ortograficzny w nazwie - zamierzony, zeby lepiej ddac liczbe mnogą                  */
 
     final Handler handler = new Handler();
     //Starting the timer:
@@ -475,7 +472,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private void rozsunKratkiLeft(final int dx, final int valueMin, final int valueMax, int czas) {
     /**
-     * Zsuwanie kratek (czyli ruch w lewo)
+     * Rozsuwanie kratek, ALE RUCH W LEWO(!)
      * Uwaga - wywolywana tylko wyjatkowo, jesli podczas animacji w prawo nastapi stukniecie w prawa bande(!!!!)
      * Prawa skrajna kratka - nie porusza sie
      * dx - 'skok' 'atomowego' ruchu w pixelach;
@@ -492,8 +489,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         int przebieg=0; //ktory przebieg petli; wykorzyst. dalej jako mnożnik
 
         for (int i=przOst; i>-1; i--) {
-          przebieg += 1;
 
+          //Rozsuwanie wlasciwe":
+          przebieg = przebieg + 1;
           final int r=i;
           final int fp=przebieg;
           bKratki[i].post(new Runnable() {
@@ -517,13 +515,13 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             }
           });
 
-          //badanie polozenia 0-wej kratki:
+          //Badanie polozenia 0-wej kratki:
           bKratki[0].post(new Runnable() {
             @Override
             public void run() {
               if (bKratki[0].getLeft()<lObszar.getLeft()+20) //'stuknelismy' w lewą bandę...
                 anim.cancel(); //dalej nie idziemy, koniec animacji
-                return;
+              return;
             }
           });
 
@@ -1255,7 +1253,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord   = "0123456789AB";
     //currWord   = "chrząszcz-chrząszcz-89AB-abcd-efghj-chleb";
     //currWord   = "1hrząszcz-2hrząszcz-3hrząszcz-4hrząszcz-5hrząszcz-6hrząszcz";
-    //currWord   = "nie-za-po-mi-naj-ki";
     //currWord     = "Mi-ko-łaj";
     //currWord     = "chrząszcz";
     //currWord     = "a-a-a-a-a-a";
@@ -1264,6 +1261,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord = "pies1";
     //currWord = "ryż";
     //currWord = "ża-rów-ka";
+    currWord   = "nie-za-po-mi-naj-ki";
 
 
 
@@ -1336,6 +1334,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //bUpperLower.setText(sizeW+"x"+sizeH);
 
     likwidujBKratki(); //if any..
+    bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - mówi, że niepokratkowane tvShownWord
 
     //Trzeba bDalej==v zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
     unieczynnijNaChwile(500, (Button)v);
