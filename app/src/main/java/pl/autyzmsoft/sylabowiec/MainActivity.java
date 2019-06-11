@@ -39,7 +39,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -291,6 +290,12 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     if (stanKratek == StanBAnim.POKRATKOWANE) {
+      //Okreslenie odstepu miedzy kratkami - będzie do zatrzymania ZSUwania kratek:
+//      OMK=0;
+//      if (sylaby.getlSylab()>1) {
+//        OMK = bKratki[1].getLeft() - bKratki[0].getRight();
+//        OMK = Math.abs(OMK);
+//      }
       //Animacja rozsuniecia kratek:
       unieczynnijNaChwile(delay+duration+200, bAnim, bUpperLower, bDalej, bAgain, bAgain1, bShiftLeft); //Zeby Marcin nie klikal w trakcie animacji
       new Handler().postDelayed(new Runnable() {
@@ -313,7 +318,34 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
   } //koniec Metody()
 
+  private void pelnaAnimacjaSylab() {
+    //Parametry dla animacji:
+    final int delay = 200;     //kiedy po nacisnieciu bAnim rozpoczynamy [rozsu/zsu]wamie
+    final int dx    = 2;       //krok i kierunek roz(s)uwania
+    final int valueMin = 1;    //na potrzeby funkcji animujacej
+    final int valueMax = 100;  //j.w.
+    final int duration = 1000; //czas trwania [roz|zsu]uwania
 
+    unieczynnijNaChwile(delay+duration+200, bAnim, bUpperLower, bDalej, bAgain, bAgain1, bShiftLeft); //Zeby Marcin nie klikal w trakcie animacji
+    pokratkuj(tvShownWord);
+
+    new Handler().postDelayed(new Runnable() {
+      public void run() {
+        rozsunKratkiRight(+dx, valueMin, valueMax, duration); //(zaczynamy) rozsuwac w prawo
+      }
+    },delay);
+
+    new Handler().postDelayed(new Runnable() {
+      public void run() {
+        rozsunKratkiRight(-dx, valueMin, valueMax, duration); //UWAGA na -dx (minus dx)!!! - daje to kierunek w lewo
+      }
+    },delay/2);
+
+    usunPokratkowanie();
+
+  }
+
+  private final int OMK =10;//20; //odstęp między kratkami po zakończeniu pokratkowania
 
   private void pokratkuj(TextView wyraz) {
     /**
@@ -413,20 +445,19 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
   private boolean stopuj = false; //czy zatrzymano rozsuw. w prawo z powodu mozliwosci wyjscia poza lObszar
-  //Do zarejestrowania rzeczywistego czasu rozsuwania (potrzebne jesli była zatrzymana(!)):
-  private long animStartTime;
-  private long animStopTime;
+
 
   private void rozsunKratkiRight(final int dx, final int valueMin, final int valueMax, final int czas) {
     /**
      * [Rozsu/Zsu]wanie "właściwe" ('roz-zsu' zalezy od znaku parametru dx):
      * Zobrazowanie podzialu na sylaby poprzez animowane Rozsuniecie/Zsuniecie kratkek
-     * dx - 'skok' 'atomowego' ruchu w pixelach; jesli dx ujemna - zsuwanie
+     * dx - 'skok' 'atomowego' ruchu w pixelach;
+     * Jesli dx ujemna - zsuwanie
      * Lewa skrajna kratka - nie porusza sie
      * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
-     * Jesli podczas rozsuwania napotka "bandę" z prawej strony - reakcja - stop i rozsuwanie w lewo
+     * Jesli podczas rozsuwania napotka "bandę" z prawej strony - reakcja -> stop i rozsuwanie w lewo
      **/
-    stopuj = false;
+    stopuj = false;  //dajemy znac, gdyby ost. kratka stuknęła w prawą bandę
     final ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
     anim.setDuration(czas);
 
@@ -438,9 +469,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
           if (stopuj) {
             anim.cancel();
-            animStopTime = SystemClock.elapsedRealtime(); //rejestrujemy czas zakonczenia animacji
-            //Po zatrzymanym wysuwaniu w prawo, kontynuujemy wysuwanie w lewo (ALE ODPOWIEDNIO KROCEJ, zeby potem zsuwanie sie 'zlozylo'):
-            rozsunKratkiLeft(dx, valueMin, valueMax, (int) (czas - (animStopTime-animStartTime)));
+            //Po zatrzymanym wysuwaniu w prawo, kontynuujemy wysuwanie w lewo:
+            rozsunKratkiLeft(dx, valueMin, valueMax, czas);
             return;
           }
 
@@ -461,11 +491,24 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
                 stopuj = true; //dajemy znac zeby zatrzymac wysuwanie na prawo poza lObszar i rozpocząć w lewo
             }
           });
+
+          /**** Jesli mamy do czynienia ze ZSUwaniem, to trzeba wiedzieć, kiedy się zatrzymać: *********/
+          if (dx<0) {
+            bKratki[1].post(new Runnable() {
+              public void run() {
+                if ( Math.abs((bKratki[1].getLeft() - bKratki[0].getRight())) < OMK) {
+                  anim.cancel();
+                  return;
+                }
+              }
+            });
+          }
+          /**********************************************************************************************/
+
         }
       }
     });
     anim.start(); //startujemy animację
-    animStartTime = SystemClock.elapsedRealtime(); //rejestrujemy czas startu animacji (potrzebny bedzie przy jej 'nienaturalnym' zatrzymaniu)
   } //koniec Metody()
 
 
@@ -473,10 +516,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private void rozsunKratkiLeft(final int dx, final int valueMin, final int valueMax, int czas) {
     /**
      * Rozsuwanie kratek, ALE RUCH W LEWO(!)
-     * Uwaga - wywolywana tylko wyjatkowo, jesli podczas animacji w prawo nastapi stukniecie w prawa bande(!!!!)
+     * Uwaga - wywolywana tylko WYJĄTKOWO, jesli podczas animacji w prawo nastapi stukniecie w prawa bande(!!!!)
      * Prawa skrajna kratka - nie porusza sie
      * dx - 'skok' 'atomowego' ruchu w pixelach;
      * Pozostale paramsy - potrzebne dla obiektu ValueAnimator
+     * Jeżeli przed zakonczeniem parametru 'czas' uderzy w lewą bandę - zatrzymujemy i konczymy.
      **/
     final ValueAnimator anim = ValueAnimator.ofInt(valueMin,valueMax);
     anim.setDuration(czas);
@@ -519,9 +563,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           bKratki[0].post(new Runnable() {
             @Override
             public void run() {
-              if (bKratki[0].getLeft()<lObszar.getLeft()+20) //'stuknelismy' w lewą bandę...
-                anim.cancel(); //dalej nie idziemy, koniec animacji
-              return;
+              if (bKratki[0].getLeft()<lObszar.getLeft()+20) {//'stuknelismy' w lewą bandę...
+                  anim.cancel(); //dalej nie idziemy, koniec animacji
+                  return;
+              }
             }
           });
 
@@ -611,18 +656,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       if ((dlug >= dlug_min) && (dlug <= dlug_max)) {
         lRob.add(el); //dodajemy z rozszerzeniem - pelna nazwa pliku!!!
       }
-      //Sprawdzamy, bo moze byc 'kot1', 'kot2' .... - taki wyraz, choc dluzszy, trzeba
-      // wziac, bo last digit bedzie w przyszlosci wyciety i zostanie 3-literowe kot, tak
-      // jak trzeba...
-//      else { //2-019-03-31 -> to bylo w Literowance, w Literowcu wylaczam...
-//        if (dlug0 == dlug_max + 1) {
-//          int idxEnd = dlug - 1;
-//          Character lastChar = elTmp.charAt(idxEnd);
-//          if (Character.isDigit(lastChar)) {
-//            lRob.add(el);
-//          }
-//        }
-//      }
     } //for
 
     //Przepisanie lRob -> tabRob:
@@ -888,6 +921,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     mPamietacz = new Pamietacz(listaOper); //do pamietania przydzielonych obrazkow
 
     bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - mówi, że niepokratkowane tvShownWord
+
+    tvShownWord.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(final View v) {
+        pelnaAnimacjaSylab();
+      }
+    });
+
 
     //Zapamietanie ustawien:
     currOptions = new KombinacjaOpcji();
@@ -1262,6 +1303,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord = "ryż";
     //currWord = "ża-rów-ka";
     //currWord   = "nie-za-po-mi-naj-ki";
+    //currWord   = "mi-kro-fa-lów-ka";
 
 
 
