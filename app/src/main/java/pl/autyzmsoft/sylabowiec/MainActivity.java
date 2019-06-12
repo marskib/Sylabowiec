@@ -271,7 +271,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     final int dx    = 2;       //krok i kierunek roz(s)uwania
     final int valueMin = 1;    //na potrzeby funkcji animujacej
     final int valueMax = 100;  //j.w.
-    final int duration = 1000; //czas trwania [roz|zsu]uwania
+    final int duration = 1000; //zakładany(!) czas trwania [roz|zsu]uwania
 
 
     //Jaki jest aktualny stan pokratkowania (czyli stan bAnim) - na tej podstawie odp. akcja:
@@ -320,14 +320,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
   private void pelnaAnimacjaSylab() {
     //Parametry dla animacji:
-    final int delay = 200;     //kiedy po nacisnieciu bAnim rozpoczynamy [rozsu/zsu]wamie
+    final int delay = 400;     //kiedy po nacisnieciu bAnim rozpoczynamy [rozsu/zsu]wamie
     final int dx    = 2;       //krok i kierunek roz(s)uwania
     final int valueMin = 1;    //na potrzeby funkcji animujacej
     final int valueMax = 100;  //j.w.
     final int duration = 1000; //czas trwania [roz|zsu]uwania
 
-    unieczynnijNaChwile(delay+duration+200, bAnim, bUpperLower, bDalej, bAgain, bAgain1, bShiftLeft); //Zeby Marcin nie klikal w trakcie animacji
     pokratkuj(tvShownWord);
+    cofnijKratkiJesliWystajom();
 
     new Handler().postDelayed(new Runnable() {
       public void run() {
@@ -339,11 +339,18 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       public void run() {
         rozsunKratkiRight(-dx, valueMin, valueMax, duration); //UWAGA na -dx (minus dx)!!! - daje to kierunek w lewo
       }
-    },delay/2);
+    },delay+duration+200);
 
-    usunPokratkowanie();
+    new Handler().postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        usunPokratkowanie();
+      }
+    },delay+2*duration+400);
 
-  }
+    unieczynnijNaChwile(delay+2*duration+400, bAnim, bUpperLower, bDalej, bAgain, bAgain1, bShiftLeft); //Zeby Marcin nie klikal w trakcie animacji
+
+  } //koniec Metody()
 
   private final int OMK =10;//20; //odstęp między kratkami po zakończeniu pokratkowania
 
@@ -483,14 +490,16 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
           lPar.rightMargin += dx;
           bKratki[i].setLayoutParams(lPar);
 
-          //badanie polozenia ostatniej kratki:
-          bKratki[liter].post(new Runnable() {
-            @Override
-            public void run() {
-              if (bKratki[liter].getRight()>lObszar.getRight()-20) //'stuknelismy' w prawa bandę...
-                stopuj = true; //dajemy znac zeby zatrzymac wysuwanie na prawo poza lObszar i rozpocząć w lewo
-            }
-          });
+          //badanie polozenia ostatniej kratki (jesli ruch w prawo=rozsuwanie):
+          if (dx>0) {
+            bKratki[liter].post(new Runnable() {
+              @Override
+              public void run() {
+                if (bKratki[liter].getRight() > lObszar.getRight() - 20) //'stuknelismy' w prawa bandę...
+                  stopuj = true; //dajemy znac zeby zatrzymac wysuwanie na prawo poza lObszar i rozpocząć w lewo
+              }
+            });
+          }
 
           /**** Jesli mamy do czynienia ze ZSUwaniem, to trzeba wiedzieć, kiedy się zatrzymać: *********/
           if (dx<0) {
@@ -1302,7 +1311,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord = "pies1";
     //currWord = "ryż";
     //currWord = "ża-rów-ka";
-    //currWord   = "nie-za-po-mi-naj-ki";
+    currWord   = "nie-za-po-mi-naj-ki";
     //currWord   = "mi-kro-fa-lów-ka";
 
 
