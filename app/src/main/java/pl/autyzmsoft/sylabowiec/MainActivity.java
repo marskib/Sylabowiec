@@ -398,10 +398,28 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       podepnijListenerDoKratki(bSyl);
       bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
     } //for
+    dodajGumki();
     //Jesli ostatnia kratka wystaje zz bandę, to cofamy:
     cofnijKratkiJesliWystajom();
   } //koniec Metody()
 
+
+  private Button bGumkaG, bGumkaD;
+  private void dodajGumki() {
+    if (sylaby.getlSylab()==1) return;
+
+    bGumkaG = new Button(this);
+    bGumkaD = new Button(this);
+    final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    lPar.leftMargin = bKratki[0].getLeft();
+    lPar.height = 10;
+    lPar.topMargin=30;
+    bGumkaG.setLayoutParams(lParams);
+    lPar.topMargin=60;
+    bGumkaD.setLayoutParams(lParams);
+    lObszar.addView(bGumkaG);
+    lObszar.addView(bGumkaD);
+  }
 
 
   private Timer timer;
