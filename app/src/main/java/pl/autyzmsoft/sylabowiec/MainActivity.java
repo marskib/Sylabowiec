@@ -402,9 +402,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private Button utworzButtonBGumka() {
     Button bGumka = new Button(this);
     final LayoutParams lParG = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    lParG.leftMargin  = -10;
-    lParG.rightMargin = -20;
-    lParG.height = (int) (0.50*lObszar.getHeight());
+    //lParG.leftMargin  = -10;
+    //lParG.rightMargin = -20;
+
+    lParG.leftMargin  = -15;
+    lParG.rightMargin = -15;
+
+
+    lParG.height = (int) (0.75*lObszar.getHeight());
     lParG.width  = 40;
     bGumka.setLayoutParams(lParG);
     //bGumka.setVisibility(INVISIBLE);
@@ -418,7 +423,13 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     bSyl.setMaxLines(1);
     //layout dla bKratki:
     final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    lPar.rightMargin = -5; //zeby kratki prawie zachodzilay na siebie - kosmetyka
+
+    //lPar.rightMargin = -5; //zeby kratki prawie zachodzilay na siebie - kosmetyka
+    lPar.leftMargin  = 0;
+    lPar.rightMargin = 0;
+
+
+
     //lObszar.addView(bSyl);
     //1-sza kratka zaczyna sie tam, gdzie zaczynal sie tvShownWord; reszta will follow her:
     if (i==0)
