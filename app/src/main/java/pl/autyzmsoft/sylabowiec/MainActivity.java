@@ -285,17 +285,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     if (stanKratek == StanBAnim.BEZ_KRATEK) {
       unieczynnijNaChwile(500, bAnim); //zakladam, ze tyle to mniej wiecej potrwa (jesli bedzie odsuwanie w prawo, inaczej trwa ok. 0 sek)
-      pokratkuj(tvShownWord);
+      pokratkuj_v2();
       return;
     }
 
     if (stanKratek == StanBAnim.POKRATKOWANE) {
-      //Okreslenie odstepu miedzy kratkami - będzie do zatrzymania ZSUwania kratek:
-//      OMK=0;
-//      if (sylaby.getlSylab()>1) {
-//        OMK = bKratki[1].getLeft() - bKratki[0].getRight();
-//        OMK = Math.abs(OMK);
-//      }
       //Animacja rozsuniecia kratek:
       unieczynnijNaChwile(delay+duration+200, bAnim, bUpperLower, bDalej, bAgain, bAgain1, bShiftLeft); //Zeby Marcin nie klikal w trakcie animacji
       new Handler().postDelayed(new Runnable() {
@@ -307,7 +301,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     if (stanKratek == StanBAnim.ROZSUNIETE) {
-      //Animacja zsuwania kratek:
+      //Animacja zsuwania kratek (zwroc uwage na -dx):
       unieczynnijNaChwile((delay/2)+duration+200, bAnim, bUpperLower, bDalej, bAgain, bAgain1, bShiftLeft); //Zeby Marcin nie klikal w trakcie animacji
       new Handler().postDelayed(new Runnable() {
         public void run() {
@@ -319,6 +313,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
   private void pelnaAnimacjaSylab() {
+    /**
+     * Uzywana na klikniecie na tvShownWord
+    */
     //Parametry dla animacji:
     final int delay = 400;     //kiedy po nacisnieciu bAnim rozpoczynamy [rozsu/zsu]wamie
     final int dx    = 2;       //krok i kierunek roz(s)uwania
@@ -353,6 +350,85 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
   private final int OMK =10;//20; //odstęp między kratkami po zakończeniu pokratkowania
+
+
+
+  private void pokratkuj_v2() {
+    /**
+     v2 pokratkuj() - z dodaniem 'gumek' miedzy sylabami
+     Pokazanie podziału na sylaby ułożonego wyrazu (wyraz = de facto tvShownWord)
+     (uwaga - nie ma ruchu-animcji, tylko pokratkowanie)
+     Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
+     Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
+     */
+
+    //tworzymy tablice, zeby miec na czym dzialac:
+    bKratki = new Button[MAXS];
+    bGumkiG = new Button[MAXS-1];
+    bGumkiD = new Button[MAXS-1];
+
+    tvShownWord.setVisibility(View.GONE); //chowamy ulozony wyraz
+
+    //Główna pętla; każda sylaba ląduje w osobno powołanej bKratce; kratki lądują w bKratki[]:
+    lObszar.setGravity(Gravity.CENTER_VERTICAL);
+    for (int i = 0; i < sylaby.getlSylab() ; i++) {
+      Button bSyl;
+      bSyl = utworzButtonBSyl(i);
+
+      Button bGumka;
+      bGumka = utworzBGumka();
+
+      podepnijListenerDoKratki(bSyl);
+      bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
+      lObszar.addView(bSyl);
+
+      lObszar.addView(bGumka);
+    } //for
+    //Jesli ostatnia kratka wystaje zz bandę, to cofamy:
+    cofnijKratkiJesliWystajom();
+  } //koniec Metody()
+
+
+  private Button utworzBGumka() {
+    Button bGumka = new Button(this);
+    LayoutParams lParG = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    lParG.leftMargin  = -10;
+    lParG.rightMargin = -20;
+    lParG.height = 90;
+    lParG.width  = 60;
+    bGumka.setLayoutParams(lParG);
+    return bGumka;
+  }
+
+
+  private Button utworzButtonBSyl(int i) {
+
+    final Button bSyl = new Button(this);
+    bSyl.setMaxLines(1);
+    //layout dla bKratki:
+    final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    lPar.rightMargin = -5; //zeby kratki prawie zachodzilay na siebie - kosmetyka
+    //lObszar.addView(bSyl);
+    //1-sza kratka zaczyna sie tam, gdzie zaczynal sie tvShownWord; reszta will follow her:
+    if (i==0)
+      lPar.leftMargin = tvShownWord.getLeft();
+    bSyl.setLayoutParams(lPar);
+
+    //Poprzez minimalne zmniejszenie liter, zapewniam, ze 'obwoluta' sylaby bedzie
+    //nieco mniejsza od wysokoscli lObszar  (doświadczalnie):
+    float wys = tvShownWord.getTextSize()-5;
+    wys = pxToSp((int) wys);
+    bSyl.setTextSize(TypedValue.COMPLEX_UNIT_SP, wys );
+    //Umieszczenie tekstu na sylabie-kwadraciku:
+    String txtSyl = sylaby.getSylabaAt(i);
+    if (inUp) txtSyl = txtSyl.toUpperCase(Locale.getDefault());
+    bSyl.setText(txtSyl);
+    bSyl.setTypeface(Typeface.DEFAULT_BOLD);  //Wytluszczenie
+
+    //Minimalnie podciagam tekst w gore - kosmetyka doswiadczalna:
+    bSyl.setPadding(bSyl.getPaddingLeft(),-5,bSyl.getPaddingRight(), bSyl.getPaddingBottom());
+    return bSyl;
+  } //koniec Metody()
 
   private void pokratkuj(TextView wyraz) {
     /**
@@ -398,28 +474,16 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       podepnijListenerDoKratki(bSyl);
       bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
     } //for
-    dodajGumki();
     //Jesli ostatnia kratka wystaje zz bandę, to cofamy:
     cofnijKratkiJesliWystajom();
   } //koniec Metody()
 
+  private Button[] bGumkiG, bGumkiD; //gumki pomiedzysylabowe Gorne i Dolne
 
-  private Button bGumkaG, bGumkaD;
-  private void dodajGumki() {
-    if (sylaby.getlSylab()==1) return;
 
-    bGumkaG = new Button(this);
-    bGumkaD = new Button(this);
-    final LayoutParams lPar = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    lPar.leftMargin = bKratki[0].getLeft();
-    lPar.height = 10;
-    lPar.topMargin=30;
-    bGumkaG.setLayoutParams(lParams);
-    lPar.topMargin=60;
-    bGumkaD.setLayoutParams(lParams);
-    lObszar.addView(bGumkaG);
-    lObszar.addView(bGumkaD);
-  }
+
+
+
 
 
   private Timer timer;
@@ -1329,7 +1393,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord = "pies1";
     //currWord = "ryż";
     //currWord = "ża-rów-ka";
-    currWord   = "nie-za-po-mi-naj-ki";
+    //currWord   = "nie-za-po-mi-naj-ki";
     //currWord   = "mi-kro-fa-lów-ka";
 
 
