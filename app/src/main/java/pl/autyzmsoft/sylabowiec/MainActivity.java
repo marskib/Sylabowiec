@@ -108,7 +108,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   // w Obszarze); podzbior tab. lbs
   private static MojTV[] lbsRob;
 
-  public Button[] bKratki; //tablica na 'pokratkowane' sylaby (na zobrazowanie podzialu na sylaby)
+  private Button[] bKratki; //tablica na 'pokratkowane' sylaby (na zobrazowanie podzialu na sylaby)
+  private Button[] bGumki;  //tablica na 'gumki' pomiędzy pokratkowanymi sylabami
 
   public static File katalogSD;                 //katalog z obrazkami na SD (internal i external)
 
@@ -258,6 +259,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       tvShownWord.setVisibility(VISIBLE);
       /**/
       likwidujBKratki();
+      likwidujBGumki();
       return;
   }
 
@@ -364,25 +366,30 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     //tworzymy tablice, zeby miec na czym dzialac:
     bKratki = new Button[MAXS];
-    bGumkiG = new Button[MAXS-1];
-    bGumkiD = new Button[MAXS-1];
+    bGumki  = new Button[MAXS-1];
 
     tvShownWord.setVisibility(View.GONE); //chowamy ulozony wyraz
 
     //Główna pętla; każda sylaba ląduje w osobno powołanej bKratce; kratki lądują w bKratki[]:
     lObszar.setGravity(Gravity.CENTER_VERTICAL);
     for (int i = 0; i < sylaby.getlSylab() ; i++) {
+
+      //Tworzenie kratki na sylabe:
       Button bSyl;
       bSyl = utworzButtonBSyl(i);
-
-      Button bGumka;
-      bGumka = utworzBGumka();
-
       podepnijListenerDoKratki(bSyl);
       bKratki[i] = bSyl;  //zeby miec 'uchwyt' -> bo trzeba moc niszczyc/inicjowac na nowo itp...
       lObszar.addView(bSyl);
+     aaaaaaa bSyl.bringToFront();
 
-      lObszar.addView(bGumka);
+      //Tworzenie 'gumki' miedzy kratkami:
+      Button bGumka;
+      if (i<sylaby.getlSylab()-1) { //sens tylko jesl wyraz wiecej niz 1 sylabowy
+        bGumka = utworzBGumka();
+        bGumki[i] = bGumka;
+        lObszar.addView(bGumka);
+      }
+
     } //for
     //Jesli ostatnia kratka wystaje zz bandę, to cofamy:
     cofnijKratkiJesliWystajom();
@@ -395,7 +402,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     lParG.leftMargin  = -10;
     lParG.rightMargin = -20;
     lParG.height = 90;
-    lParG.width  = 60;
+    lParG.width  = 40;
     bGumka.setLayoutParams(lParG);
     return bGumka;
   }
@@ -701,6 +708,17 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     for (final Button button : bKratki)
       lObszar.removeView(button);
     bKratki = null;
+  }
+
+  private void likwidujBGumki() {
+    /***
+     Zeby miec 'czyste' przedpole po bDalej, bAgain, bAnim
+     */
+    if (bGumki==null)
+      return;
+    for (final Button button : bGumki)
+      lObszar.removeView(button);
+    bGumki = null;
   }
 
 
@@ -1467,6 +1485,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //bUpperLower.setText(sizeW+"x"+sizeH);
 
     likwidujBKratki(); //if any..
+    likwidujBGumki();  //if any..
     bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - mówi, że niepokratkowane tvShownWord
 
     //Trzeba bDalej==v zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
@@ -1539,6 +1558,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //bAgain1 - kl. pod bDalej
 
     likwidujBKratki(); //if any..
+    likwidujBGumki(); //if any..
     bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - mówi, że niepokratkowane tvShownWord
 
     //trzeba zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
