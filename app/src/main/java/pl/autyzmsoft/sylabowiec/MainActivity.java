@@ -231,6 +231,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
       BEZ_KRATEK, POKRATKOWANE, ROZSUNIETE, ZSUNIETE
   }
 
+  private int minSzerGumki; //Minimalna Szerokosc Gumki -> kiedy nalezy zatrzymac rozciaganie
+  private int maxSzerGumki; //Maxymalna Szerokosc Gumki -> kiedy nalezy zatrzymac zsuwanie
+
 
   private StanBAnim bAnim_PobierzStan_i_UstalNowy() {
   /**
@@ -273,7 +276,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     final int dx    = 2;       //krok i kierunek roz(s)uwania
     final int valueMin = 1;    //na potrzeby funkcji animujacej
     final int valueMax = 100;  //j.w.
-    final int duration = 5000; //zakładany(!) czas trwania [roz|zsu]uwania
+    final int duration = 500; //zakładany(!) czas trwania [roz|zsu]uwania
 
 
     //Jaki jest aktualny stan pokratkowania (czyli stan bAnim) - na tej podstawie odp. akcja:
@@ -316,7 +319,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
 
-  private final int OMK =10;//20; //odstęp między kratkami po zakończeniu zsuwania
 
 
 
@@ -363,27 +365,29 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     cofnijKratkiJesliWystajom();
   } //koniec Metody()
 
-  private int minSzerGumki; //Minimalna Szerokosc Gumki -> kiedy nalezy zatrzymac rozciaganie; na razie tentatywnie...
-  private int maxSzerGumki; //Maxymalna Szerokosc Gumki -> kiedy nalezy zatrzymac zsuwanie; na razie tentatywnie...
+
 
   private Button utworzButtonBGumka() {
-    Button bGumka = new Button(this);
+    final Button bGumka = new Button(this);
     final LayoutParams lParG = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
     //lParG.leftMargin  = -10;
     //lParG.rightMargin = -20;
-
     lParG.leftMargin  = -15;
     lParG.rightMargin = -15;
 
-
-    lParG.height = (int) (0.70*lObszar.getHeight());
-    //Kiedy zatrzymac zsuwanie/rozciaganie w animacjach:
-    maxSzerGumki = lParG.height;
-    minSzerGumki = lParG.height/2;
-
-
-    lParG.width  = 40;
-    bGumka.setLayoutParams(lParG);
+    bKratki[0].post(new Runnable() {
+      @Override
+      public void run() {
+       lParG.height = (int) (0.75*bKratki[0].getHeight());
+       lParG.width  = 40;
+       bGumka.setLayoutParams(lParG);
+       //na przyszlosc: Kiedy (przy jakich parametrach) zatrzymywać zsuwanie/rozciaganie w animacjach: (maly code-smell...)
+       maxSzerGumki = lParG.height;
+       minSzerGumki = (int) (0.80*maxSzerGumki);
+       //tvNazwa.setText(Integer.toString(maxSzerGumki)+" / "+ Integer.toString(minSzerGumki));-sledzenie
+      }
+    });
     //bGumka.setVisibility(INVISIBLE);
     return bGumka;
   }
@@ -507,13 +511,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             return;
           }
 
+          //Bedziemy pocieniac/pogrubiac oraz poszerzac/zwezac gumki miedzy wyrazami:
           LayoutParams lPar;
           lPar = (LayoutParams) bGumki[i].getLayoutParams();
 
-          //Wrażenie rozciagania w obydwu kierunkach (ale jeden element "stoi") - nie kasuj, zachowaj na wzor:
-          //if (i==0) lPar.leftMargin -= dx;
-
-          lPar.width  += dx;
+          lPar.width  += dx; //to da wrazenie ruchu w poziomie
 
           //Zcienianie/Zgrubianie Gumek w zaleznosci od kierunku ruchu:
           if (dx>0) {
@@ -533,7 +535,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
             }
           }
 
-          bGumki[i].setLayoutParams(lPar); //ruch wlasciwy
+          bGumki[i].setLayoutParams(lPar); //ruch (animacja) wlasciwy
 
           //badanie polozenia ostatniej kratki (jesli ruch w prawo=rozsuwanie):
           if (dx>0) {
@@ -545,20 +547,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
               }
             });
           }
-
-          /**** Jesli mamy do czynienia ze ZSUwaniem, to trzeba wiedzieć, kiedy się zatrzymać: *********/
-          if (dx<0) {
-            bKratki[1].post(new Runnable() {
-              public void run() {
-                if ( Math.abs((bKratki[1].getLeft() - bKratki[0].getRight())) < OMK) {
-                  anim.cancel();
-                  return;
-                }
-              }
-            });
-          }
-          /**********************************************************************************************/
-
         }
       }
     });
@@ -1373,7 +1361,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //currWord = "ża-rów-ka";
     //currWord   = "nie-za-po-mi-naj-ki";
     //currWord   = "mi-kro-fa-lów-ka";
-    currWord   = "pa-ra-sol";
+    //currWord   = "pa-ra-sol";
 
 
 
