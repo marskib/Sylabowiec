@@ -320,15 +320,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
 
 
-
-
   private void pokratkuj_v2() {
     /**
      v2 pokratkuj() - z dodaniem 'gumek' miedzy sylabami
      Pokazanie podziału na sylaby ułożonego wyrazu (wyraz = de facto tvShownWord)
-     (uwaga - nie ma ruchu-animcji, tylko pokratkowanie)
+     (uwaga - na tym etpie nie ma jeszcze ruchu-animcji, tylko pokratkowanie)
      Kazda sylaba umieszczona zostaje w 'kratce' (button bKratka[i])
      Podstawowa tablica, na ktorej funkcja dziala - bKratki[MAXS]
+     Tablica na gumki - bGumki[MAXS-1]
      */
 
     //tworzymy tablice, zeby miec na czym dzialac:
@@ -337,7 +336,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     tvShownWord.setVisibility(View.GONE); //chowamy ulozony wyraz
 
-    //Główna pętla; każda sylaba ląduje w osobno powołanej bKratce; kratki lądują w bKratki[]:
+    //Główna pętla; każda sylaba ląduje w osobno powołanej bKratce; kratki lądują w bKratki[];
+    //dodatkowo tworzone jest obszar-bufor 'bGumka' pomiędzy kratkami:
     lObszar.setGravity(Gravity.CENTER_VERTICAL);
     for (int i = 0; i < sylaby.getlSylab() ; i++) {
 
@@ -350,7 +350,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
       //Tworzenie 'gumki' miedzy kratkami:
       Button bGumka;
-      if (i<sylaby.getlSylab()-1) { //sens tylko jesl wyraz wiecej niz 1 sylabowy
+      if (i<sylaby.getlSylab()-1) { //sens tylko jesli wyraz wiecej niz 1 sylabowy
         bGumka = utworzButtonBGumka();
         bGumki[i] = bGumka;
 
@@ -366,8 +366,14 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   } //koniec Metody()
 
 
-
+  private boolean juzPoliczonoParamBGumki = false; //na przyszlosc: Kiedy (przy jakich parametrach) zatrzymywać zsuwanie/rozciaganie w animacjach: (maly code-smell...)
   private Button utworzButtonBGumka() {
+    /***
+     * Tworzona jest bGumka do umieszczenia w tablicy; jest to 'bufor' pomiedzy sylabami;
+     * Code-smell: zmienna juzPoliczonoParamBGumki powoduje, że 'brzydki' efekt 'doskoku' na ostatnie sylabie wystąpi
+     * tylko 1 raz w całej sesji, na pocżtku sesji  (doświadczalnie...)
+     * Trzeba było stosować bKratki[].post, bo inaczej maxSzerGumki sie nie liczylo jak trzeba...
+     */
     final Button bGumka = new Button(this);
     final LayoutParams lParG = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -375,22 +381,28 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //lParG.rightMargin = -20;
     lParG.leftMargin  = -15;
     lParG.rightMargin = -15;
+    lParG.width  = 40;
 
-    bKratki[0].post(new Runnable() {
-      @Override
-      public void run() {
-       lParG.height = (int) (0.75*bKratki[0].getHeight());
-       lParG.width  = 40;
-       bGumka.setLayoutParams(lParG);
-       //na przyszlosc: Kiedy (przy jakich parametrach) zatrzymywać zsuwanie/rozciaganie w animacjach: (maly code-smell...)
-       maxSzerGumki = lParG.height;
-       minSzerGumki = (int) (0.80*maxSzerGumki);
-       //tvNazwa.setText(Integer.toString(maxSzerGumki)+" / "+ Integer.toString(minSzerGumki));-sledzenie
-      }
-    });
+    if (juzPoliczonoParamBGumki) {
+      lParG.height = maxSzerGumki;
+      bGumka.setLayoutParams(lParG);
+    }
+    else {
+      bKratki[0].post(new Runnable() {
+        @Override
+        public void run() {
+          juzPoliczonoParamBGumki = true;
+          maxSzerGumki = (int) (0.75 * bKratki[0].getHeight());
+          minSzerGumki = (int) (0.80 * maxSzerGumki);
+          lParG.height = maxSzerGumki;
+          bGumka.setLayoutParams(lParG);
+          //tvNazwa.setText(Integer.toString(maxSzerGumki)+" / "+ Integer.toString(minSzerGumki));//-sledzenie
+        }
+      });
+    }
     //bGumka.setVisibility(INVISIBLE);
     return bGumka;
-  }
+  }  //koniec Metody()
 
 
   private Button utworzButtonBSyl(int i) {
@@ -403,7 +415,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     //lPar.rightMargin = -5; //zeby kratki prawie zachodzilay na siebie - kosmetyka
     lPar.leftMargin  = 0;
     lPar.rightMargin = 0;
-
 
 
     //lObszar.addView(bSyl);
@@ -435,6 +446,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
   private void cofnijKratkiJesliWystajom() {
     /** Jesi po pokratkowaniu ostatnia kratka wychodzi za lObszar, to przesuwamy wszystko w lewo */
     /** Blad ortograficzny w nazwie - zamierzony, zeby lepiej oddac liczbe mnogą                 */
+    /** Jedyna metoda zrobiona na timer - dla nauki; Animacje 'firmowe' chodzą płynniej, więc gdzie indzien ValueAnimator */
 
     final Handler handler = new Handler();
     //Starting the timer:
