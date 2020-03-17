@@ -1496,23 +1496,22 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     /**
      * Na chwile unieczynnnia podane klawisze.
      * Jeżeli były nieczynne, to nic sie nie zmieni.
-     * Uzywana w bAgainO.Ckick()i bDalejOnClick(), zeby zapobiec problemom gdy 2 szybkie kliki na klawiszu in question
+     * Uzywana w bAgainOnCick()i bDalejOnClick(), zeby zapobiec problemom gdy 2 szybkie kliki na klawiszu in question
      * Uzywana rowniez na bAnim
      */
 
-      for (int i=0; i<klawisze.length; i++) {
-        final boolean stanSaved = klawisze[i].isEnabled();
-        klawisze[i].setEnabled(false);
-        Handler mHandl = new Handler();
-        final int i_final = i;
-        mHandl.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            klawisze[i_final].setEnabled(stanSaved);
-          }
-        }, chwila);
-      }
-  }
+    for (int i=0; i<klawisze.length; i++) {
+      klawisze[i].setClickable(false);
+      Handler mHandl = new Handler();
+      final int i_final = i;
+      mHandl.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          klawisze[i_final].setClickable(true);
+        }
+      }, chwila);
+    }
+  }  //koniec Metody()
 
   public void bAgainOnClick(View v) {
     //bAgain -  kl. pod Obszarem
@@ -1523,7 +1522,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     bAnim.setTag(StanBAnim.BEZ_KRATEK);   //inicjowanie stanu bAnim - mówi, że niepokratkowane tvShownWord
 
     //trzeba zabokowac na chwilke, bo 2 szybkie kliki sa wylapywane i kaszana... (2019.04)
-    if (v==bAgain1) unieczynnijNaChwile(500, bAgain1);
+    if (v==bAgain1) unieczynnijNaChwile(500, bAgain1, bDalej);
 
     //Usuniecie Grawitacji z lObszar, bo mogla byc ustawiona w korygujJesliWystaje() ):
     usunGrawitacje();
